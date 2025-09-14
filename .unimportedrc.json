@@ -1,0 +1,23 @@
+{
+  "ignoreUnresolved": [],
+  "ignoreUnused": [
+    "@radix-ui/react-dialog",
+    "@radix-ui/react-popover",
+    "@radix-ui/react-progress",
+    "@tailwindcss/cli",
+    "@tailwindcss/vite",
+    "cmdk",
+    "pdfjs-dist",
+    "react-d3-speedometer",
+    "tailwindcss"
+  ],
+  "ignoreUnimported": [
+    "C:\\Users\\vania\\Neuro4b\\frontend\\src\\components\\BubbleMatrixChart.jsx",
+    "C:\\Users\\vania\\Neuro4b\\frontend\\src\\components\\DualAxisChart.jsx",
+    "C:\\Users\\vania\\Neuro4b\\frontend\\src\\components\\UseWorkerData.jsx",
+    "C:\\Users\\vania\\Neuro4b\\frontend\\src\\components\\ui\\command.jsx",
+    "C:\\Users\\vania\\Neuro4b\\frontend\\src\\components\\ui\\dialog.jsx",
+    "C:\\Users\\vania\\Neuro4b\\frontend\\src\\components\\ui\\popover.jsx",
+    "C:\\Users\\vania\\Neuro4b\\frontend\\src\\components\\ui\\progress.jsx"
+  ]
+}
