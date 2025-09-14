@@ -6,7 +6,7 @@ export default function PageLayout({ title, tooltip, headerAction, children }) {
     <div className="absolute inset-0 mb-2 mt-1 mx-3 bg-primary-bg rounded-sm">
       
       {/* Sticky header con slot adicional */}
-      <div className="sticky top-0 z-0 grid grid-cols-3 items-center px-6 my-2">
+      <div className="sticky top-0 z-1 isolate grid grid-cols-3 items-center px-6 my-2 bg-primary-bg">
         {/* Izquierda: h1 + tooltip */}
         <div className="flex items-center gap-4">
           <h1 className="text-md font-semibold text-primary-text pl-2">{title}</h1>

@@ -18,7 +18,8 @@ export function LoginForm({ className, setIsAuthenticated, ...props }) {
     setError("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      const apiBase = import.meta.env.VITE_API_BASE;
+      const response = await fetch(`${apiBase}/api/login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

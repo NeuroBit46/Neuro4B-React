@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+neuro4k
 node_modules
 dist
 dist-ssr
