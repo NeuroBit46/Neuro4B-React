@@ -205,7 +205,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-3 mt-6 gap-6">
             {secciones.map(
               ({ id, title, tscore, metrics, icon, miniDesc, nivel, color, background }) => (
-                <div key={id} className="bg-primary-bg rounded-sm shadow p-4 flex flex-col">
+                <div key={id} className="bg-white rounded-sm shadow p-4 flex flex-col">
                   <div className="flex items-center gap-2.5">
                     {/* Ícono */}
                     <div className="w-9 h-9 rounded-full flex items-center justify-center bg-primary/15 shrink-0">

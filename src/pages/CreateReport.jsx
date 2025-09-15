@@ -8,22 +8,23 @@ import SearchBar from '../components/SearchBar';
 export default function CreateReport() {
   const [selectedWorkers, setSelectedWorkers] = useState([]);
   const [selectedTpl, setSelectedTpl] = useState(null);
-    const [textoBusqueda, setTextoBusqueda] = useState('');
+  const [textoBusqueda, setTextoBusqueda] = useState('');
 
   return (
     <PageLayout
       title="Generar informe"
       tooltip="Para generar un informe, seleccione al menos un trabajador y una plantilla."
-      headerAction={{
-          center: <SearchBar onBuscar={setTextoBusqueda} />
-      }}
+      headerAction={{ center: <SearchBar onBuscar={setTextoBusqueda} /> }}
     >
       <WorkersList
         selectedWorkers={selectedWorkers}
         setSelectedWorkers={setSelectedWorkers}
         actionsMode={false}
-        limitMode="fixed"
         textoBusqueda={textoBusqueda}
+        // Config: sin paginación, scroll vertical con header sticky
+        pagination={false}
+        stickyHeader={true}
+        bodyMaxHeightClass="max-h-[35vh]"
       />
 
       <TemplateCardList

@@ -27,7 +27,7 @@ export function TemplateCard({ name, file, isSelected, onSelect, onPreview }) {
 
   return (
     <div
-      className="rounded-sm bg-primary-bg shadow-xs p-2"
+      className="rounded-sm bg-primary-bg border border-border shadow-xs p-2"
       role="checkbox"
       aria-checked={isSelected}
       title={isSelected ? 'Plantilla seleccionada' : 'Seleccionar plantilla'}
@@ -84,7 +84,7 @@ export default function TemplateCardList({ selectedTpl, setSelectedTpl }) {
   const closePreview = () => setPreviewInfo(null);
 
   return (
-    <div className="space-y-4 rounded-sm mt-6 bg-secondary-bg">
+    <div className="space-y-4 rounded-sm mt-6 bg-white border border-border shadow-xs">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 md:gap-20 gap-8 p-4 md:px-10">
         {templates.map((tpl) => (
           <TemplateCard

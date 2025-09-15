@@ -1,9 +1,30 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import ButtonBase from './ButtonBase';
 import DropzoneField from './DropzoneFile';
 import { Icons } from '../constants/Icons';
-import { WorkerInput } from './WorkerInput';
+// import { WorkerInput } from './WorkerInput';
 import ArchivoPreviewModal from './ArchivoPreviewModal';
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from './ui/select';
+import { Input } from './ui/input';
+import {                 // <-- importa los Cards de shadcn
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from './ui/card';
+
+const DEFAULT_POSITION_OPTIONS = [
+  'Operario',
+  'Supervisor',
+  'Gerente',
+];
 
 export default function WorkerForm({
   mode = 'crear',
@@ -11,7 +32,8 @@ export default function WorkerForm({
   onSubmit,
   hideEmptyInView = false,
   emptyPlaceholder = 'Sin dato',
-  emptyLabels = {}
+  emptyLabels = {},
+  positionOptions = DEFAULT_POSITION_OPTIONS, // <-- nuevas opciones del select
 }) {
   const isView = mode === 'ver';
   const isEdit = mode === 'editar';
@@ -162,112 +184,170 @@ export default function WorkerForm({
   const dimCompany  = isView && isEmpty(company);
   const dimPosition = isView && isEmpty(position);
 
+  // Asegura que el valor actual aparezca aunque no esté en la lista
+  const positionOpts = useMemo(() => {
+    const set = new Set((positionOptions || []).filter(Boolean));
+    if (position && !set.has(position)) set.add(position);
+    // ordenar por texto; si tus ids existen, cámbialo por el criterio que prefieras
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [positionOptions, position]);
+
   return (
     <div className="space-y-6">
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-5 p-4 px-10 bg-primary-bg shadow-xs rounded-lg'>
-        {!shouldHide(name) && (
-          <WorkerInput
-            label="Nombre"
-            icon={renderIcon(Icons.workers, isView && isEmpty(name))}
-            value={name}
-            placeholder={viewPlaceholder('name', name, 'Ingrese nombre completo del trabajador')}
-            onChange={e => setName(e.target.value)}
-            disabled={isReadOnly} // <-- deshabilitado al crear
-            inputClass={`${isEdit ? 'text-secondary-text' : 'text-primary-text'} placeholder:text-secondary-text/70`}
-          />
-        )}
-        {!shouldHide(company) && (
-          <WorkerInput
-            label="Empresa"
-            icon={renderIcon(Icons.company, isView && isEmpty(company))}
-            value={company}
-            placeholder={viewPlaceholder('company', company, 'Ingrese empresa del trabajador')}
-            onChange={e => setCompany(e.target.value)}
-            disabled={isReadOnly} // <-- deshabilitado al crear
-            inputClass={`${isEdit ? 'text-secondary-text' : 'text-primary-text'} placeholder:text-secondary-text/70`}
-          />
-        )}
-        {!shouldHide(position) && (
-          <WorkerInput
-            label="Cargo"
-            icon={renderIcon(Icons.position, isView && isEmpty(position))}
-            value={position}
-            placeholder={viewPlaceholder('position', position, 'Ingrese cargo del trabajador')}
-            onChange={e => setPosition(e.target.value)}
-            disabled={isReadOnly} // <-- deshabilitado al crear
-            inputClass={`${isEdit ? 'text-secondary-text' : 'text-primary-text'} placeholder:text-secondary-text/70`}
-          />
-        )}
-      </div>
-
-      <div className='grid grid-cols-2 space-x-10 md:space-x-20 px-0'>
-        {/* PDF */}
-        <div>
-          <DropzoneField
-            ref={pdfRef}
-            onDrop={handlePdfDrop}
-            file={pdfFile}
-            disabled={isReadOnly}          // <-- bloquea interacción
-            forceDisabled={loading}        // <-- NO abrir modal ni picker mientras crea
-            fileLabel={pdfName ? `${pdfName}` : 'Archivo PDF Nesplora'}
-            onClick={() => !loading && pdfFile && openFileModal(pdfFile)} // <-- evita modal en loading
-          />
-          {isEdit && pdfFile && (
-            <div className="flex justify-center space-x-4 mt-2">
-              <ButtonBase size="sm" variant="secondary" onClick={handlePdfReplace} disabled={loading}>
-                Cambiar archivo
-              </ButtonBase>
-              <ButtonBase size="sm" variant="secondary" onClick={handlePdfRemove} disabled={loading}>
-                Eliminar archivo
-              </ButtonBase>
-            </div>
-          )}
-        </div>
-
-        {/* Excel */}
-        <div>
-          <DropzoneField
-            ref={excelRef}
-            onDrop={handleExcelDrop}
-            file={excelFile}
-            disabled={isReadOnly}          // <-- bloquea interacción
-            forceDisabled={loading}        // <-- NO abrir modal ni picker mientras crea
-            fileLabel={excelName ? `${excelName}` : 'Archivo Excel EEG'}
-            onClick={() => !loading && excelFile && openFileModal(excelFile)} // <-- evita modal en loading
-          />
-          {isEdit && excelFile && (
-            <div className="flex justify-center space-x-4 mt-2">
-              <ButtonBase size="sm" variant="secondary" onClick={handleExcelReplace} disabled={loading}>
-                Cambiar archivo
-              </ButtonBase>
-              <ButtonBase size="sm" variant="secondary" onClick={handleExcelRemove} disabled={loading}>
-                Eliminar archivo
-              </ButtonBase>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {!isView && (
-        <div className='flex justify-center pt-2'>
-          <ButtonBase
-            onClick={handleSubmit}
-            variant="primary"
-            size="md"
-            disabled={loading}
-            className="flex items-center gap-2"
-          >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                {isEdit ? "Actualizando trabajador..." : "Creando trabajador..."}
-              </>
-            ) : (
-              isEdit ? "Actualizar trabajador" : "Crear trabajador"
+      {/* Card: Datos del trabajador */}
+      <Card className="rounded-sm shadow-xs gap-2 py-4">
+        <CardHeader>
+          <CardTitle className='text-sm text-primary-text'>Datos del trabajador</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-5">
+            {/* Nombre */}
+            {!shouldHide(name) && (
+              <div className="flex flex-col">
+                <label className="text-xs font-medium text-secondary-text mb-1 flex items-center gap-2">
+                  {renderIcon(Icons.workers, dimName)}
+                  Nombre
+                </label>
+                <Input
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  // En "ver": solo readOnly (no disabled) para evitar opacidad
+                  readOnly={isView}
+                  disabled={loading}
+                  placeholder={viewPlaceholder('name', name, 'Ingrese nombre completo del trabajador')}
+                  className={`text-primary-text placeholder:text-secondary-text/70 ${isView ? 'disabled:opacity-100' : ''}`}
+                />
+              </div>
             )}
-          </ButtonBase>
-        </div>
-      )}
+
+            {/* Empresa */}
+            {!shouldHide(company) && (
+              <div className="flex flex-col">
+                <label className="text-xs font-medium text-secondary-text mb-1 flex items-center gap-2">
+                  {renderIcon(Icons.company, dimCompany)}
+                  Empresa
+                </label>
+                <Input
+                  value={company}
+                  onChange={e => setCompany(e.target.value)}
+                  readOnly={isView}
+                  disabled={loading}
+                  placeholder={viewPlaceholder('company', company, 'Ingrese empresa del trabajador')}
+                  className={`text-primary-text placeholder:text-secondary-text/70 ${isView ? 'disabled:opacity-100' : ''}`}
+                />
+              </div>
+            )}
+
+            {/* Cargo */}
+            {!shouldHide(position) && (
+              <div className="flex flex-col">
+                <label className="text-xs font-medium text-secondary-text mb-1 flex items-center gap-2">
+                  {renderIcon(Icons.position, dimPosition)}
+                  Cargo
+                </label>
+                <Select
+                  value={position || undefined}
+                  onValueChange={setPosition}
+                  // Deshabilita solo cuando está cargando
+                  disabled={loading}
+                >
+                  <SelectTrigger
+                    className={`w-full text-primary-text data-[placeholder]:text-secondary-text/70 ${isView ? 'pointer-events-none opacity-100' : ''}`}
+                    // marca semánticamente el readOnly en vista
+                    aria-readonly={isView || undefined}
+                  >
+                    <SelectValue placeholder={viewPlaceholder('position', position, 'Seleccione un cargo')} />
+                  </SelectTrigger>
+                  <SelectContent position="popper" className="z-50">
+                    {positionOpts.map(opt => (
+                      <SelectItem key={opt} value={opt}>
+                        {opt}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Card: Archivos */}
+      <Card className="rounded-sm shadow-xs gap-0 py-4">
+        <CardHeader>
+          <CardTitle className='text-sm text-primary-text'>Archivos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20">
+            {/* PDF */}
+            <div>
+              <DropzoneField
+                ref={pdfRef}
+                onDrop={handlePdfDrop}
+                file={pdfFile}
+                disabled={isReadOnly}
+                forceDisabled={loading}
+                fileLabel={pdfName ? `${pdfName}` : 'Archivo PDF Nesplora'}
+                onClick={() => !loading && pdfFile && openFileModal(pdfFile)}
+              />
+              {isEdit && pdfFile && (
+                <div className="flex justify-center space-x-4 mt-2">
+                  <ButtonBase size="sm" variant="secondary" onClick={handlePdfReplace} disabled={loading}>
+                    Cambiar archivo
+                  </ButtonBase>
+                  <ButtonBase size="sm" variant="secondary" onClick={handlePdfRemove} disabled={loading}>
+                    Eliminar archivo
+                  </ButtonBase>
+                </div>
+              )}
+            </div>
+
+            {/* Excel */}
+            <div>
+              <DropzoneField
+                ref={excelRef}
+                onDrop={handleExcelDrop}
+                file={excelFile}
+                disabled={isReadOnly}
+                forceDisabled={loading}
+                fileLabel={excelName ? `${excelName}` : 'Archivo Excel EEG'}
+                onClick={() => !loading && excelFile && openFileModal(excelFile)}
+              />
+              {isEdit && excelFile && (
+                <div className="flex justify-center space-x-4 mt-2">
+                  <ButtonBase size="sm" variant="secondary" onClick={handleExcelReplace} disabled={loading}>
+                    Cambiar archivo
+                  </ButtonBase>
+                  <ButtonBase size="sm" variant="secondary" onClick={handleExcelRemove} disabled={loading}>
+                    Eliminar archivo
+                  </ButtonBase>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+
+        {!isView && (
+          <CardFooter className="justify-center mt-4">
+            <ButtonBase
+              onClick={handleSubmit}
+              variant="primary"
+              size="md"
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  {isEdit ? "Actualizando trabajador..." : "Creando trabajador..."}
+                </>
+              ) : (
+                isEdit ? "Actualizar trabajador" : "Crear trabajador"
+              )}
+            </ButtonBase>
+          </CardFooter>
+        )}
+      </Card>
 
       {showModal && (
         <ArchivoPreviewModal file={activeFile} onClose={() => setShowModal(false)} />

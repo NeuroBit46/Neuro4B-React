@@ -33,6 +33,7 @@ export const Icons = {
   aciertos: <Icon icon='mdi:alarm-success' className='text-xl text-primary'/>,
   user: <Icon icon='typcn:user' className='text-2xl text-primary-bg'/>,
   arrowDown: <Icon icon='iconamoon:arrow-down-2' className='text-xl text-primary-text'/>,
+  arrowsOrder: <Icon icon='tabler:selector' className='text-xl text-primary-text'/>,
   selector: (isSelected) => (
     <div
       className={`rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 ${

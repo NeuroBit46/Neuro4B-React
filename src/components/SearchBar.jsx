@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Icons } from "../constants/Icons";
 
@@ -20,10 +20,23 @@ export default function SearchBar({
     if (!useCombobox && onBuscar) onBuscar(value);
   };
 
+  // Normaliza texto
   const limpiar = (txt) =>
     (txt || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-  const filtrados = workers.filter((w) =>
+  // Helper: asegura id numérico
+  const getIdNum = (w) => {
+    const n = Number(w?.id);
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  // Orden: id de mayor a menor (más reciente primero)
+  const workersSorted = useMemo(() => {
+    return [...workers].sort((a, b) => getIdNum(b) - getIdNum(a));
+  }, [workers]);
+
+  // Aplica el filtro sobre la lista ordenada
+  const filtrados = workersSorted.filter((w) =>
     limpiar(w?.name).includes(limpiar(texto)) ||
     (filterByCompany && limpiar(w?.company).includes(limpiar(texto)))
   );
