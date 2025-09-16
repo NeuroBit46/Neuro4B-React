@@ -19,6 +19,8 @@ import {                 // <-- importa los Cards de shadcn
   CardContent,
   CardFooter,
 } from './ui/card';
+import { useLoadingBar } from "@/components/LoadingBar";
+import { Progress } from "./ui/progress";
 
 const DEFAULT_POSITION_OPTIONS = [
   'Operario',
@@ -130,7 +132,16 @@ export default function WorkerForm({
       // adjuntar Excel solo si existe
       if (excelFile) newData.excelFile = excelFile;
 
-      if (onSubmit) await onSubmit(newData);
+      // En crear: siempre correr OCR. En editar: solo si se subió un File nuevo.
+      const meta = {
+        mode,
+        pdfChanged: isEdit ? pdfFile instanceof File : true,
+      };
+
+      if (onSubmit) {
+        // ahora onSubmit recibe { data, meta }
+        await onSubmit({ data: newData, meta });
+      }
     } catch (error) {
       console.error('Error al enviar:', error);
       alert('Error en la solicitud');
@@ -191,6 +202,8 @@ export default function WorkerForm({
     // ordenar por texto; si tus ids existen, cámbialo por el criterio que prefieras
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [positionOptions, position]);
+
+  const { isActive: globalLoading, progress } = useLoadingBar();
 
   return (
     <div className="space-y-6">
@@ -326,28 +339,30 @@ export default function WorkerForm({
             </div>
           </div>
         </CardContent>
-
+      </Card>
         {!isView && (
-          <CardFooter className="justify-center mt-4">
+          <CardFooter className="flex items-center justify-center gap-3 mt-4">
             <ButtonBase
               onClick={handleSubmit}
               variant="primary"
               size="md"
               disabled={loading}
               className="flex items-center gap-2"
+              // showLoadingBar  // evita duplicar start/done; la página ya los llama
+              loadingText={isEdit ? "Actualizando trabajador..." : "Creando trabajador..."}
             >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  {isEdit ? "Actualizando trabajador..." : "Creando trabajador..."}
-                </>
-              ) : (
-                isEdit ? "Actualizar trabajador" : "Crear trabajador"
-              )}
+              {isEdit ? "Actualizar trabajador" : "Crear trabajador"}
             </ButtonBase>
+
+            {globalLoading && (
+              <Progress
+                value={progress}
+                className="h-3 w-50"
+                aria-label="Progreso"
+              />
+            )}
           </CardFooter>
         )}
-      </Card>
 
       {showModal && (
         <ArchivoPreviewModal file={activeFile} onClose={() => setShowModal(false)} />

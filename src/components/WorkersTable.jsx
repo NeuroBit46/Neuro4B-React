@@ -59,13 +59,11 @@ export default function WorkersTable({
   // Pre-filtrado por texto (nombre/empresa)
   const data = useMemo(() => {
     const f = limpiar(textoBusqueda);
-    const sorted = [...workers].sort((a, b) => {
-      // si hay created_at úsalo, sino fecha
-      const da = new Date(a.created_at || a.fecha);
-      const db = new Date(b.created_at || b.fecha);
-      return db - da; // más reciente primero
-    });
-    return sorted.filter(
+    // Antes: se ordenaba acá y luego la tabla volvía a ordenar => resultados inesperados
+    // const sorted = [...workers].sort((a, b) => { ... });
+    // return sorted.filter(...);
+
+    return workers.filter(
       (w) => limpiar(w.nombre).includes(f) || limpiar(w.empresa).includes(f)
     );
   }, [workers, textoBusqueda]);
@@ -108,10 +106,12 @@ export default function WorkersTable({
       col.accessor((row) => row.fecha, {
         id: "fecha",
         header: () => "Fecha",
+        sortDescFirst: true, // primer clic en "Fecha" va a desc
         sortingFn: (a, b) => {
-          const da = new Date(a.original.created_at || a.original.fecha).getTime();
-          const db = new Date(b.original.created_at || b.original.fecha).getTime();
-          return da === db ? 0 : da > db ? 1 : -1;
+          const idA = Number(a.original?.id) || 0;
+          const idB = Number(b.original?.id) || 0;
+          // comparator ascendente por id (React Table invierte cuando desc=true)
+          return idA - idB;
         },
         cell: ({ row }) => <span className="text-primary-text">{formatFecha(row.original.fecha)}</span>,
       }),
@@ -236,13 +236,12 @@ export default function WorkersTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    // Solo dos estados de orden: asc/desc (sin "none")
-    enableSortingRemoval: false,
+    enableSortingRemoval: false, // solo asc/desc
     ...(pagination
       ? {
           getPaginationRowModel: getPaginationRowModel(),
           initialState: {
-            sorting: [{ id: "fecha", desc: true }],
+            sorting: [{ id: "fecha", desc: true }], // más nuevos primero (id desc)
             pagination: { pageSize },
           },
         }

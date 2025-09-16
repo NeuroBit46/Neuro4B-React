@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
+import { useLoadingBar } from "./LoadingBar";
+import { Loader2 } from "lucide-react";
 
 // Mapea tus variantes/tamaños a los de shadcn
 const mapVariant = (v) => {
@@ -8,22 +10,20 @@ const mapVariant = (v) => {
       return "default";
     case "secondary":
       return "secondary";
-    case "danger":
-    case "destructive":
-      return "destructive";
-    case "outline":
-      return "outline";
     case "ghost":
       return "ghost";
-    case "link":
-      return "link";
+    case "outline":
+      return "outline";
+    case "destructive":
+      return "destructive";
     default:
       return "default";
   }
 };
-
 const mapSize = (s) => {
   switch (s) {
+    case "xs":
+      return "sm";
     case "sm":
       return "sm";
     case "md":
@@ -44,18 +44,46 @@ export default function ButtonBase({
   variant = "primary",
   size = "sm",
   className = "",
+  isLoading: isLoadingProp,
+  loadingText,
+  showLoadingBar = false,
   ...props
 }) {
+  const { start, done } = useLoadingBar();
+  const [internalLoading, setInternalLoading] = useState(false);
+  const isLoading = isLoadingProp ?? internalLoading;
+
+  const handleClick = async (e) => {
+    if (!onClick || disabled || isLoading) return;
+    const ret = onClick(e);
+    if (ret && typeof ret.then === "function") {
+      try {
+        showLoadingBar && start();
+        setInternalLoading(true);
+        await ret;
+      } finally {
+        setInternalLoading(false);
+        showLoadingBar && done();
+      }
+    }
+  };
+
   return (
     <Button
-      onClick={onClick}
-      disabled={disabled}
+      onClick={handleClick}
+      disabled={disabled || isLoading}
       variant={mapVariant(variant)}
       size={mapSize(size)}
       className={className}
       {...props}
     >
-      {children}
+      {isLoading && (
+        <Loader2
+          className="mr-2 h-4 w-4 animate-spin"
+          aria-hidden="true"
+        />
+      )}
+      {isLoading && loadingText ? loadingText : children}
     </Button>
   );
 }
