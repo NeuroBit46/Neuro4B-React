@@ -1,9 +1,16 @@
 import PageLayout from '../components/PageLayout';
 import WorkersList from '../components/WorkersList';
-import TemplateCardList from '../components/TemplateCard';
+import TemplateSelector from '../components/TemplateSelector';
 import ButtonCreateReport from '../components/ButtonCreateReport';
 import { useState } from 'react';
 import SearchBar from '../components/SearchBar';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card"; // <-- import Card
 
 export default function CreateReport() {
   const [selectedWorkers, setSelectedWorkers] = useState([]);
@@ -16,20 +23,32 @@ export default function CreateReport() {
       tooltip="Para generar un informe, seleccione al menos un trabajador y una plantilla."
       headerAction={{ center: <SearchBar onBuscar={setTextoBusqueda} /> }}
     >
-      <WorkersList
-        selectedWorkers={selectedWorkers}
-        setSelectedWorkers={setSelectedWorkers}
-        actionsMode={false}
-        textoBusqueda={textoBusqueda}
-        // Config: sin paginación, scroll vertical con header sticky
-        pagination={false}
-        stickyHeader={true}
-        bodyMaxHeightClass="max-h-[35vh]"
-      />
+      {/* Card de trabajadores */}
+      <Card className="border-border/70 shadow-xs p-2 pt-3 gap-1">
+        <CardHeader className="px-3 pt-0 pb-0 space-y-0">
+          {/* <CardTitle className="text-sm font-semibold text-primary-text">
+            Trabajadores
+          </CardTitle> */}
+          <CardDescription className="text-xs text-secondary-text leading-snug">
+            Seleccione un trabajador por cada informe
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-3 pt-0 pb-3">
+          <WorkersList
+            selectedWorkers={selectedWorkers}
+            setSelectedWorkers={setSelectedWorkers}
+            actionsMode={false}
+            textoBusqueda={textoBusqueda}
+            pagination={false}
+            stickyHeader={true}
+            bodyMaxHeightClass="max-h-[35vh]"
+          />
+        </CardContent>
+      </Card>
 
-      <TemplateCardList
-        selectedTpl={selectedTpl}
-        setSelectedTpl={setSelectedTpl}
+      <TemplateSelector
+        value={selectedTpl}
+        onChange={setSelectedTpl}
       />
 
       <ButtonCreateReport

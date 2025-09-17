@@ -60,7 +60,7 @@ export const Icons = {
     <Icon 
         icon={isActive ? 'bi:file-earmark-pdf-fill' : 'bi:file-earmark-pdf'} 
         className={`text-xl ${
-          isActive ? 'text-secondary hover:text-secondary-hover' : 'text-secondary/60'
+          isActive ? 'text-secondary hover:text-secondary-hover cursor-pointer' : 'text-secondary/60'
         } transition-colors duration-200`}
     />
   ),
@@ -68,7 +68,7 @@ export const Icons = {
     <Icon 
         icon={isActive ? 'bi:file-earmark-excel-fill' : 'bi:file-earmark-excel'} 
         className={`text-xl ${
-          isActive ? 'text-primary hover:text-primary-hover' : 'text-primary/60'
+          isActive ? 'text-primary hover:text-primary-hover cursor-pointer' : 'text-primary/60'
         } transition-colors duration-200`}
     />
   ),
@@ -76,7 +76,7 @@ export const Icons = {
     <Icon 
         icon={isActive ? 'bi:file-earmark-word-fill' : 'bi:file-earmark-word'} 
         className={`text-xl ${
-          isActive ? 'text-high/90 hover:text-high cursor-pointer' : 'text-high/60'
+          isActive ? 'text-high/90 hover:text-high cursor-pointer cursor-pointer' : 'text-high/60'
         } transition-colors duration-200`}
     />
   ),

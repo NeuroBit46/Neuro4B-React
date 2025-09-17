@@ -22,7 +22,10 @@ export default function WorkersList({
   const [archivoVisible, setArchivoVisible] = useState(null);
 
   const handleDeleteSuccess = (deletedId) => {
-    setSelectedWorkers((prev) => prev.filter((id) => id !== deletedId));
+    // Quita el trabajador del estado principal
+    setWorkers(prev => prev.filter(w => w.id !== deletedId));
+    // Limpia selección si aplicaba
+    setSelectedWorkers(prev => prev.filter(id => id !== deletedId));
   };
 
   return (

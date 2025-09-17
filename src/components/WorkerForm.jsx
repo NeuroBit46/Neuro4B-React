@@ -341,7 +341,7 @@ export default function WorkerForm({
         </CardContent>
       </Card>
         {!isView && (
-          <CardFooter className="flex items-center justify-center gap-3 mt-4">
+          <CardFooter className="flex items-center justify-center gap-8 mt-4">
             <ButtonBase
               onClick={handleSubmit}
               variant="primary"
@@ -355,11 +355,16 @@ export default function WorkerForm({
             </ButtonBase>
 
             {globalLoading && (
-              <Progress
-                value={progress}
-                className="h-3 w-50"
-                aria-label="Progreso"
-              />
+              <div className="flex items-center gap-0">
+                <Progress
+                  value={progress}
+                  className="h-3 w-50"
+                  aria-label="Progreso"
+                />
+                <span className="text-xs text-secondary-text tabular-nums w-10 text-right">
+                  {Math.min(100, Math.round(progress))}%
+                </span>
+              </div>
             )}
           </CardFooter>
         )}

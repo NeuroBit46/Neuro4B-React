@@ -206,15 +206,21 @@ export default function WorkersTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-28">
-                    <DropdownMenuItem onClick={() => navigate(`/detalles-trabajador/${row.original.id}`)}>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/detalles-trabajador/${row.original.id}`)}
+                    >
                       Ver
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate(`/editar-trabajador/${row.original.id}`)}>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/editar-trabajador/${row.original.id}`)}
+                    >
                       Editar
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
+                      className="text-destructive focus:text-destructive cursor-pointer"
                       onClick={() => setConfirmRow(row.original)}
                     >
                       Eliminar
@@ -258,6 +264,18 @@ export default function WorkersTable({
       const res = await fetch(`${API_BASE}/api/eliminar/${row.id}/`, { method: "DELETE" });
       if (!res.ok) throw new Error("No se pudo eliminar");
       onDeleteSuccess?.(row.id);
+
+      // Ajustar página si la actual queda sin filas tras la actualización
+      if (pagination) {
+        // Espera al siguiente tick para que llegue la nueva lista filtrada
+        setTimeout(() => {
+          const page = table.getState().pagination.pageIndex;
+          const pc = table.getPageCount();
+            if (page >= pc && pc > 0) {
+              table.setPageIndex(pc - 1);
+            }
+        }, 0);
+      }
     } catch (e) {
       console.error("Error eliminando trabajador:", e);
     } finally {
@@ -268,12 +286,12 @@ export default function WorkersTable({
   // Anchos por columna (por id), robusto aunque cambie el orden
   const widthById = {
     seleccionar: "2%",
-    nombre: "18%",
-    empresa: "20%",
-    cargo: "12%",
-    fecha: "12%",
-    pdf: "7%",
-    excel: "7%",
+    nombre: "25%",
+    empresa: "30%",
+    cargo: "4%",
+    fecha: "8%",
+    pdf: "6%",
+    excel: "6%",
     informe: "6%",
     acciones: "6%",
   };
