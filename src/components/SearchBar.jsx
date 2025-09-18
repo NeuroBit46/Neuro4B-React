@@ -66,6 +66,11 @@ export default function SearchBar({
     };
   }, [open]);
 
+  // Placeholder: en combobox siempre "Buscar por trabajador"
+  const placeholderText = useCombobox
+    ? "Buscar por trabajador"
+    : (filterByCompany ? "Buscar por trabajador o empresa" : "Buscar por trabajador");
+
   return (
     <div
       ref={anchorRef}
@@ -79,7 +84,7 @@ export default function SearchBar({
           onChange={handleChange}
           onFocus={() => useCombobox && setOpen(true)}
           onBlur={() => useCombobox && setTimeout(() => setOpen(false), 150)}
-          placeholder={filterByCompany ? "Buscar por trabajador o empresa" : "Buscar por trabajador"}
+          placeholder={placeholderText}
           className="w-full px-4 py-1.5 pl-13 text-xs rounded-full focus:outline-none"
         />
       </div>

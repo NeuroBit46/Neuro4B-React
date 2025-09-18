@@ -88,6 +88,19 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
     );
   }
 
+  // Lee query actual para determinar activos en el dropdown
+  const qs = new URLSearchParams(location.search);
+  const sectionQS = qs.get("section") || "";
+  const tabQS = qs.get("tab") || "";
+
+  // Misma lógica visual que la navbar, pero con bg-primary en lugar de blanco
+  const ddItemClasses = (active) =>
+    `flex flex-row items-center px-4 py-1 rounded transition-colors ${
+      active
+        ? "bg-primary/40"
+        : "hover:bg-primary/20 focus-visible:bg-primary/40"
+    }`;
+
   return (
     <header className="flex justify-between h-full w-full sticky top-0 z-50">
       {/* NAVIGATION MENU (LEFT) */}
@@ -161,57 +174,60 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
                   </button>
 
                   {dashboardOpen && (
-                    <div className="absolute left-0 mt-2 z-50 w-64 bg-white rounded shadow-lg p-2">
-                      {items.find((i) => i.name === "Dashboard")?.subItems.map((sub) => {
-                        if (sub.children) {
-                          return (
-                            <div key={sub.name} className="flex flex-col gap-1">
-                              <NavigationMenuLink asChild>
-                                <NavLink to={sub.path} onClick={() => setDashboardOpen(false)}>
-                                  {sub.name}
-                                </NavLink>
-                              </NavigationMenuLink>
-                              <div className="ml-4 flex flex-col gap-1">
-                                {sub.children.map((tab) => (
-                                  <NavigationMenuLink asChild key={tab}>
-                                    <NavLink
-                                      to={`/dashboard?section=Nesplora%20Ice%20Cream&tab=${nesploraQueryByLabel[tab]}`}
-                                      className={({ isActive }) =>
-                                        `flex flex-row items-center gap-2 px-4 py-2 rounded transition-colors ${
-                                          isActive
-                                            ? "bg-white/60 text-primary"
-                                            : "bg-transparent hover:bg-white/40 text-gray-700"
-                                        }`
-                                      }
-                                      onClick={() => setDashboardOpen(false)}
-                                    >
-                                      {tab}
-                                    </NavLink>
-                                  </NavigationMenuLink>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        }
+                    <div className="absolute left-0 mt-2 z-50 w-64 rounded shadow-sm">
+                      <div className="relative rounded overflow-hidden">
+                        <div className="absolute inset-0 pointer-events-none rounded backdrop-blur-md bg-primary-bg/85" />
+                        <div className="relative z-10 p-2 text-primary-text text-sm">
+                          {items.find((i) => i.name === "Dashboard")?.subItems.map((sub) => {
+                            if (sub.children) {
+                              const isGroupActive = sectionQS === "Nesplora Ice Cream";
+                              return (
+                                <div key={sub.name} className="flex flex-col gap-1">
+                                  {/* Grupo (sin NavigationMenuLink) */}
+                                  <NavLink
+                                    to={sub.path}
+                                    className={() => ddItemClasses(isGroupActive)}
+                                    onClick={() => setDashboardOpen(false)}
+                                  >
+                                    {sub.name}
+                                  </NavLink>
 
-                        return (
-                          <NavigationMenuLink asChild key={sub.name}>
-                            <NavLink
-                              to={sub.path}
-                              className={({ isActive }) =>
-                                `flex flex-row items-center gap-2 px-4 py-2 rounded transition-colors ${
-                                  isActive
-                                    ? "bg-white/60 text-primary"
-                                    : "bg-transparent hover:bg-white/40 text-gray-700"
-                                }`
-                              }
-                              onClick={() => setDashboardOpen(false)}
-                            >
-                              {sub.name}
-                            </NavLink>
-                          </NavigationMenuLink>
-                        );
-                      })}
+                                  <div className="ml-4 flex flex-col gap-1">
+                                    {sub.children.map((tab) => {
+                                      const tabKey = nesploraQueryByLabel[tab];
+                                      const isActive = isGroupActive && tabQS === tabKey;
+                                      return (
+                                        // Item hijo (sin NavigationMenuLink)
+                                        <NavLink
+                                          key={tab}
+                                          to={`/dashboard?section=Nesplora%20Ice%20Cream&tab=${tabKey}`}
+                                          className={() => ddItemClasses(isActive)}
+                                          onClick={() => setDashboardOpen(false)}
+                                        >
+                                          {tab}
+                                        </NavLink>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            }
+
+                            // EEG (sin NavigationMenuLink)
+                            const isEegActive = sectionQS === "EEG";
+                            return (
+                              <NavLink
+                                key={sub.name}
+                                to={sub.path}
+                                className={() => ddItemClasses(isEegActive)}
+                                onClick={() => setDashboardOpen(false)}
+                              >
+                                {sub.name}
+                              </NavLink>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -247,9 +263,9 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
             </span>
           </button>
           {profileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg z-50 flex flex-col">
+            <div className="absolute right-0 mt-2 w-40 bg-primary-bg/85 rounded shadow-lg z-50 flex flex-col">
               <button
-                className="px-4 py-2 text-left text-sm hover:bg-primary-bg/10"
+                className={`${ddItemClasses(false)} w-full justify-start text-sm py-2`}
                 onClick={() => {
                   setProfileMenuOpen(false);
                   if (onLogout) onLogout();
