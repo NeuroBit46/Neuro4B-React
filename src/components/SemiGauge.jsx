@@ -6,6 +6,38 @@ export default function SemiGauge({ value = 0, color = "var(--color-primary)", b
   const endX = center + radius * Math.cos(Math.PI * (1 - angle / 180));
   const endY = center - radius * Math.sin(Math.PI * (1 - angle / 180));
 
+  const option = {
+    series: [
+      {
+        type: 'gauge',
+        startAngle: 180,
+        endAngle: 0,
+        min: 20,
+        max: 80,
+        splitNumber: 6,              // control legible (opcional)
+        axisLabel: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: false },
+        pointer: { show: false },
+        progress: {
+          show: true,
+          roundCap: true,
+          width: 8,                  // grosor relleno
+          itemStyle: { color }       // color dinámico (sec.color)
+        },
+        axisLine: {
+          roundCap: true,
+          lineStyle: {
+            width: 8,                // igual al progress para un aro limpio
+            color: [[1, background ]] // background = rgba(...,0.15)
+          }
+        },
+        data: [{ value }],
+        detail: { show: false }
+      }
+    ]
+  };
+
   return (
     <div
       className="p-1.5 w-fit rounded-sm flex items-center justify-center"

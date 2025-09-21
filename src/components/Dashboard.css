@@ -1,0 +1,58 @@
+.dashboard {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.descripcion {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 10px 0;
+}
+
+.progress-bar {
+  background: #eee;
+  border-radius: 5px;
+  height: 10px;
+  margin-bottom: 10px;
+}
+
+.progress {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.submetricas {
+  margin-top: 10px;
+}
+
+.submetrica {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  border-bottom: 1px solid #f0f0f0;
+}

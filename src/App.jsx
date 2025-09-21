@@ -10,6 +10,7 @@ import EditWorker from './pages/EditWorker';
 import Dashboard from './pages/Dashboard';
 import { Icons } from './constants/Icons';
 import LoginPage from './pages/Login';
+import DashboardGeneral from './components/DashboardGeneral';
 
 // Componente para rutas privadas
 function PrivateRoute({ children, isAuthenticated }) {
@@ -92,7 +93,7 @@ export default function App() {
               path="/dashboard"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <Dashboard />
+                  <DashboardGeneral />
                 </PrivateRoute>
               }
             />
