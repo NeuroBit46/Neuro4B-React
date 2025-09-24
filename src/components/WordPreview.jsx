@@ -5,12 +5,12 @@ import { renderAsync } from "docx-preview";
 export default function WordPreview({ file, onLoadEnd, className = "" }) {
   const containerRef = useRef(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const loadDocx = useCallback(async () => {
     if (!file) return;
     setError(null);
-    setLoading(true);
+    setReady(false);
     let aborted = false;
 
     try {
@@ -22,7 +22,7 @@ export default function WordPreview({ file, onLoadEnd, className = "" }) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         arrayBuffer = await res.arrayBuffer();
       } else {
-        throw new Error("Formato de entrada no soportado");
+        throw new Error("Fuente de archivo no soportada");
       }
 
       if (!containerRef.current) return;
@@ -36,7 +36,7 @@ export default function WordPreview({ file, onLoadEnd, className = "" }) {
         className: "docx-wrapper"
       });
 
-      // Ajusta cada página para que imite estilo PDF
+      // Ajustar páginas
       const pages = containerRef.current.querySelectorAll(".docx");
       pages.forEach((p, idx) => {
         p.classList.add("word-page");
@@ -44,18 +44,14 @@ export default function WordPreview({ file, onLoadEnd, className = "" }) {
       });
 
       if (aborted) return;
+      setReady(true);
     } catch (e) {
       if (!aborted) setError(e.message || "Error leyendo DOCX");
     } finally {
-      if (!aborted) {
-        setLoading(false);
-        onLoadEnd && onLoadEnd();
-      }
+      if (!aborted && onLoadEnd) onLoadEnd();
     }
 
-    return () => {
-      aborted = true;
-    };
+    return () => { aborted = true; };
   }, [file, onLoadEnd]);
 
   useEffect(() => {
@@ -64,14 +60,14 @@ export default function WordPreview({ file, onLoadEnd, className = "" }) {
 
   return (
     <div className={`w-full h-full overflow-auto ${className}`}>
-      <div className="flex items-center gap-4 mb-2 text-xs text-high">
-        {loading && <span>Cargando documento...</span>}
-        {error && <span className="text-red-500">Error: {error}</span>}
-        {!loading && !error && file && <span className="text-high">Listo</span>}
-      </div>
       {error && (
-        <div className="text-red-500 italic py-4 text-center">
+        <div className="text-red-500 italic text-center py-4">
           {error}
+        </div>
+      )}
+      {!error && !ready && (
+        <div className="flex justify-center py-6 text-secondary-text text-sm">
+          Cargando documento...
         </div>
       )}
       {!error && (
