@@ -153,13 +153,13 @@ export default function WorkersTable({
         id: "informe",
         header: () => "Informe",
         cell: ({ row }) => {
-          const ruta = normalizeRuta(row.original.ruta_informe);
+          const ruta = normalizeRuta(row.original.ruta_Informe);
           const enabled = !!ruta;
           return (
             <button
               className={`inline-flex w-full justify-center ${enabled ? "text-primary" : "text-secondary-text"}`}
               title={enabled ? "Ver Informe" : "No disponible"}
-              onClick={() => enabled && onArchivoClick?.({ name: `Informe de ${row.original.nombre}`, url: ruta, type: "pdf" })}
+              onClick={() => enabled && onArchivoClick?.({ name: `Informe de ${row.original.nombre}`, url: ruta, type: "word" })}
             >
               {Icons.word(enabled)}
             </button>
