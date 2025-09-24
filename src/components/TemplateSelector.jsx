@@ -16,9 +16,9 @@ export default function TemplateSelector({
   value,
   onChange,
   templates = [
-    { name: "Informe Operador", file: "/plantillas/ejecutivo.pdf", desc: "Resumen sintético para dirección." },
+    { name: "Informe Ejecutivo", file: "/plantillas/ejecutivo.pdf", desc: "Resumen sintético para dirección." },
     { name: "Informe Supervisor", file: "/plantillas/supervisor.pdf", desc: "Detalle operativo para mandos medios." },
-    { name: "Informe Gerente", file: null, desc: "Versión en preparación." },
+    { name: "Informe Gerencia", file: null, desc: "Versión en preparación." },
   ],
   title = "Plantilla de informe",
   description = "Seleccione el formato base para generar el informe",

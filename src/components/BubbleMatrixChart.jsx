@@ -43,9 +43,6 @@ const BubbleMatrixChart = ({ data, colorMap = defaultColorMap, height = 400 }) =
   const { data: chartData, cats } = useMemo(() => transformData(data), [data]);
   const rounds = Math.max(1, Math.max(...chartData.map(d => d.x), 0)) || 14;
 
-  // Debug opcional
-  // console.log('len:', chartData.length);
-  // console.log('byCat:', chartData.reduce((a,d)=>((a[d.yLabel]=(a[d.yLabel]||0)+1),a),{}));
 
   const yTicks = Array.from({ length: cats.length }, (_, i) => i);
   const xTicks = Array.from({ length: rounds }, (_, i) => i + 1);

@@ -1,18 +1,11 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ButtonBase from './ButtonBase';
 import DropzoneField from './DropzoneFile';
 import { Icons } from '../constants/Icons';
 // import { WorkerInput } from './WorkerInput';
 import ArchivoPreviewModal from './ArchivoPreviewModal';
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from './ui/select';
 import { Input } from './ui/input';
-import {                 // <-- importa los Cards de shadcn
+import {
   Card,
   CardHeader,
   CardTitle,
@@ -22,12 +15,6 @@ import {                 // <-- importa los Cards de shadcn
 import { useLoadingBar } from "@/components/LoadingBar";
 import { Progress } from "./ui/progress";
 
-const DEFAULT_POSITION_OPTIONS = [
-  'Operario',
-  'Supervisor',
-  'Gerente',
-];
-
 export default function WorkerForm({
   mode = 'crear',
   initialData = {},
@@ -35,7 +22,6 @@ export default function WorkerForm({
   hideEmptyInView = false,
   emptyPlaceholder = 'Sin dato',
   emptyLabels = {},
-  positionOptions = DEFAULT_POSITION_OPTIONS, // <-- nuevas opciones del select
 }) {
   const isView = mode === 'ver';
   const isEdit = mode === 'editar';
@@ -195,14 +181,6 @@ export default function WorkerForm({
   const dimCompany  = isView && isEmpty(company);
   const dimPosition = isView && isEmpty(position);
 
-  // Asegura que el valor actual aparezca aunque no esté en la lista
-  const positionOpts = useMemo(() => {
-    const set = new Set((positionOptions || []).filter(Boolean));
-    if (position && !set.has(position)) set.add(position);
-    // ordenar por texto; si tus ids existen, cámbialo por el criterio que prefieras
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [positionOptions, position]);
-
   const { isActive: globalLoading, progress } = useLoadingBar();
 
   return (
@@ -258,27 +236,14 @@ export default function WorkerForm({
                   {renderIcon(Icons.position, dimPosition)}
                   Cargo
                 </label>
-                <Select
-                  value={position || undefined}
-                  onValueChange={setPosition}
-                  // Deshabilita solo cuando está cargando
+                <Input
+                  value={position}
+                  onChange={e => setPosition(e.target.value)}
+                  readOnly={isView}
                   disabled={loading}
-                >
-                  <SelectTrigger
-                    className={`w-full text-primary-text data-[placeholder]:text-secondary-text/70 ${isView ? 'pointer-events-none opacity-100' : ''}`}
-                    // marca semánticamente el readOnly en vista
-                    aria-readonly={isView || undefined}
-                  >
-                    <SelectValue placeholder={viewPlaceholder('position', position, 'Seleccione un cargo')} />
-                  </SelectTrigger>
-                  <SelectContent position="popper" className="z-50">
-                    {positionOpts.map(opt => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  placeholder={viewPlaceholder('position', position, 'Ingrese cargo del trabajador')}
+                  className={`text-primary-text placeholder:text-secondary-text/70 ${isView ? 'disabled:opacity-100' : ''}`}
+                />
               </div>
             )}
           </div>

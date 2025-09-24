@@ -59,23 +59,23 @@ export default function AddWorker() {
     if (mountedRef.current) setStatus("Creando trabajador...");
     try {
       const formData = new FormData();
-      formData.append("nombre", data.name);
-      formData.append("empresa", data.company);
-      formData.append("cargo", data.position);
+
+      // Mapear a nombres esperados por la API
+      formData.append("nombre", data.name || "");
+      formData.append("empresa", data.company || "");
+      formData.append("cargo", data.position || "");
+
       if (data.pdfFile) formData.append("pdf_file", data.pdfFile);
       if (data.excelFile) formData.append("eeg_file", data.excelFile);
 
-      const response = await fetch(`${API_BASE}/api/crear/`, { method: "POST", body: formData });
-      if (!response.ok) {
-        const msg = await response.text().catch(() => "");
-        throw new Error("Error al crear trabajador: " + response.status + " " + msg);
-      }
-      const result = await response.json();
 
-      // Solo intenta conversión si realmente se subió un PDF
-      if (data.pdfFile) {
-        await transformPDF(result.id);
-      }
+      const response = await fetch(`${API_BASE}/api/crear/`, { method: "POST", body: formData });
+      const raw = await response.text();
+      if (!response.ok) throw new Error(`Error al crear trabajador: ${response.status} ${raw}`);
+
+      const result = JSON.parse(raw);
+
+      if (data.pdfFile) await transformPDF(result.id);
 
       if (mountedRef.current && opRef.current === myOp && location.key === originKey) {
         navigate("/archivos-trabajadores");
