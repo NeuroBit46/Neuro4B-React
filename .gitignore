@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-neuro4k
+Neuro4B-Django
 node_modules
 dist
 dist-ssr

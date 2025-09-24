@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PdfPreview from "./PdfPreview";
 import ExcelPreview from "./ExcelPreview";
+import WordPreview from "./WordPreview";
 import { formatBytes, formatDate } from "../utils/fileUtils";
 import { Icons } from "../constants/Icons";
 
@@ -19,19 +20,29 @@ export default function ArchivoPreviewModal({ file, onClose }) {
   }, [onClose]);
 
   useEffect(() => {
-    setLoading(true); // Solo aquí
+    setLoading(true);
     if (!file || typeof file !== "object" || !file.url) {
       setTipo("desconocido");
       return;
     }
     if (file.type) {
-      if (file.type.includes("pdf")) setTipo("pdf");
-      else if (file.type.includes("excel") || file.type.includes("spreadsheet")) setTipo("excel");
+      const t = file.type.toLowerCase();
+      if (t.includes("pdf")) setTipo("pdf");
+      else if (
+        t.includes("sheet") ||
+        t.includes("excel") ||
+        t.includes("spreadsheet")
+      ) setTipo("excel");
+      else if (
+        t.includes("word") ||
+        t.includes("officedocument.wordprocessingml")
+      ) setTipo("word");
       else setTipo("desconocido");
     } else {
       const ext = file.url.split(".").pop().toLowerCase();
       if (ext === "pdf") setTipo("pdf");
-      else if (ext === "xls" || ext === "xlsx") setTipo("excel");
+      else if (["xls", "xlsx"].includes(ext)) setTipo("excel");
+      else if (["doc", "docx"].includes(ext)) setTipo("word");
       else setTipo("desconocido");
     }
   }, [file]);
@@ -57,25 +68,24 @@ export default function ArchivoPreviewModal({ file, onClose }) {
       preview = <PdfPreview src={fullUrl} onLoadEnd={() => setLoading(false)} />;
     } else if (tipo === "excel") {
       preview = <ExcelPreview file={fullUrl} onLoadEnd={() => setLoading(false)} />;
+    } else if (tipo === "word") {
+      preview = <WordPreview file={fullUrl} onLoadEnd={() => setLoading(false)} zoom={0.9} />;
     }
 
     return (
-      <div className="relative min-h-[200px]">
-        {/* Preview solo si tipo es válido */}
-        {(tipo === "pdf" || tipo === "excel") && preview}
-        {/* Overlay de cargando */}
+      <div className="relative min-h-[220px]">
+        {(tipo === "pdf" || tipo === "excel" || tipo === "word") && preview}
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
-            <p className="text-center text-gray-500 italic py-6">
+          <div className="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-zinc-900/70 z-10">
+            <p className="text-center text-gray-500 dark:text-gray-300 italic py-6">
               ⏳ Cargando archivo...
             </p>
           </div>
         )}
-        {/* Mensaje de error solo si NO está cargando y tipo es desconocido */}
         {!loading && tipo === "desconocido" && (
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <p className="text-center text-red-500 italic py-6">
-              ⚠️ No se pudo mostrar la vista previa. Formato no soportado.
+              ⚠️ Formato no soportado.
             </p>
           </div>
         )}
@@ -87,7 +97,11 @@ export default function ArchivoPreviewModal({ file, onClose }) {
     <div className="fixed inset-0 glass-secondary-bg z-50 flex items-center justify-center min-h-screen">
       <div
         className={`bg-primary-bg rounded-xl p-6 w-full max-w-4xl max-h-[90vh] shadow-xl overflow-y-auto border-l-4 ${
-          tipo === "excel" ? "border-primary" : "border-secondary"
+          tipo === "excel"
+            ? "border-primary"
+            : tipo === "word"
+            ? "border-secondary"
+            : "border-secondary"
         } flex flex-col gap-4`}
       >
         {/* Encabezado */}
