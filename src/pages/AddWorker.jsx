@@ -25,10 +25,28 @@ export default function AddWorker() {
   const transformPDF = async (workerId) => {
     if (mountedRef.current) setStatus("Iniciando OCR/transformación de PDF...");
     start({ durationMs: 75_000, prefill: 1 });
+
+    const url = `${API_BASE}/api/trabajadores/${workerId}/convertir-pdf/`;
     try {
-      await fetch(`${API_BASE}/api/trabajadores/${workerId}/convertir-pdf/`, { method: "POST" });
+      const resp = await fetch(url, { method: "POST" });
+      if (!resp.ok) {
+        const ct = resp.headers.get("content-type") || "";
+        let detail = "";
+        try {
+          detail = ct.includes("application/json") ? JSON.stringify(await resp.json()) : await resp.text();
+        } catch {
+          /* ignore */
+        }
+        console.error("convertir-pdf fallo", { status: resp.status, detail, url });
+        if (mountedRef.current) {
+          setStatus(`Error al iniciar conversión (HTTP ${resp.status})`);
+        }
+      } else {
+        if (mountedRef.current) setStatus("Conversión iniciada (procesando en servidor)...");
+      }
     } catch (e) {
-      console.warn("Error al iniciar OCR", e);
+      console.error("Network/Fetch error convertir-pdf", e);
+      if (mountedRef.current) setStatus("Error de red al iniciar conversión");
     } finally {
       done();
     }
@@ -48,9 +66,13 @@ export default function AddWorker() {
       if (data.excelFile) formData.append("eeg_file", data.excelFile);
 
       const response = await fetch(`${API_BASE}/api/crear/`, { method: "POST", body: formData });
-      if (!response.ok) throw new Error("Error al crear trabajador");
+      if (!response.ok) {
+        const msg = await response.text().catch(() => "");
+        throw new Error("Error al crear trabajador: " + response.status + " " + msg);
+      }
       const result = await response.json();
 
+      // Solo intenta conversión si realmente se subió un PDF
       if (data.pdfFile) {
         await transformPDF(result.id);
       }

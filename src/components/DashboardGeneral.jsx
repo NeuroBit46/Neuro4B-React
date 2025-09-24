@@ -282,12 +282,12 @@ const resumenRingOption = useMemo(() => ({
   series: [
     {
       type: 'gauge',
-      startAngle: 180,
-      endAngle: -180,
+      startAngle: 90,
+      endAngle: -270,
       clockwise: false,
       min: 0,
       max: 100,
-      radius: '80%',
+      radius: '90%',
       center: ['50%', '55%'],
       progress: {
         show: true,
@@ -361,6 +361,21 @@ const resumenRingOption = useMemo(() => ({
     }]
   };
 
+  const MAIN_CARD_HEIGHT = "h-[280px]";
+const MAIN_CARD_WIDTH_PROMEDIO = "w-80";
+const MAIN_CARD_WIDTH_INDEX = "w-60";  // más angosta
+const MAIN_CARD_WIDTH_RADAR = "w-80";
+
+// Tamaños compactos para el cluster 2x2 y radar
+const CLUSTER_CARD_HEIGHT = 220;                 // altura individual (px)
+const CLUSTER_CARD_H_CLASS = `h-[${CLUSTER_CARD_HEIGHT}px]`;
+const CLUSTER_GRID_WIDTH = "w-[32rem]";          // ancho del bloque 2x2
+const RING_MAX_SIZE = 110;                       // diámetro máx ring
+const GAUGE_MAX_SIZE = 90;                       // ancho máx semigauge
+const GAUGE_HEIGHT_PROP = 70;                    // prop height del SemiGauge
+// Altura radar = 2 * cardHeight + gap(16px)
+const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
+
   return (
     <PageLayout
       title="Dashboard"
@@ -384,7 +399,7 @@ const resumenRingOption = useMemo(() => ({
       }}
     >
       {section === "Nesplora Ice Cream" && (
-        <>
+        <div>
           {loading && (
             <div className="text-center py-6 text-sm text-secondary-text">
               Cargando datos...
@@ -392,165 +407,193 @@ const resumenRingOption = useMemo(() => ({
           )}
 
           {!loading && activeIndex === 0 && (
-            <div className="space-y-6">
-              {/* Fila 1: índices principales (2/3) + radar (1/3) */}
-              <div className="grid lg:grid-cols-3 gap-4">
-                {/* Columna izquierda */}
-                <div className="grid grid-cols-2 gap-3 lg:col-span-2">
-                  {/* Resumen */}
-                  <Card className="relative flex flex-col h-full p-0 overflow-hidden shadow-sm border-0">
-                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
+            <div className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3 md:auto-rows-[160px]">
+                {/* Promedio */}
+                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full">
+    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
+    <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
+      {/* Header compacto */}
+      <div className="flex items-start justify-between px-2 pt-1">
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
+            {Icons.average}
+          </span>
+          <h3 className="text-[11px] text-primary-text font-semibold leading-snug">
+            Promedio global normalizado
+          </h3>
+        </div>
+        <Badge
+          className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border"
+          style={{ background: statusBg, color: statusColor, borderColor: statusBorder }}
+        >
+          {estadoGeneral.toUpperCase()}
+        </Badge>
+      </div>
+      {/* Ring más grande, menos padding */}
+      <div className="flex-1 flex items-center justify-center px-1 pb-1">
+        <div className="w-[120px] h-[120px] relative">
+          <ReactECharts option={resumenRingOption} style={{ width: "100%", height: "100%" }} />
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{ background: `radial-gradient(circle at 50% 50%, ${withAlpha(neutralColor,0.22)} 0%, transparent 72%)` }}
+          />
+        </div>
+      </div>
+    </div>
+  </Card>
+                {/* Índice 0 */}
+                {secciones[0] && (
+                  <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full" title={secciones[0].miniDesc}>
+                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(secciones[0].color)} />
                     <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-                      <div className="flex items-start justify-between px-4 pt-4">
+                      <div className="flex items-start justify-between px-2.5 pt-1.5">
                         <div className="flex items-center gap-2">
-                          <span
-                            className="w-7 h-7 rounded-sm flex items-center justify-center text-[13px] font-bold shadow-sm bg-primary/80"
-                          >
-                            {Icons.average}
+                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
+                            {Icons[secciones[0].icon]}
                           </span>
-                          <h3 className="text-sm text-primary-text font-semibold tracking-tight">Promedio global normalizado</h3>
+                          <h3 className="text-[11px] font-semibold text-primary-text leading-snug truncate">
+                            {secciones[0].title}
+                          </h3>
                         </div>
-                        <Badge
-                          className="h-5 px-2 py-0 text-[10px] font-medium rounded-full border"
-                          style={{
-                            background: statusBg,
-                            color: statusColor,
-                            borderColor: statusBorder
-                          }}
-                        >
-                          {estadoGeneral.toUpperCase()}
+                        <Badge className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border" style={buildNivelBadgeStyle(secciones[0])}>
+                          {secciones[0].nivel}
                         </Badge>
                       </div>
-                      <div className="flex-1 flex flex-col items-center justify-center px-4 pb-4">
-                        {/* Progress Ring ECharts */}
-                        <div className="w-full max-w-[120px] aspect-square relative"> {/* antes 160px */}
-                          <ReactECharts
-                            option={resumenRingOption}
-                            style={{ width: '100%', height: '100%' }}
-                          />
-                          {/* Fondo sutil detrás */}
-                          <div
-                            className="absolute inset-0 rounded-full"
-                            style={{
-                              background: `radial-gradient(circle at 50% 50%, ${withAlpha(neutralColor,0.22)} 0%, transparent 70%)`
-                            }}
-                          />
-                          {/* Glow reducido */}
-                          <div
-                            className="absolute inset-0 rounded-full blur-lg opacity-30 pointer-events-none"
-                            style={{
-                              background: `radial-gradient(circle at 50% 55%, ${withAlpha(neutralColor,0.65)} 0%, transparent 65%)`
-                            }}
-                          />
-                        </div>
+                      <div className="flex-1 flex flex-col items-center justify-center px-2.5 pb-2">
+                        <SemiGauge
+                          value={secciones[0].tscore}
+                          color={secciones[0].color}
+                          background={secciones[0].background}
+                          min={20}
+                          max={80}
+                          height={50}
+                        />
                       </div>
                     </div>
                   </Card>
+                )}
 
-                  {/* Índices principales */}
-                  {secciones.map((sec) => {
-                    const ring = sec.color.replace('rgb', 'rgba').replace(')', ',.35)');
-                    return (
-                      <Card
-                        key={sec.id}
-                        className="relative flex flex-col h-full p-0 overflow-hidden shadow-sm border-0"
-                        title={sec.miniDesc}
-                      >
-                        <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
-                        <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-                          <div className="flex items-start justify-between px-4 pt-4">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className="w-7 h-7 p-1 rounded-sm flex items-center justify-center text-[13px] font-bold shadow-sm bg-primary/80"
-                              >
-                                {Icons[sec.icon]}
-                              </span>
-                              <div className="flex flex-col leading-tight">
-                                <h3 className="text-sm font-semibold text-primary-text">{sec.title}</h3>
-                              </div>
-                            </div>
-                            <Badge
-                              className="h-5 px-2 py-0 text-[10px] font-medium rounded-full border"
-                              style={buildNivelBadgeStyle(sec)}
-                            >
-                              {sec.nivel}
-                            </Badge>
-                          </div>
-                          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-4">
-                            <SemiGauge
-                              value={sec.tscore}
-                              color={sec.color}
-                              background={sec.background}
-                              min={20}
-                              max={80}
-                              height={80}
-                            />
-                          </div>
-                        </div>
-                      </Card>
-                    );
-                  })}
-                </div>
-
-                {/* Columna derecha: Radar */}
-                <Card className="relative p-0 shadow-sm border-0 overflow-hidden h-full">
+                {/* Radar (row-span-2) */}
+                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-2 h-full">
                   <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
-                  <div className="rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80 p-4 flex items-center justify-center h-full">
-                    <ReactECharts
-                      option={{
-                        ...radarOption,
-                        radar: {
-                          ...radarOption.radar,
-                          center: ['50%', '50%'],
-                          radius: '70%'
-                        }
-                        // No necesitas sobrescribir series; ya usan neutralColor
-                      }}
-                      style={{ height: 260, width: '100%' }}
-                    />
+                  <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
+                    <div className="flex items-start px-4 pt-2 gap-2">
+                      <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80 text-primary-bg">
+                        {Icons.radar || "R"}
+                      </span>
+                      <h3 className="text-[11px] text-primary-text font-semibold leading-snug">
+                        Distribución por índice
+                      </h3>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center px-3 pb-3">
+                      <ReactECharts
+                        option={{
+                          ...radarOption,
+                          radar: { ...radarOption.radar, center: ["50%", "50%"], radius: "68%" }
+                        }}
+                        style={{ width: "100%", height: "100%" }}
+                      />
+                    </div>
                   </div>
                 </Card>
+
+                {/* Índice 1 */}
+                {secciones[1] && (
+                  <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full" title={secciones[1].miniDesc}>
+                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(secciones[1].color)} />
+                    <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
+                      <div className="flex items-start justify-between px-2.5 pt-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
+                            {Icons[secciones[1].icon]}
+                          </span>
+                          <h3 className="text-[11px] font-semibold text-primary-text leading-snug truncate">
+                            {secciones[1].title}
+                          </h3>
+                        </div>
+                        <Badge className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border" style={buildNivelBadgeStyle(secciones[1])}>
+                          {secciones[1].nivel}
+                        </Badge>
+                      </div>
+                      <div className="flex-1 flex flex-col items-center justify-center px-2.5 pb-2">
+                        <SemiGauge
+                          value={secciones[1].tscore}
+                          color={secciones[1].color}
+                          background={secciones[1].background}
+                          min={20}
+                          max={80}
+                          height={50}
+                        />
+                      </div>
+                    </div>
+                  </Card>
+                )}
+
+                {/* Índice 2 */}
+                {secciones[2] && (
+                  <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full" title={secciones[2].miniDesc}>
+                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(secciones[2].color)} />
+                    <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
+                      <div className="flex items-start justify-between px-2.5 pt-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
+                            {Icons[secciones[2].icon]}
+                          </span>
+                          <h3 className="text-[11px] font-semibold text-primary-text leading-snug truncate">
+                            {secciones[2].title}
+                          </h3>
+                        </div>
+                        <Badge className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border" style={buildNivelBadgeStyle(secciones[2])}>
+                          {secciones[2].nivel}
+                        </Badge>
+                      </div>
+                      <div className="flex-1 flex flex-col items-center justify-center px-2.5 pb-2">
+                        <SemiGauge
+                          value={secciones[2].tscore}
+                          color={secciones[2].color}
+                          background={secciones[2].background}
+                          min={20}
+                          max={80}
+                          height={50}
+                        />
+                      </div>
+                    </div>
+                  </Card>
+                )}
               </div>
 
-              {/* Fila 2: subíndices */}
+              {/* Subíndices */}
               <div className="grid gap-4 md:grid-cols-3">
-                {secciones.map((sec) => {
-                  const ring = sec.color.replace('rgb', 'rgba').replace(')', ',.35)');
-                  return (
-                    <Card
-                      key={sec.id}
-                      className="relative p-0 border-0 shadow-sm overflow-hidden h-full"
-                    >
-                      <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
-                      <div className="rounded-sm bg-gradient-to-br from-white to-white/95 dark:from-zinc-900 dark:to-zinc-900/80 p-4 h-full flex flex-col">
-                        <CardHeader className="p-0 mb-3 flex flex-row items-center justify-between">
-                          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-primary-text">
-                            <span
-                              className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[13px] font-bold shadow-sm bg-primary/80"
-                            >
-                              {Icons[sec.icon]}
-                            </span>
-                            {sec.title}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0 flex-1">
-                          <div className="grid grid-cols-2 gap-3">
-                            {sec.metrics.map((metric, idx) => (
-                              <MetricBar
-                                key={idx}
-                                title={metric.label}
-                                value={metric.value}
-                                scale={1}
-                                getColorSetFromValue={(v) => getColorSet(getNivelKey(v))}
-                                getNivelFromValue={(v) => getNivelLabel(getNivelKey(v))}
-                              />
-                            ))}
-                          </div>
-                        </CardContent>
-                      </div>
-                    </Card>
-                  );
-                })}
+                {secciones.map((sec) => (
+                  <Card key={sec.id} className="relative p-0 border-0 shadow-sm overflow-hidden h-full">
+                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
+                    <div className="rounded-sm bg-gradient-to-br from-white to-white/95 dark:from-zinc-900 dark:to-zinc-900/80 p-4 h-full flex flex-col">
+                      <CardHeader className="p-0 mb-3 flex flex-row items-center justify-between">
+                        <CardTitle className="text-sm font-semibold flex items-center gap-2 text-primary-text">
+                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[13px] font-bold shadow-sm bg-primary/80">
+                            {Icons[sec.icon]}
+                          </span>
+                          {sec.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0 flex-1">
+                        <div className="grid grid-cols-1 gap-3">
+                          {sec.metrics.map((metric, idx) => (
+                            <MetricBar
+                              key={idx}
+                              title={metric.label}
+                              value={metric.value}
+                              scale={1}
+                              getColorSetFromValue={(v) => getColorSet(getNivelKey(v))}
+                              getNivelFromValue={(v) => getNivelLabel(getNivelKey(v))}
+                            />
+                          ))}
+                        </div>
+                      </CardContent>
+                    </div>
+                  </Card>
+                ))}
               </div>
             </div>
           )}
@@ -564,7 +607,7 @@ const resumenRingOption = useMemo(() => ({
           {!loading && activeIndex === 3 && (
             <FlexibilityCognitiveView section={flexibilidad} getColorSet={getColorSet} />
           )}
-        </>
+        </div>
       )}
 
       {section === "EEG" && (

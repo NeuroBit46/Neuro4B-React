@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import WorkerForm from "@/components/WorkerForm";
 import { useLoadingBar } from "@/components/LoadingBar";
+import PageLayout from "@/components/PageLayout";
 
 export default function EditWorker() {
   const { id } = useParams();
@@ -54,9 +55,13 @@ export default function EditWorker() {
     }
   };
 
-  return workerData ? (
-    <WorkerForm mode="editar" initialData={workerData} onSubmit={handleUpdate} loadingBarKey={BAR_KEY} />
-  ) : (
-    <p className="text-center text-gray-500">Cargando datos del trabajador...</p>
+  return (
+    <PageLayout title="Editar trabajador">
+      {workerData ? (
+        <WorkerForm mode="editar" initialData={workerData} onSubmit={handleUpdate} loadingBarKey={BAR_KEY} />
+      ) : (
+        <p className="text-center text-gray-500">Cargando datos del trabajador...</p>
+      )}
+    </PageLayout>
   );
 }
