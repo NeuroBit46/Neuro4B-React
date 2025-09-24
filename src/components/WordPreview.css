@@ -1,83 +1,81 @@
-/* .docx-preview-scale .docx-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  align-items: center;
-  font-family: "Calibri", "Arial", sans-serif;
-}
-
-.docx-preview-scale .docx-wrapper .docx {
+/* Páginas estilo PDF */
+.word-page {
   background: #fff;
+  width: 800px !important;
+  min-height: 1123px;
+  padding: 2rem 2.2rem;
   box-shadow: 0 4px 18px -4px rgba(0,0,0,.25);
-  border: 1px solid #e5e7eb;
-  padding: 2.2rem 2.4rem;
-  width: 794px;       
-  min-height: 1123px; 
+  border: 1px solid rgba(0,0,0,0.08);
   position: relative;
-  overflow: hidden;
   border-radius: 4px;
+  overflow: hidden;
 }
 
-.dark .docx-preview-scale .docx-wrapper .docx {
+.dark .word-page {
   background: #1d1d1f;
   color: #e5e5e5;
   border-color: #303033;
 }
 
-.docx p { margin: 0.45rem 0; line-height: 1.25; }
-.docx h1,h2,h3,h4 { font-weight:600; margin: 0.9rem 0 0.5rem; line-height:1.18; }
-.docx h1 { font-size:1.65rem; }
-.docx h2 { font-size:1.35rem; }
-.docx h3 { font-size:1.15rem; }
+.word-page:after {
+  content: attr(data-page-number);
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  font-size: 10px;
+  color: rgba(0,0,0,0.35);
+}
 
-.docx table {
+.dark .word-page:after {
+  color: rgba(255,255,255,0.25);
+}
+
+/* Tipografía */
+.word-page p { margin: 0.45rem 0; line-height: 1.25; }
+.word-page h1,h2,h3,h4 { font-weight:600; margin: 0.9rem 0 0.5rem; line-height:1.18; }
+.word-page h1 { font-size:1.65rem; }
+.word-page h2 { font-size:1.35rem; }
+.word-page h3 { font-size:1.15rem; }
+
+/* Tablas */
+.word-page table {
   border-collapse: collapse !important;
   width: 100% !important;
   font-size: 0.78rem;
   margin: 0.6rem 0;
 }
 
-.docx table td, .docx table th {
+.word-page table td,
+.word-page table th {
   border: 1px solid #d1d5db !important;
   padding: 4px 6px;
   vertical-align: top;
 }
 
-.dark .docx table td, .dark .docx table th {
+.dark .word-page table td,
+.dark .word-page table th {
   border-color: #3a3a40 !important;
 }
 
-.docx a { color: #2563eb; text-decoration: underline; }
-.dark .docx a { color: #3b82f6; }
+/* Listas */
+.word-page ul, .word-page ol { margin: 0.5rem 0 0.5rem 1.25rem; padding:0; }
+.word-page li { margin: 0.25rem 0; }
 
-.docx ul, .docx ol { margin: 0.5rem 0 0.5rem 1.25rem; padding:0; }
-.docx li { margin: 0.25rem 0; }
-
-.docx img {
+/* Imágenes */
+.word-page img {
   max-width: 100%;
   height: auto;
   display: inline-block;
 }
 
-.docx hr {
+/* Enlaces */
+.word-page a { color: var(--color-high,#2563eb); text-decoration: underline; }
+.dark .word-page a { color: var(--color-high,#3b82f6); }
+
+/* Separadores */
+.word-page hr {
   border: none;
   border-top: 1px solid #d4d4d8;
   margin: 1rem 0;
 }
-
-.dark .docx hr {
-  border-top-color: #3a3a40;
-}
-
-.docx-wrapper .docx:after {
-  content: attr(data-page-number);
-  position: absolute;
-  right: 12px;
-  bottom: 6px;
-  font-size: 10px;
-  color: rgba(0,0,0,0.35);
-}
-
-.dark .docx-wrapper .docx:after {
-  color: rgba(255,255,255,0.25);
-} */
+.dark .word-page hr { border-top-color: #3a3a40; }

@@ -2,12 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { renderAsync } from "docx-preview";
 
-export default function WordPreview({
-  file,
-  onLoadEnd,
-  className = "",
-  zoom = 1
-}) {
+export default function WordPreview({ file, onLoadEnd, className = "" }) {
   const containerRef = useRef(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,20 +26,21 @@ export default function WordPreview({
       }
 
       if (!containerRef.current) return;
-
-      // Limpia render previo
       containerRef.current.innerHTML = "";
 
       await renderAsync(arrayBuffer, containerRef.current, null, {
         inWrapper: true,
-        ignoreLastRenderedPageBreak: true,
-        experimental: true,
-        className: "docx-wrapper",
-        useBase64URL: true,
         breakPages: true,
-        // Desactiva si prefieres fuentes del sistema
-        renderHeaders: true,
-        renderFooters: true
+        useBase64URL: true,
+        experimental: true,
+        className: "docx-wrapper"
+      });
+
+      // Ajusta cada página para que imite estilo PDF
+      const pages = containerRef.current.querySelectorAll(".docx");
+      pages.forEach((p, idx) => {
+        p.classList.add("word-page");
+        p.setAttribute("data-page-number", idx + 1);
       });
 
       if (aborted) return;
@@ -67,27 +63,22 @@ export default function WordPreview({
   }, [loadDocx]);
 
   return (
-    <div className={`w-full h-full flex flex-col ${className}`}>
-      <div className="flex items-center gap-4 mb-2 text-xs text-secondary-text">
+    <div className={`w-full h-full overflow-auto ${className}`}>
+      <div className="flex items-center gap-4 mb-2 text-xs text-high">
         {loading && <span>Cargando documento...</span>}
         {error && <span className="text-red-500">Error: {error}</span>}
+        {!loading && !error && file && <span className="text-high">Listo</span>}
       </div>
-      <div
-        className="relative flex-1 overflow-auto bg-neutral-200/60 dark:bg-zinc-800/60 rounded-md p-4"
-        style={{
-          WebkitOverflowScrolling: "touch"
-        }}
-      >
-        <div
-          ref={containerRef}
-          className="docx-preview-scale"
-          style={{
-            transform: `scale(${zoom})`,
-            transformOrigin: "top left",
-            transition: "transform 0.2s"
-          }}
-        />
-      </div>
+      {error && (
+        <div className="text-red-500 italic py-4 text-center">
+          {error}
+        </div>
+      )}
+      {!error && (
+        <div className="flex flex-col items-center gap-6 py-4">
+          <div ref={containerRef} className="flex flex-col items-center gap-6 w-full" />
+        </div>
+      )}
     </div>
   );
 }
