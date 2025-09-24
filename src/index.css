@@ -22,10 +22,10 @@
   --color-success: rgb(86, 176, 161, 0.15);
   --color-error: rgb(236, 212, 210);
   --color-very-low:   rgba(232, 142, 142, 1); /* Rojo pastel suave */
---color-low:        rgba(239, 174, 133, 1); /* Naranja melocotón */
---color-medium:     rgba(235, 210, 145, 1); /* Amarillo mantequilla */
---color-high:       rgba(137, 176, 222, 1); /* Azul cielo suave */
---color-very-high:  rgba(132, 198, 145, 1); /* Verde menta fresco */
+  --color-low:        rgba(239, 174, 133, 1); /* Naranja melocotón */
+  --color-medium:     rgba(235, 210, 145, 1); /* Amarillo mantequilla */
+  --color-high:       rgba(137, 176, 222, 1); /* Azul cielo suave */
+  --color-very-high:  rgba(132, 198, 145, 1); /* Verde menta fresco */
   --color-neutral: rgba(166, 148, 204, 1); /* Morado lavanda suave */
 }
 

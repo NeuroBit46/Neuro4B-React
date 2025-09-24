@@ -71,7 +71,6 @@ export default function WordPreview({
       <div className="flex items-center gap-4 mb-2 text-xs text-secondary-text">
         {loading && <span>Cargando documento...</span>}
         {error && <span className="text-red-500">Error: {error}</span>}
-        {!loading && !error && file && <span>Listo</span>}
       </div>
       <div
         className="relative flex-1 overflow-auto bg-neutral-200/60 dark:bg-zinc-800/60 rounded-md p-4"

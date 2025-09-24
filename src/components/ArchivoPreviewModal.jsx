@@ -100,7 +100,7 @@ export default function ArchivoPreviewModal({ file, onClose }) {
           tipo === "excel"
             ? "border-primary"
             : tipo === "word"
-            ? "border-secondary"
+            ? "border-high"
             : "border-secondary"
         } flex flex-col gap-4`}
       >
@@ -140,13 +140,21 @@ export default function ArchivoPreviewModal({ file, onClose }) {
               target="_blank"
               rel="noopener noreferrer"
               className={`text-sm ml-auto relative group font-medium ${
-                tipo === "excel" ? "text-primary" : "text-secondary"
+                tipo === "excel"
+                  ? "text-primary"
+                  : tipo === "word"
+                  ? "text-high"
+                  : "text-secondary"
               }`}
             >
               <span className="relative z-10">Descargar</span>
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-200 ${
-                  tipo === "excel" ? "bg-primary" : "bg-secondary"
+                  tipo === "excel"
+                    ? "bg-primary"
+                    : tipo === "word"
+                    ? "bg-high"
+                    : "bg-secondary"
                 }`}
               />
             </a>
