@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import { useCSSVariables } from './useCSSVariables.jsx';
 
 export default function LearningCurveChart({
-  xLabels,
+  xLabels = [],
   seriesData,
   aciertosPorRonda = [],
   tiempoPorRonda = [],
@@ -26,6 +26,7 @@ export default function LearningCurveChart({
     'color-primary-disabled',
     'color-secondary-text',
     'color-primary-text',
+    'color-neutral',
   ]);
 
   const colorList = [
@@ -34,10 +35,12 @@ export default function LearningCurveChart({
     colors['color-very-high'],
   ];
 
+  const colorNeutral = (colors['color-neutral'] || '#B0B0B0').trim();
+
+  // --- lógica de percentSeries (igual que antes) ---
   const percentSet = new Set(
     (percentSeries || []).map((s) => String(s).toLowerCase().trim())
   );
-
   const looksPercent = (name) => {
     if (!inferPercentByName) return false;
     const n = String(name).toLowerCase();
@@ -49,7 +52,6 @@ export default function LearningCurveChart({
       n.includes('%')
     );
   };
-
   const isPercentSeries = (name) =>
     percentSet.has(String(name).toLowerCase().trim()) || looksPercent(name);
 
@@ -65,22 +67,30 @@ export default function LearningCurveChart({
     symbol: 'circle',
     symbolSize: 6,
     yAxisIndex: 0,
+    xAxisIndex: 0, // usa el eje categórico
     lineStyle: { width: 2, color: colorList[idx % colorList.length] },
     itemStyle: { color: colorList[idx % colorList.length] },
   }));
+
+  // --- coordenada del divisor entre R7 y R8 ---
+  const dividerCoord = 6.5;
 
   const option = {
     title: {
       text: 'Curva de aprendizaje',
       left: 'center',
       textStyle: {
-        fontSize: 12,
+        fontSize: 13,
         fontFamily,
         color: colors['color-primary-text'],
+        fontWeight: '600',
       },
     },
     tooltip: {
       trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
       formatter: (params) => {
         if (!params || !params.length) return '';
         const i = params[0]?.dataIndex ?? 0;
@@ -101,22 +111,37 @@ export default function LearningCurveChart({
     },
     legend: {
       data: Object.keys(filteredSeriesData),
-      top: 20,
+      top: 25,
       textStyle: {
         fontSize: 12,
         fontFamily,
         color: colors['color-secondary-text'],
       },
     },
-    xAxis: {
-      type: 'category',
-      data: xLabels,
-      axisLabel: {
-        fontSize: 11,
-        fontFamily,
-        color: colors['color-secondary-text'],
+    xAxis: [
+      {
+        type: 'category',
+        data: xLabels,
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: {
+          fontSize: 12,
+          fontFamily,
+          color: colors['color-secondary-text'],
+        },
+        name: 'Rondas',
+        nameLocation: 'middle',
+        nameGap: 30,
+        nameTextStyle: { color: colors['color-primary-text'], fontSize: 12, fontFamily },
       },
-    },
+      // eje auxiliar numérico oculto
+      {
+        type: 'value',
+        show: false,
+        min: 0,
+        max: Math.max(xLabels.length - 1, 1),
+      },
+    ],
     yAxis: [
       {
         type: 'value',
@@ -125,24 +150,73 @@ export default function LearningCurveChart({
         max: typeof yMaxAbsolute === 'number' ? yMaxAbsolute : undefined,
         axisLabel: {
           formatter: (v) => Math.round(v),
-          fontSize: 11,
+          fontSize: 12,
           fontFamily,
           color: colors['color-secondary-text'],
         },
+        axisLine: { show: false },
+        axisTick: { show: false },
         splitLine: {
           show: true,
           lineStyle: {
-            type: 'dashed',
-            color: colors['color-primary-disabled'],
+            type: 'solid',
+            color: colors['color-neutral'],
+            opacity: 0.4,
           },
         },
       },
     ],
-    series,
+    grid: { top: 40, bottom: 20, left: 25, right: 35, containLabel: true },
+    series: [
+      ...series,
+      // serie dummy para markLine
+      {
+        name: 'Divisor',
+        type: 'scatter',
+        data: [],
+        xAxisIndex: 1,
+        yAxisIndex: 0,
+        markLine: {
+          symbol: 'none',
+          label: { show: false },
+          lineStyle: {
+            color: colorNeutral,
+            type: 'dashed',
+            width: 1.5,
+          },
+          data: [{ xAxis: dividerCoord }],
+        },
+      },
+    ],
+    graphic: [
+      {
+        type: 'text',
+        left: '25%',
+        top: 285,
+        z: 5,
+        style: {
+          text: 'Parte 1',
+          fill: colors['color-neutral'],
+          font: `normal 12px ${fontFamily}`,
+        },
+      },
+      {
+        type: 'text',
+        left: '67%',
+        top: 285,
+        z: 5,
+        style: {
+          text: 'Parte 2',
+          fill: colors['color-neutral'],
+          font: `normal 12px ${fontFamily}`,
+        },
+      },
+    ],
   };
+
   return (
     <div className="w-fit h-fit px-2 rounded-md">
-      <ReactECharts option={option} style={{ height: '300px', width: '450px' }} />
+      <ReactECharts option={option} style={{ height: '300px', width: '500px' }} />
     </div>
   );
 }

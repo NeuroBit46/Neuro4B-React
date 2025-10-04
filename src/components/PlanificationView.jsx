@@ -8,6 +8,7 @@ import BarGroupChartECharts from "./BarChart";
 import { getNivelKey, getNivelLabel } from "../pages/Dashboard";
 import RawSummaryCards from "./RawSummaryCards";
 import LearningCurveChart from "./LearningCurveChart";
+import CardPunt from "./CardPunt";
 
 export default function PlanificationView({ section, getColorSet }) {
   const {
@@ -90,34 +91,15 @@ export default function PlanificationView({ section, getColorSet }) {
   );
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center space-x-2">
-            <span className="text-primary-text">{Icons[icon]}</span>
-            <h1 className="text-sm text-primary-text font-medium">{title}</h1>
-          </div>
-          <p className="text-xs text-secondary-text">{miniDesc}</p>
-        </div>
+    <div className="space-y-3">
+      <div className="flex items-center justify-evenly">
+        <CardPunt title="Aciertos Total Punt. T" punt={ datosPorFiltro["Aciertos en planificación"]["P1"].PT} />
+        <CardPunt title="Tiempo Total Punt. T" punt={ datosPorFiltro["Tiempo de asignación"]["Total"].PT} />
+        <CardPunt title="Planificación Total Punt. T" punt={tscore} />
       </div>
-
       <div className="grid grid-cols-[0.2fr_1fr_0.2fr] place-items-center">
-        <div className="space-y-2 rounded-sm pt-2">
-          <FiltroSwitch
-            filtros={filtros}
-            active={activeFiltro}
-            onChange={setActiveFiltro}
-          />
-          <BarGroupChartECharts
-            activeFiltro={activeFiltro}
-            grupos={grupos}
-            categorias={categorias}
-            datos={datosPorFiltro[activeFiltro]}
-          />
-        </div>
         <DualYAxisChart data={datos} />
         <div className="flex flex-col items-center space-y-4">
-          <SemiGauge value={tscore} color={color} background={background} />
           <RawSummaryCards
             totals={resumenRaw}
           />

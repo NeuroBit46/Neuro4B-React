@@ -30,7 +30,7 @@ export const Icons = {
   position: <Icon icon='material-symbols:id-card-rounded' className='text-xl text-primary'/>,
   menu: <Icon icon='mage:dots-menu' className='text-2xl text-primary-bg'/>,
   dropdown: <Icon icon='iconoir:arrow-down-tag' className='text-2xl text-primary'/>,
-  time: <Icon icon='material-symbols:avg-time-rounded' className='text-xl text-secondary'/>,
+  time: <Icon icon='material-symbols:avg-time-rounded' className='text-xl text-neutral'/>,
   aciertos: <Icon icon='mdi:alarm-success' className='text-xl text-primary'/>,
   user: <Icon icon='typcn:user' className='text-2xl text-primary-bg'/>,
   arrowDown: <Icon icon='iconamoon:arrow-down-2' className='text-xl text-primary-text'/>,

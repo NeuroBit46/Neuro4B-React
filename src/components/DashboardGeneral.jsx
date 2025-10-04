@@ -376,9 +376,23 @@ const GAUGE_HEIGHT_PROP = 70;                    // prop height del SemiGauge
 // Altura radar = 2 * cardHeight + gap(16px)
 const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
 
+  // --- Título dinámico para el layout ---
+  const tabLabelMap = {
+    resumen: 'Resumen',
+    planificacion: 'Planificación',
+    memoria: 'Memoria de Trabajo',
+    flexibilidad: 'Flexibilidad Cognitiva'
+  };
+
+  const dynamicTitle = section === 'EEG'
+    ? 'EEG'
+    : section === 'Nesplora Ice Cream'
+      ? (tabLabelMap[tab] || 'Dashboard')
+      : 'Dashboard';
+
   return (
     <PageLayout
-      title="Dashboard"
+      title={dynamicTitle}
       headerAction={{
         center: (
           <SearchBar

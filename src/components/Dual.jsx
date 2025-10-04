@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import { useCSSVariables } from './useCSSVariables.jsx';
 import { applyFontToChart } from '../utils/applyFontToChart';
 
-const DualYAxisChart = ({ data }) => {
+const DualYAxisChart = ({ data = [] }) => {
   const fontFamily = getComputedStyle(document.documentElement)
     .getPropertyValue('--font-sans')
     .trim();
@@ -13,56 +13,100 @@ const DualYAxisChart = ({ data }) => {
     'color-primary-text',
     'color-secondary-text',
     'color-primary',
+    'color-neutral',
   ]);
 
-  const aciertosData = data.map(d => d.aciertos);
-  const tiempoData = data.map(d => d.tiempo);
+  const colorPrimary = (colors['color-primary'] || '#1E88E5').trim();
+  const colorSecondary = (colors['color-secondary'] || '#E53935').trim();
+  const colorPrimaryText = (colors['color-primary-text'] || '#2B2B2B').trim();
+  const colorSecondaryText = (colors['color-secondary-text'] || '#808080').trim();
+  const colorNeutral = (colors['color-neutral'] || '#B0B0B0').trim();
+  const aciertosDataNum = data.map(d => Number(d.aciertos));
+  const tiempoDataNum = data.map(d => Number(d.tiempo));
+
+  const aciertosDataItems = aciertosDataNum.map(v => ({
+    value: v,
+    itemStyle: {
+      color: v === 0 ? colorSecondary : colorPrimary,
+      opacity: 0.9,
+    },
+  }));
+
+  const dividerCoord = 6.5;
 
   const baseOption = {
     title: {
-      text: 'Aciertos vs Tiempo de servicio',
-      left: 'left',
+      text: 'Ejecución por Rondas',
+      left: 'center',
       top: 0,
       textStyle: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: colors['color-primary-text'],
-      },
-      show: false,
-    },
-    tooltip: { trigger: 'axis'},
-    legend: { data: ['Aciertos', 'Tiempo de servicio'] },
-    xAxis: {
-      type: 'category',
-      data: data.map((_, i) => `R${i + 1}`),
-      axisLine: {
-        lineStyle: { color: colors['color-secondary-text'] },
-      },
-      name: 'Rondas',
-      nameLocation: 'middle',
-      nameGap: 30,
-      nameTextStyle: {
-        color: colors['color-primary-text'],
+        color: colorPrimaryText,
+        fontFamily,
         fontSize: 12,
-        fontWeight: 'normal',
+        fontWeight: 600,
       },
     },
+
+    color: [],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+      formatter: params => {
+        const i = params[0]?.dataIndex ?? 0;
+        const ronda = params[0]?.axisValueLabel ?? '';
+        return [
+          `${ronda}`,
+          `Aciertos: ${aciertosDataNum[i] ?? 0}`,
+          `Tiempo de servicio: ${tiempoDataNum[i] ?? 0}`,
+        ].join('<br/>');
+      },
+    },
+    legend: {
+      data: ['Aciertos', 'Tiempo de servicio'],
+      textStyle: { color: colorPrimaryText },
+      top: 25,
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: data.map((_, i) => `R${i + 1}`),
+        axisLine: { show: false },
+        axisTick: {show: false},
+        axisLabel: {
+          color: colorSecondaryText,
+        },
+        name: 'Rondas',
+        nameLocation: 'middle',
+        nameGap: 30,
+        nameTextStyle: { color: colorPrimaryText, fontSize: 12 },
+      },
+      {
+        type: 'value',
+        show: false,
+        min: 0,
+        max: Math.max(data.length - 1, 1),
+      },
+    ],
     yAxis: [
       {
         type: 'value',
         name: 'Aciertos',
         position: 'left',
-        axisLine: {
-          lineStyle: { color: colors['color-secondary-text'] },
+        min: function (value) {
+          const range = value.max - value.min || 1;
+          const offset = range * 0.1;
+          return Math.max(0, value.min - offset);
         },
+        axisLabel: {
+          color: colorSecondaryText,
+        },
+        axisLine: {show: false},
+        axisTick: {show: false},
         splitLine: {
           show: true,
-          lineStyle: {
-            color: colors['color-primary'],
-            type: 'dashed',
-            width: 1.5,
-            opacity: 0.6,
-          },
+          lineStyle: { color: colorPrimary, type: 'dashed', width: 1.5, opacity: 0.6 },
         },
         minInterval: 1,
       },
@@ -70,65 +114,92 @@ const DualYAxisChart = ({ data }) => {
         type: 'value',
         name: 'Tiempo (sg)',
         position: 'right',
-        axisLine: {
-          lineStyle: { color: colors['color-secondary-text'] },
+        axisLine: {show: false},
+        axisTick: {show: false},
+        axisLabel: {
+          color: colorSecondaryText,
         },
         splitLine: {
           show: true,
-          lineStyle: {
-            color: colors['color-secondary'],
-            type: 'solid',
-            width: 1,
-            opacity: 0.4,
-          },
+          lineStyle: { color: colorNeutral, type: 'solid', width: 1, opacity: 0.4 },
         },
       },
     ],
-    grid: {
-      top: 40,
-      bottom: 20,
-      left: 20,
-      right: 20,
-      containLabel: true,
-    },
+    grid: { top: 40, bottom: 20, left: 25, right: 35, containLabel: true },
     series: [
       {
         name: 'Aciertos',
         type: 'bar',
-        data: aciertosData,
+        data: aciertosDataItems,
         yAxisIndex: 0,
-        itemStyle: {
-          color: colors['color-primary'],
-          opacity: 0.75,
-        }
+        xAxisIndex: 0,
+        barMinHeight: 20,
+        label: { show: false },
+        itemStyle: { color: colorPrimary },
       },
       {
         name: 'Tiempo de servicio',
         type: 'line',
-        data: tiempoData,
+        data: tiempoDataNum,
         yAxisIndex: 1,
+        xAxisIndex: 0,
         smooth: false,
-        lineStyle: {
-          color: colors['color-secondary'],
-          opacity: 1,
-        },
-        itemStyle: {
-          color: colors['color-secondary'],
-          opacity: 0.75,
-        },
+        lineStyle: { color: colorNeutral, opacity: 1 },
+        itemStyle: { color: colorNeutral, opacity: 0.85 },
         symbol: 'circle',
         symbolSize: 8,
+      },
+      {
+        name: 'Divisor',
+        type: 'scatter',
+        data: [],
+        xAxisIndex: 1,
+        yAxisIndex: 0,
+        markLine: {
+          symbol: 'none',
+          label: { show: false },
+          lineStyle: {
+            color: colorNeutral,
+            type: 'dashed',
+            width: 1.5,
+          },
+          data: [{ xAxis: dividerCoord }],
+        },
+      },
+    ],
+    graphic: [
+      {
+        type: 'text',
+        left: '25%',
+        top: 285,
+        z: 5,
+        style: {
+          text: 'Parte 1',
+          fill: colorNeutral,
+          font: `normal 12px ${fontFamily}`,
+        },
+      },
+      {
+        type: 'text',
+        left: '67%',
+        top: 285,
+        z: 5,
+        style: {
+          text: 'Parte 2',
+          fill: colorNeutral,
+          font: `normal 12px ${fontFamily}`,
+        },
       },
     ],
   };
 
   const option = applyFontToChart(baseOption, fontFamily);
 
-  return(
-      <div className="w-fit h-fit pr-2 pt-2 pb-3 rounded-sm">
-        <ReactECharts option={option} style={{ height: '320px', width: '600px' }} />
-      </div>
-    );
+  return (
+    <div className="w-fit h-fit pr-2 pt-2 pb-3 rounded-sm">
+      <ReactECharts option={option} style={{ height: '300px', width: '550px' }} />
+    </div>
+  );
 };
 
 export default DualYAxisChart;
