@@ -393,6 +393,20 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
   return (
     <PageLayout
       title={dynamicTitle}
+      titleAddon={activeIndex === 1 && planificacion ? (
+        <div className="ml-2">
+          {/* CardPunt reutilizado para mostrar tscore de Planificación */}
+          <div className="scale-90 origin-left">
+            <Card className="p-2 px-3 rounded-sm shadow-sm border border-border/60 bg-white/80 dark:bg-zinc-800/60 flex flex-row items-center gap-3">
+              <span className="text-[11px] font-semibold text-secondary-text tracking-wide">Punt. T</span>
+              <span className="text-sm font-bold text-primary-text">{planificacion.tscore}</span>
+              <Badge className="text-[9px] px-2 py-0" style={buildNivelBadgeStyle(planificacion)}>
+                {planificacion.nivel}
+              </Badge>
+            </Card>
+          </div>
+        </div>
+      ) : null}
       headerAction={{
         center: (
           <SearchBar
@@ -425,37 +439,37 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
               <div className="grid gap-4 md:grid-cols-3 md:auto-rows-[160px]">
                 {/* Promedio */}
                 <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full">
-    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
-    <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-      {/* Header compacto */}
-      <div className="flex items-start justify-between px-2 pt-1">
-        <div className="flex items-center gap-2">
-          <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
-            {Icons.average}
-          </span>
-          <h3 className="text-[11px] text-primary-text font-semibold leading-snug">
-            Promedio global normalizado
-          </h3>
-        </div>
-        <Badge
-          className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border"
-          style={{ background: statusBg, color: statusColor, borderColor: statusBorder }}
-        >
-          {estadoGeneral.toUpperCase()}
-        </Badge>
-      </div>
-      {/* Ring más grande, menos padding */}
-      <div className="flex-1 flex items-center justify-center px-1 pb-1">
-        <div className="w-[120px] h-[120px] relative">
-          <ReactECharts option={resumenRingOption} style={{ width: "100%", height: "100%" }} />
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{ background: `radial-gradient(circle at 50% 50%, ${withAlpha(neutralColor,0.22)} 0%, transparent 72%)` }}
-          />
-        </div>
-      </div>
-    </div>
-  </Card>
+                  <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
+                  <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
+                    {/* Header compacto */}
+                    <div className="flex items-start justify-between px-2 pt-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
+                          {Icons.average}
+                        </span>
+                        <h3 className="text-[11px] text-primary-text font-semibold leading-snug">
+                          Promedio global normalizado
+                        </h3>
+                      </div>
+                      <Badge
+                        className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border"
+                        style={{ background: statusBg, color: statusColor, borderColor: statusBorder }}
+                      >
+                        {estadoGeneral.toUpperCase()}
+                      </Badge>
+                    </div>
+                    {/* Ring más grande, menos padding */}
+                    <div className="flex-1 flex items-center justify-center px-1 pb-1">
+                      <div className="w-[120px] h-[120px] relative">
+                        <ReactECharts option={resumenRingOption} style={{ width: "100%", height: "100%" }} />
+                        <div
+                          className="absolute inset-0 rounded-full"
+                          style={{ background: `radial-gradient(circle at 50% 50%, ${withAlpha(neutralColor,0.22)} 0%, transparent 72%)` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
                 {/* Índice 0 */}
                 {secciones[0] && (
                   <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full" title={secciones[0].miniDesc}>

@@ -166,7 +166,7 @@ export default function LearningCurveChart({
         },
       },
     ],
-    grid: { top: 40, bottom: 20, left: 25, right: 35, containLabel: true },
+    grid: { top: 40, bottom: 20, left: 20, right: 20, containLabel: true },
     series: [
       ...series,
       // serie dummy para markLine
@@ -192,7 +192,7 @@ export default function LearningCurveChart({
       {
         type: 'text',
         left: '25%',
-        top: 285,
+        top: 265,
         z: 5,
         style: {
           text: 'Parte 1',
@@ -203,7 +203,7 @@ export default function LearningCurveChart({
       {
         type: 'text',
         left: '67%',
-        top: 285,
+        top: 265,
         z: 5,
         style: {
           text: 'Parte 2',
@@ -215,8 +215,8 @@ export default function LearningCurveChart({
   };
 
   return (
-    <div className="w-fit h-fit px-2 rounded-md">
-      <ReactECharts option={option} style={{ height: '300px', width: '500px' }} />
+    <div className="w-fit h-fit rounded-md">
+      <ReactECharts option={option} style={{ height: '280px', width: '500px' }} />
     </div>
   );
 }

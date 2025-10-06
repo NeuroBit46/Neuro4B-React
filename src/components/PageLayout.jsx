@@ -9,7 +9,7 @@ import InfoTooltip from './InfoTooltip';
  * - Rutas con parámetros (/:id) se reconocen por prefix.
  * - Se puede extender el mapa sin romper compatibilidad.
  */
-export default function PageLayout({ title, tooltip, headerAction, children }) {
+export default function PageLayout({ title, tooltip, headerAction, titleAddon, children }) {
   const location = useLocation();
 
   // Mapa básico de rutas -> título por defecto
@@ -44,10 +44,15 @@ export default function PageLayout({ title, tooltip, headerAction, children }) {
       <div className="sticky top-0 z-1 isolate grid grid-cols-3 items-center px-6 my-2 bg-primary-bg">
         {/* Izquierda: h1 + tooltip */}
         <div className="flex items-center gap-4">
-          <h1 className="text-md font-semibold text-primary-text pl-2" data-testid="page-title">
-            {effectiveTitle}
-          </h1>
-          {tooltip && <InfoTooltip message={tooltip} />}
+          <div className="flex items-center gap-3">
+            <h1 className="text-md font-semibold text-primary-text pl-2" data-testid="page-title">
+              {effectiveTitle}
+            </h1>
+            {tooltip && <InfoTooltip message={tooltip} />}
+          </div>
+          {titleAddon && (
+            <div className="flex items-center">{titleAddon}</div>
+          )}
         </div>
 
         {/* Centro: search bar */}

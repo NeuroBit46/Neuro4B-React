@@ -125,7 +125,7 @@ const DualYAxisChart = ({ data = [] }) => {
         },
       },
     ],
-    grid: { top: 40, bottom: 20, left: 25, right: 35, containLabel: true },
+    grid: { top: 40, bottom: 20, left: 25, right: 25, containLabel: true },
     series: [
       {
         name: 'Aciertos',
@@ -133,7 +133,7 @@ const DualYAxisChart = ({ data = [] }) => {
         data: aciertosDataItems,
         yAxisIndex: 0,
         xAxisIndex: 0,
-        barMinHeight: 20,
+        barMinHeight: 5,
         label: { show: false },
         itemStyle: { color: colorPrimary },
       },
@@ -171,7 +171,7 @@ const DualYAxisChart = ({ data = [] }) => {
       {
         type: 'text',
         left: '25%',
-        top: 285,
+        top: 265,
         z: 5,
         style: {
           text: 'Parte 1',
@@ -182,7 +182,7 @@ const DualYAxisChart = ({ data = [] }) => {
       {
         type: 'text',
         left: '67%',
-        top: 285,
+        top: 265,
         z: 5,
         style: {
           text: 'Parte 2',
@@ -196,8 +196,8 @@ const DualYAxisChart = ({ data = [] }) => {
   const option = applyFontToChart(baseOption, fontFamily);
 
   return (
-    <div className="w-fit h-fit pr-2 pt-2 pb-3 rounded-sm">
-      <ReactECharts option={option} style={{ height: '300px', width: '550px' }} />
+    <div className="w-fit h-fit rounded-sm">
+      <ReactECharts option={option} style={{ height: '280px', width: '550px' }} />
     </div>
   );
 };

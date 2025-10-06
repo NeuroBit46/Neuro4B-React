@@ -461,3 +461,52 @@ html, body, #root {
   color: var(--color-primary-foreground, #ffffff);
 }
 
+/* ================= Planificación Tokens (Mejor práctica) =================
+   Sistema declarativo de escalado para la vista de Planificación.
+   - Usa variables -> tamaño nítido (no transform)
+   - Permite cambiar densidad agregando una clase de escala
+   - Reemplaza a .planif-zoom (transform) que queda DEPRECATED
+========================================================================= */
+:root { --planif-scale: 1; }
+.planif-scale-110 { --planif-scale: 1.1; }
+.planif-scale-100 { --planif-scale: 1; }
+
+/* Definición de tokens dependientes de la escala */
+.planif-vars {
+  /* Espaciados base (multiplican rem) */
+  --planif-gap-3: calc(0.75rem * var(--planif-scale));
+  --planif-gap-4: calc(1rem * var(--planif-scale));
+  --planif-gap-5: calc(1.25rem * var(--planif-scale));
+  --planif-gap-6: calc(1.5rem * var(--planif-scale));
+  --planif-space-2-5: calc(0.625rem * var(--planif-scale));
+  --planif-gap-x-main: calc(2.5rem * var(--planif-scale)); /* antes gap-x-10 */
+  --planif-space-x-bottom: calc(2rem * var(--planif-scale)); /* antes space-x-8 */
+  /* Padding de cards específicos de esta vista */
+  --planif-card-pad-x: calc(1rem * var(--planif-scale)); /* px-4 */
+  --planif-card-pad-y: calc(0.625rem * var(--planif-scale)); /* py-2.5 */
+  /* Alturas opcionales (se pueden mapear luego) */
+  --planif-chart-height: calc(20rem * var(--planif-scale));
+  /* Escala tipografía y radios/bordes para percepción uniforme */
+  font-size: calc(1rem * var(--planif-scale));
+  line-height: 1.45;
+  --planif-radius: calc(0.625rem * var(--planif-scale));
+}
+
+/* Ajustes específicos de elementos internos en la vista (opt-in por clase) */
+.planif-vars .planif-icon-sm {
+  width: calc(1.5rem * var(--planif-scale));
+  height: calc(1.5rem * var(--planif-scale));
+  font-size: calc(0.9rem * var(--planif-scale));
+}
+.planif-vars .planif-badge {
+  padding: calc(0.125rem * var(--planif-scale)) calc(0.5rem * var(--planif-scale));
+  font-size: calc(0.55rem * var(--planif-scale));
+  line-height: 1.1;
+  border-radius: calc(9999px);
+}
+.planif-vars .planif-card-pad {
+  padding: var(--planif-card-pad-y) var(--planif-card-pad-x);
+}
+
+/* (Eliminada .planif-zoom legacy: se migró a tokens) */
+

@@ -9,6 +9,9 @@ import { getNivelKey, getNivelLabel } from "../pages/Dashboard";
 import RawSummaryCards from "./RawSummaryCards";
 import LearningCurveChart from "./LearningCurveChart";
 import CardPunt from "./CardPunt";
+import GroupedMetricsCard from "./GroupedMetricsCard";
+import IndicatorCard from "./IndicatorCard";
+import { Card } from "./ui/card";
 
 export default function PlanificationView({ section, getColorSet }) {
   const {
@@ -20,21 +23,20 @@ export default function PlanificationView({ section, getColorSet }) {
     nivel,
   } = section;
 
-  const categorias = ["PuntajeDuro", "PT", "PC"];
+  const categorias = ["PD", "PT", "PC"]; // PD reemplaza a PuntajeDuro en nueva estructura
   const grupos = ["P1", "P2", "Total"];
-  const filtros = ["Aciertos en planificación", "Tiempo de asignación"];
-  const [activeFiltro, setActiveFiltro] = useState(filtros[0]);
-
-  const datosPorFiltro = {
-    "Aciertos en planificación": {
-      "P1": { PuntajeDuro: 2, PT: 39, PC: 14 },
-      "P2": { PuntajeDuro: 2, PT: 41, PC: 18 },
-      "Total": { PuntajeDuro: 4, PT: 40, PC: 16 }
+  // Nueva estructura sin filtros, organizada por tipo principal (Aciertos, Tiempo)
+  // Cada tipo contiene P1, P2 y Total con sub-métricas PD (PuntajeDuro), PT y PC
+  const planificacionData = {
+    Aciertos: {
+      P1: { PD: 2, PT: 39, PC: 14 },
+      P2: { PD: 2, PT: 41, PC: 18 },
+      Total: { PD: 4, PT: 40, PC: 16 }
     },
-    "Tiempo de asignación": {
-      "P1": { PuntajeDuro: 39.9, PT: 47, PC: 39 },
-      "P2": { PuntajeDuro: 28.2, PT: 50, PC: 49 },
-      "Total": { PuntajeDuro: 68.2, PT: 48, PC: 44 }
+    Tiempo: {
+      P1: { PD: 39.9, PT: 47, PC: 39 },
+      P2: { PD: 28.2, PT: 50, PC: 49 },
+      Total: { PD: 68.2, PT: 48, PC: 44 }
     }
   };
 
@@ -72,12 +74,12 @@ export default function PlanificationView({ section, getColorSet }) {
   };
 
   const resumenRaw = {
-    aciertosP1: datosPorFiltro["Aciertos en planificación"]["P1"].PuntajeDuro,
-    aciertosP2: datosPorFiltro["Aciertos en planificación"]["P2"].PuntajeDuro,
-    aciertosTotal: datosPorFiltro["Aciertos en planificación"]["Total"].PuntajeDuro,
-    tiempoP1: datosPorFiltro["Tiempo de asignación"]["P1"].PuntajeDuro,
-    tiempoP2: datosPorFiltro["Tiempo de asignación"]["P2"].PuntajeDuro,
-    tiempoTotal: datosPorFiltro["Tiempo de asignación"]["Total"].PuntajeDuro,
+    aciertosP1: planificacionData.Aciertos.P1.PD,
+    aciertosP2: planificacionData.Aciertos.P2.PD,
+    aciertosTotal: planificacionData.Aciertos.Total.PD,
+    tiempoP1: planificacionData.Tiempo.P1.PD,
+    tiempoP2: planificacionData.Tiempo.P2.PD,
+    tiempoTotal: planificacionData.Tiempo.Total.PD,
   };
 
   const aciertosPorRonda = [1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1];
@@ -90,32 +92,85 @@ export default function PlanificationView({ section, getColorSet }) {
     tiempoPorRonda[i] > 0 ? a / tiempoPorRonda[i] : 0
   );
 
+  // Builder para un solo grupo reutilizable
+  const buildGroup = (tipo) => {
+    const data = planificacionData[tipo];
+    return {
+      title: tipo,
+      columnHeaders: grupos,
+      rows: categorias.map(cat => ({
+        label: cat,
+        values: grupos.map(grp => data[grp][cat])
+      }))
+    };
+  };
+
   return (
-    <div className="space-y-3">
+  <div className="planif-vars planif-scale-110 flex flex-col items-center" style={{ rowGap: 'var(--planif-gap-4)' }}>
       <div className="flex items-center justify-evenly">
-        <CardPunt title="Aciertos Total Punt. T" punt={ datosPorFiltro["Aciertos en planificación"]["P1"].PT} />
-        <CardPunt title="Tiempo Total Punt. T" punt={ datosPorFiltro["Tiempo de asignación"]["Total"].PT} />
-        <CardPunt title="Planificación Total Punt. T" punt={tscore} />
       </div>
-      <div className="grid grid-cols-[0.2fr_1fr_0.2fr] place-items-center">
-        <DualYAxisChart data={datos} />
-        <div className="flex flex-col items-center space-y-4">
-          <RawSummaryCards
-            totals={resumenRaw}
+  {/* Grid principal: sustituye gap-x-10 por variable */}
+  <div className="grid grid-cols-[1fr_auto] items-start" style={{ columnGap: 'var(--planif-gap-x-main)' }}>
+        <div className="flex flex-col w-full" style={{ rowGap: 'var(--planif-gap-6)' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--planif-gap-6)' }}>
+            <div className="flex flex-col" style={{ rowGap: 'var(--planif-gap-3)' }}>
+              <CardPunt title="Aciertos Total Punt. T" punt={ planificacionData.Aciertos.P1.PT } />
+              <GroupedMetricsCard
+                group={buildGroup('Aciertos')}
+                panelClassName="bg-gradient-to-br from-white/70 to-white/50 dark:from-zinc-900/70 dark:to-zinc-900/50"
+              />
+            </div>
+            <div className="flex flex-col" style={{ rowGap: 'var(--planif-gap-3)' }}>
+              <CardPunt title="Tiempo Total Punt. T" punt={ planificacionData.Tiempo.P1.PT } />
+              <GroupedMetricsCard
+                group={buildGroup('Tiempo')}
+                panelClassName="bg-gradient-to-br from-white/70 to-white/50 dark:from-zinc-900/70 dark:to-zinc-900/50"
+              />
+            </div>
+          </div>
+        </div>
+        {/* Columna central: indicadores */}
+        <div className="grid grid-cols-2 max-w-189" style={{ gap: 'var(--planif-gap-5)' }}>
+          <IndicatorCard
+            icon={Icons.time}
+            title="Carga cognitiva"
+            description="Los aciertos no han aumentado, es posible que la carga cognitiva afecte al aprendizaje."
+          />
+          <IndicatorCard
+            icon={Icons.aciertos}
+            title="Fatigabilidad"
+            description="No muestra signos de fatigabilidad."
+          />
+          <IndicatorCard
+            icon={Icons.time}
+            title="Planificación proceual y memoria prospectiva"
+            description="La planificación proceual se ha aprendido y la memoria prospectiva es adecuada."
           />
         </div>
-        <LearningCurveChart
-          xLabels={['R1','R2','R3','R4','R5','R6','R7','R8','R9','R10','R11','R12','R13','R14']}
-          seriesData={{
-            Rendimiento: aciertosAcumulados, // <- ya calculada por ti (p. ej., con aciertos acumulados)
-          }}
-          aciertosPorRonda={aciertosPorRonda}
-          tiempoPorRonda={tiempoPorRonda}
-          yNameAbsolute="Rendimiento"
-          yMinAbsolute={0}
-          yMaxAbsolute={10}
-          smooth
-        />
+      </div>
+      <div className="flex items-center" style={{ columnGap: 'var(--planif-space-x-bottom)' }}>
+  <Card className="flex-row items-center justify-around planif-card-pad">
+          <div className="flex flex-col items-center" style={{ rowGap: 'var(--planif-gap-4)' }}>
+            <RawSummaryCards
+              totals={resumenRaw}
+            />
+          </div>
+          <DualYAxisChart data={datos} />
+        </Card>
+        <Card className="planif-card-pad">
+          <LearningCurveChart
+            xLabels={['R1','R2','R3','R4','R5','R6','R7','R8','R9','R10','R11','R12','R13','R14']}
+            seriesData={{
+              Rendimiento: aciertosAcumulados, // <- ya calculada por ti (p. ej., con aciertos acumulados)
+            }}
+            aciertosPorRonda={aciertosPorRonda}
+            tiempoPorRonda={tiempoPorRonda}
+            yNameAbsolute="Rendimiento"
+            yMinAbsolute={0}
+            yMaxAbsolute={10}
+            smooth
+          />
+        </Card>
       </div>
     </div>
   );
