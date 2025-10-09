@@ -15,49 +15,17 @@ import FlexibilityCognitiveView from "../components/FlexibilityCognitiveView";
 
 import EEGDashboard from "../components/EEGDashboard";
 import { Icons } from "../constants/Icons";
+import { getNivelKey, getNivelLabel, getColorSet as getColorSetNivel } from "../lib/nivel";
+import CardPunt from "../components/CardPunt";
 
 // shadcn/ui
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge"; // <-- añadido
+import ScoreRangeBar from "./ScoreRangeBar";
 
 // ----------------- Helpers -----------------
-export function getNivelKey(tscore) {
-  if (tscore >= 70 && tscore <= 80) return "MuyAlto";
-  if (tscore >= 60 && tscore <= 69) return "Alto";
-  if (tscore >= 41 && tscore <= 59) return "Medio";
-  if (tscore >= 31 && tscore <= 40) return "Bajo";
-  return "MuyBajo";
-}
-
-export function getNivelLabel(key) {
-  return {
-    MuyAlto: "MUY ALTO",
-    Alto: "ALTO",
-    Medio: "MEDIO",
-    Bajo: "BAJO",
-    MuyBajo: "MUY BAJO",
-  }[key];
-}
-
-export function getColorSet(key) {
-  const varName = {
-    MuyAlto: "var(--color-very-high)",
-    Alto: "var(--color-high)",
-    Medio: "var(--color-medium)",
-    Bajo: "var(--color-low)",
-    MuyBajo: "var(--color-very-low)",
-  }[key] || "var(--color-primary-text)";
-
-  const resolved = getComputedStyle(document.documentElement)
-    .getPropertyValue(varName.replace(/var\(|\)/g, ""))
-    .trim();
-  const [r, g, b] = resolved.match(/\d+/g);
-
-  return {
-    color: resolved,
-    background: `rgba(${r}, ${g}, ${b}, 0.15)`,
-  };
-}
+// Centralizado en lib/nivel
+export const getColorSet = getColorSetNivel;
 
 function getStaticWorkerData() {
   const raw = [
@@ -66,10 +34,10 @@ function getStaticWorkerData() {
       title: "Planificación",
       icon: "planification",
       miniDesc: "Organización de acciones y anticipación de consecuencias.",
-      tscore: 70,
+      tscore: 59,
       metrics: [
-        { label: "Aciertos", value: 72 },
-        { label: "Tiempos", value: 77 },
+        { label: "Aciertos", value: 58 },
+        { label: "Tiempos", value: 59 },
       ],
     },
     {
@@ -77,12 +45,12 @@ function getStaticWorkerData() {
       title: "Memoria de Trabajo",
       icon: "workingMemory",
       miniDesc: "Retención activa de información para tareas inmediatas.",
-      tscore: 45,
+      tscore: 31,
       metrics: [
-        { label: "Servicios", value: 47 },
-        { label: "Consultas", value: 45 },
-        { label: "Aciertos", value: 48 },
-        { label: "Tiempos", value: 43 },
+        { label: "Servicios", value: 62 },
+        { label: "Consultas", value: 29 },
+        { label: "Aciertos", value: 31 },
+        { label: "Tiempos", value: 32 },
       ],
     },
     {
@@ -90,12 +58,12 @@ function getStaticWorkerData() {
       title: "Flexibilidad cognitiva",
       icon: "flexibilityCognitive",
       miniDesc: "Adaptación a cambios y manejo de interferencias.",
-      tscore: 64,
+      tscore: 56,
       metrics: [
-        { label: "Interferencia", value: 65 },
-        { label: "Perseveraciones", value: 68 },
-        { label: "Tiempo de Servicio", value: 63 },
-        { label: "Switching", value: 62 },
+        { label: "Interferencia", value: 61 },
+        { label: "Perseveraciones", value: 70 },
+        { label: "Tiempo de Servicio", value: 61 },
+        { label: "Switching", value: 33 },
       ],
     },
   ];
@@ -208,12 +176,16 @@ function withAlpha(color, alpha = 1) {
 }
 
 function buildNivelBadgeStyle(sec) {
-  const nums = sec.color.match(/\d+/g) || [];
-  const [r,g,b] = nums;
+  // Aplica método 1: usar rgb(from var(--color-*) r g b / alpha) para modular opacidades.
+  // sec.color es una cadena tipo 'var(--color-high)'.
+  const c = sec.color;
   return {
-    background: sec.background,
-    color: sec.color,
-    borderColor: r ? `rgba(${r}, ${g}, ${b}, 0.35)` : 'transparent'
+    // Fondo suave (18% de la intensidad)
+    background: `rgb(from ${c} r g b / 0.18)`,
+    // Texto casi sólido (92%) para legibilidad
+    color: `rgb(from ${c} r g b / 0.92)`,
+    // Borde más visible (40%)
+    borderColor: `rgb(from ${c} r g b / 0.40)`
   };
 }
 
@@ -345,7 +317,43 @@ const resumenRingOption = useMemo(() => ({
         }
       },
       axisLine: { lineStyle: { color: withAlpha(neutralColor, 0.30) } },
-      axisName: { color: primaryTextColor, fontSize: 12 }
+      axisName: {
+        color: primaryTextColor,
+        fontSize: 12,
+        // Permite saltos de línea insertando '\n' en nombres largos en espacios
+        formatter: function(name) {
+          if (!name) return '';
+          var raw = String(name).trim();
+          var lower = raw.toLowerCase();
+          // No aplicar salto de línea a "Planificación"
+          if (lower === 'planificación' || lower === 'planificacion') return raw;
+
+          var maxLen = 12; // longitud máxima por línea
+          var words = raw.split(' ');
+          var lines = [];
+          var line = '';
+          for (var i = 0; i < words.length; i++) {
+            var w = words[i];
+            var tentative = line ? (line + ' ' + w) : w;
+            if (tentative.length <= maxLen) {
+              line = tentative;
+            } else {
+              if (line) lines.push(line);
+              // si la palabra sola es muy larga, la troceamos
+              if (w.length > maxLen) {
+                for (var j = 0; j < w.length; j += maxLen) {
+                  lines.push(w.slice(j, j + maxLen));
+                }
+                line = '';
+              } else {
+                line = w;
+              }
+            }
+          }
+          if (line) lines.push(line);
+          return lines.join('\n');
+        }
+      }
     },
     series: [{
       type: 'radar',
@@ -378,36 +386,53 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
 
   // --- Título dinámico para el layout ---
   const tabLabelMap = {
-    resumen: 'Resumen',
+    resumen: 'Dashboard',
     planificacion: 'Planificación',
     memoria: 'Memoria de Trabajo',
     flexibilidad: 'Flexibilidad Cognitiva'
   };
 
   const dynamicTitle = section === 'EEG'
-    ? 'EEG'
+    ? 'Electroencefalograma'
     : section === 'Nesplora Ice Cream'
       ? (tabLabelMap[tab] || 'Dashboard')
       : 'Dashboard';
 
+  // Renderiza la mini card de Punt. T para la pestaña activa (planificación, memoria, flexibilidad)
+  const renderTitleAddon = () => {
+    const sectionMap = {
+      1: planificacion,
+      2: memoriaTrabajo,
+      3: flexibilidad,
+    };
+    const sec = sectionMap[activeIndex];
+    if (!sec) return null;
+    return (
+      <div className="ml-3">
+        <Card className="p-1.5 px-8 rounded-sm shadow-sm border border-border/60 glass-primary-bg dark:bg-zinc-800/60 flex flex-row items-center gap-5" style={buildNivelBadgeStyle(sec)}>
+          <span className="text-[12px] font-semibold text-primary-text tracking-wide">Total</span>
+          <span className="text-normal font-bold text-primary-text">{sec.tscore}</span>
+          <Badge className="text-[12px] px-2 py-0" style={buildNivelBadgeStyle(sec)}>
+            {sec.nivel}
+          </Badge>
+        </Card>
+      </div>
+    );
+  };
+
   return (
     <PageLayout
       title={dynamicTitle}
-      titleAddon={activeIndex === 1 && planificacion ? (
-        <div className="ml-2">
-          {/* CardPunt reutilizado para mostrar tscore de Planificación */}
-          <div className="scale-90 origin-left">
-            <Card className="p-2 px-3 rounded-sm shadow-sm border border-border/60 bg-white/80 dark:bg-zinc-800/60 flex flex-row items-center gap-3">
-              <span className="text-[11px] font-semibold text-secondary-text tracking-wide">Punt. T</span>
-              <span className="text-sm font-bold text-primary-text">{planificacion.tscore}</span>
-              <Badge className="text-[9px] px-2 py-0" style={buildNivelBadgeStyle(planificacion)}>
-                {planificacion.nivel}
-              </Badge>
-            </Card>
-          </div>
-        </div>
-      ) : null}
+      titleAddon={renderTitleAddon()}
       headerAction={{
+        left: selectedWorker && (
+          <div className="text-xs text-primary-text text-right">
+            <p className="font-semibold">{selectedWorker.nombre}</p>
+            {selectedWorker.fecha && (
+              <p className="text-secondary-text">{selectedWorker.fecha}</p>
+            )}
+          </div>
+        ),
         center: (
           <SearchBar
             useCombobox={true}
@@ -416,14 +441,10 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
             onSeleccionar={(w) => setSelectedWorker(w)}
           />
         ),
-        right: selectedWorker && (
-          <div className="text-xs text-primary-text text-right">
-            <p className="font-semibold">{selectedWorker.nombre}</p>
-            {selectedWorker.fecha && (
-              <p className="text-secondary-text">{selectedWorker.fecha}</p>
-            )}
-          </div>
-        ),
+        right: (
+          <ScoreRangeBar
+          />
+        )
       }}
     >
       {section === "Nesplora Ice Cream" && (
@@ -435,25 +456,30 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
           )}
 
           {!loading && activeIndex === 0 && (
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-3 md:auto-rows-[160px]">
+            // Contenedor con exactamente el mismo espacio lateral que WorkingMemoryView y PlanificationView
+            <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4 space-y-4" style={{ maxWidth: '1400px' }}>
+              <div className="grid gap-4 md:grid-cols-3">
                 {/* Promedio */}
-                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full">
+                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-3 h-full py-3 px-2">
                   <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
                   <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
                     {/* Header compacto */}
-                    <div className="flex items-start justify-between px-2 pt-1">
+                    <div className="flex items-start justify-between px-2">
                       <div className="flex items-center gap-2">
                         <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
                           {Icons.average}
                         </span>
-                        <h3 className="text-[11px] text-primary-text font-semibold leading-snug">
+                        <h3 className="text-[12px] text-primary-text font-semibold leading-snug">
                           Promedio global normalizado
                         </h3>
                       </div>
                       <Badge
-                        className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border"
-                        style={{ background: statusBg, color: statusColor, borderColor: statusBorder }}
+                        className="h-4.5 px-2 py-0 text-[11px] font-medium rounded-full border"
+                        style={{
+                          background: `rgb(from ${statusColor} r g b / 0.18)`,
+                          color: `rgb(from ${statusColor} r g b / 0.92)`,
+                          borderColor: `rgb(from ${statusColor} r g b / 0.40)`
+                        }}
                       >
                         {estadoGeneral.toUpperCase()}
                       </Badge>
@@ -472,53 +498,26 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
                 </Card>
                 {/* Índice 0 */}
                 {secciones[0] && (
-                  <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full" title={secciones[0].miniDesc}>
-                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(secciones[0].color)} />
-                    <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-                      <div className="flex items-start justify-between px-2.5 pt-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
-                            {Icons[secciones[0].icon]}
-                          </span>
-                          <h3 className="text-[11px] font-semibold text-primary-text leading-snug truncate">
-                            {secciones[0].title}
-                          </h3>
-                        </div>
-                        <Badge className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border" style={buildNivelBadgeStyle(secciones[0])}>
-                          {secciones[0].nivel}
-                        </Badge>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center justify-center px-2.5 pb-2">
-                        <SemiGauge
-                          value={secciones[0].tscore}
-                          color={secciones[0].color}
-                          background={secciones[0].background}
-                          min={20}
-                          max={80}
-                          height={50}
-                        />
-                      </div>
-                    </div>
-                  </Card>
+                  <CardPunt label={secciones[0].title} punt={secciones[0].tscore} />
                 )}
 
-                {/* Radar (row-span-2) */}
-                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-2 h-full">
+                {/* Radar (row-span-3) */}
+                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-3 h-full py-3">
                   <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
                   <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-                    <div className="flex items-start px-4 pt-2 gap-2">
+                    <div className="flex items-center px-4 gap-2">
                       <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80 text-primary-bg">
                         {Icons.radar || "R"}
                       </span>
-                      <h3 className="text-[11px] text-primary-text font-semibold leading-snug">
+                      <h3 className="text-[12px] text-primary-text font-semibold leading-snug">
                         Distribución por índice
                       </h3>
                     </div>
-                    <div className="flex-1 flex items-center justify-center px-3 pb-3">
+                    <div className="flex-1 flex items-center justify-center px-0 py-0">
                       <ReactECharts
                         option={{
                           ...radarOption,
-                          radar: { ...radarOption.radar, center: ["50%", "50%"], radius: "68%" }
+                          radar: { ...radarOption.radar, center: ["50%", "62%"], radius: "70%" }
                         }}
                         style={{ width: "100%", height: "100%" }}
                       />
@@ -528,66 +527,12 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
 
                 {/* Índice 1 */}
                 {secciones[1] && (
-                  <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full" title={secciones[1].miniDesc}>
-                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(secciones[1].color)} />
-                    <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-                      <div className="flex items-start justify-between px-2.5 pt-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
-                            {Icons[secciones[1].icon]}
-                          </span>
-                          <h3 className="text-[11px] font-semibold text-primary-text leading-snug truncate">
-                            {secciones[1].title}
-                          </h3>
-                        </div>
-                        <Badge className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border" style={buildNivelBadgeStyle(secciones[1])}>
-                          {secciones[1].nivel}
-                        </Badge>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center justify-center px-2.5 pb-2">
-                        <SemiGauge
-                          value={secciones[1].tscore}
-                          color={secciones[1].color}
-                          background={secciones[1].background}
-                          min={20}
-                          max={80}
-                          height={50}
-                        />
-                      </div>
-                    </div>
-                  </Card>
+                  <CardPunt label={secciones[1].title} punt={secciones[1].tscore} />
                 )}
 
                 {/* Índice 2 */}
                 {secciones[2] && (
-                  <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 h-full" title={secciones[2].miniDesc}>
-                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(secciones[2].color)} />
-                    <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-                      <div className="flex items-start justify-between px-2.5 pt-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
-                            {Icons[secciones[2].icon]}
-                          </span>
-                          <h3 className="text-[11px] font-semibold text-primary-text leading-snug truncate">
-                            {secciones[2].title}
-                          </h3>
-                        </div>
-                        <Badge className="h-4.5 px-2 py-0 text-[9px] font-medium rounded-full border" style={buildNivelBadgeStyle(secciones[2])}>
-                          {secciones[2].nivel}
-                        </Badge>
-                      </div>
-                      <div className="flex-1 flex flex-col items-center justify-center px-2.5 pb-2">
-                        <SemiGauge
-                          value={secciones[2].tscore}
-                          color={secciones[2].color}
-                          background={secciones[2].background}
-                          min={20}
-                          max={80}
-                          height={50}
-                        />
-                      </div>
-                    </div>
-                  </Card>
+                  <CardPunt label={secciones[2].title} punt={secciones[2].tscore} />
                 )}
               </div>
 

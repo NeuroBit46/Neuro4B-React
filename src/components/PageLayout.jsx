@@ -39,10 +39,10 @@ export default function PageLayout({ title, tooltip, headerAction, titleAddon, c
   const effectiveTitle = title || inferredTitle;
 
   return (
-    <div className="absolute inset-0 mb-2 mt-1 mx-3 bg-primary-bg rounded-sm">
-      {/* Sticky header con slot adicional */}
-      <div className="sticky top-0 z-1 isolate grid grid-cols-3 items-center px-6 my-2 bg-primary-bg">
-        {/* Izquierda: h1 + tooltip */}
+    <div className="absolute inset-0 mb-2 mt-1 mx-3 bg-primary-bg rounded-sm flex flex-col">
+      {/* Header con centro absoluto para que permanezca centrado sin importar el ancho lateral */}
+      <div className="shrink-0 z-1 isolate relative flex items-center rounded-sm px-6 py-2 bg-white border-b border-primary/10 min-h-[54px]">
+        {/* Bloque izquierdo (título, tooltip, addon) */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
             <h1 className="text-md font-semibold text-primary-text pl-2" data-testid="page-title">
@@ -55,20 +55,34 @@ export default function PageLayout({ title, tooltip, headerAction, titleAddon, c
           )}
         </div>
 
-        {/* Centro: search bar */}
-        <div className="flex justify-center">
-          {headerAction?.center}
-        </div>
+        {/* Centro absoluto: se mantiene centrado aunque crezcan los lados */}
+        {(headerAction?.center || headerAction?.left) && (
+          <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center">
+            {headerAction?.left && (
+              <div className="pointer-events-auto flex items-center shrink-0">{headerAction.left}</div>
+            )}
+            {headerAction?.center && (
+              <div
+                className="pointer-events-auto flex items-center"
+                style={{ minWidth: '300px', width: 'clamp(300px, 50vw, 300px)' }}
+              >
+                {headerAction.center}
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* Derecha: botón u otro */}
-        <div className="flex justify-end space-x-4">
-          {headerAction?.right}
+        {/* Bloque derecho */}
+        <div className="flex items-center gap-4 ml-auto">
+            {headerAction?.right}
         </div>
       </div>
 
-      {/* Contenido scrollable */}
-      <main className="h-[calc(100vh-4rem)] overflow-y-auto px-6 pb-8 pt-1 space-y-">
-        {children}
+      {/* Contenido scrollable dentro del layout */}
+      <main className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-4 pb-6 pt-2 min-h-0">
+        <div className="max-w-[1600px] mx-auto w-full">
+          {children}
+        </div>
       </main>
     </div>
   );

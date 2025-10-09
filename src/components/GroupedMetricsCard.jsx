@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { getNivelKey, getNivelColorVar } from '../lib/nivel';
 
 export default function GroupedMetricsCard({
   title,
@@ -44,9 +45,9 @@ export default function GroupedMetricsCard({
               }
 
               return (
-                <Card className={`border border-border/60 rounded-sm shadow-sm bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm ${panelClassName}`}>
-                  <div className="flex flex-col h-full p-2">
-                    <h3 className="text-xs font-semibold text-primary-text mb-2 tracking-wide">
+                <Card className={`border-0 rounded-sm shadow-none bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm ${panelClassName}`}>
+                  <div className="flex flex-col h-full p-0">
+                    <h3 className="text-sm font-semibold text-primary-text mb-2 tracking-wide">
                       {group.title || title}
                     </h3>
                     {hasRows && (
@@ -64,15 +65,25 @@ export default function GroupedMetricsCard({
                             {columnHeaders.map((h, i) => (
                               <span
                                 key={i}
-                                className="text-[10px] font-semibold text-secondary-text text-center uppercase tracking-wide"
+                                className="text-[12px] font-semibold text-secondary-text text-center uppercase tracking-wide"
                               >
                                 {h}
                               </span>
                             ))}
                           </div>
                         )}
-                        <div className="space-y-1">
-                          {group.rows.map((row, rIdx) => (
+                        {(() => {
+                          // Detectar si se pasaron columnas explícitas de fases (P1/P2/Total)
+                          const explicitHeaders = Array.isArray(group.columnHeaders) ? group.columnHeaders : null;
+                          const hasPhaseCols = explicitHeaders ? explicitHeaders.some(h => /^(P1|P2|Total)$/i.test(String(h).trim())) : false;
+                          // Si NO hay columnas de fases explícitas, ocultar la fila 'PT'
+                          const rowsToRender = Array.isArray(group.rows)
+                            ? group.rows.filter(r => !(String(r?.label || '').toUpperCase() === 'PT' && !hasPhaseCols))
+                            : [];
+
+                          return (
+                            <div className="space-y-1">
+                              {rowsToRender.map((row, rIdx) => (
                             <div
                               key={rIdx}
                               style={{
@@ -82,24 +93,46 @@ export default function GroupedMetricsCard({
                                 alignItems: 'center'
                               }}
                             >
-                              <span className="text-[10px] font-semibold text-primary-text tracking-wide">
+                              <span className="text-[12px] font-semibold text-primary-text tracking-wide">
                                 {row.label}
                               </span>
                               {Array.isArray(row.values) && row.values.length > 0 ? (
-                                row.values.map((v, ci) => (
-                                  <span
-                                    key={ci}
-                                    className="text-[11px] font-semibold text-primary-text text-center px-1 py-1 rounded-sm bg-primary/5 border border-border/40"
-                                  >
-                                    {v}
-                                  </span>
-                                ))
+                                row.label === 'PT'
+                                  ? row.values.map((v, ci) => {
+                                      // Colorear según rango del valor (T-score 20-80 typical)
+                                      const num = parseFloat(String(v).replace(/,/g,''));
+                                      const nivelKey = Number.isFinite(num) ? getNivelKey(num) : 'MuyBajo';
+                                      const rawVar = getNivelColorVar(nivelKey);
+                                      const bg = `rgb(from ${rawVar} r g b / 0.22)`; // fondo suave
+                                      const border = `rgb(from ${rawVar} r g b / 0.45)`; // borde más marcado
+                                      const txt = `rgb(from ${rawVar} r g b / 0.95)`; // texto casi sólido
+
+                                      return (
+                                        <span
+                                          key={ci}
+                                          className="text-[13px] font-semibold text-center px-1 py-1 rounded-sm border"
+                                          style={{ background: bg, borderColor: border, color: txt }}
+                                        >
+                                          {v}
+                                        </span>
+                                      );
+                                    })
+                                  : row.values.map((v, ci) => (
+                                      <span
+                                        key={ci}
+                                        className="text-[12px] font-semibold text-primary-text text-center px-1 py-1 rounded-sm bg-primary/7 border border-border/40"
+                                      >
+                                        {v}
+                                      </span>
+                                    ))
                               ) : (
-                                <span className="text-[10px] italic text-secondary-text">—</span>
+                                <span className="text-[12px] italic text-secondary-text">—</span>
                               )}
                             </div>
-                          ))}
-                        </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </div>
                     )}
                     {!hasRows && hasMatrix && lengthMatch && (

@@ -32,9 +32,19 @@ export const Icons = {
   dropdown: <Icon icon='iconoir:arrow-down-tag' className='text-2xl text-primary'/>,
   time: <Icon icon='material-symbols:avg-time-rounded' className='text-xl text-neutral'/>,
   aciertos: <Icon icon='mdi:alarm-success' className='text-xl text-primary'/>,
-  user: <Icon icon='typcn:user' className='text-2xl text-primary-bg'/>,
+  user: <Icon icon='mingcute:user-4-fill' className='text-xl text-primary-bg'/>,
   arrowDown: <Icon icon='iconamoon:arrow-down-2' className='text-xl text-primary-text'/>,
   arrowsOrder: <Icon icon='tabler:selector' className='text-xl text-primary-text'/>,
+  cognitiveLoad: <Icon icon='streamline:brain-cognitive-solid' className='text-xl text-neutral'/>,
+  fatigue: <Icon icon='mingcute:battery-3-fill' className='text-2xl text-neutral'/>,
+  attention: <Icon icon='mdi:clipboard-text-time' className='text-xl text-neutral'/>,
+  total: <Icon icon='streamline-plump:star-circle-solid' className='text-xl text-neutral'/>,
+  monitEjec: <Icon icon='fluent:task-list-square-16-filled' className='text-xl text-neutral'/>,
+  monitTiempo: <Icon icon='mdi:clipboard-text-time' className='text-xl text-neutral'/>,
+  estiloCogn: <Icon icon='mdi:arrow-decision' className='text-xl text-neutral'/>,
+  helpMemo: <Icon icon='streamline:desktop-help-solid' className='text-xl text-neutral'/>,
+  helpPlan: <Icon icon='fluent:calendar-question-mark-24-filled' className='text-xl text-neutral'/>,
+  mediana: <Icon icon='tabler:chart-donut-filled' className='text-xl text-neutral'/>,
   selector: (isSelected) => (
     <div
       className={`rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 ${

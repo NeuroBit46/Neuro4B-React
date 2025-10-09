@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { useCSSVariables } from './useCSSVariables.jsx';
 
@@ -14,6 +14,8 @@ export default function LearningCurveChart({
   yMinAbsolute,
   yMaxAbsolute,
   decimalsAbsolute = 0,
+  height = 280,
+  className = '',
 }) {
   const fontFamily = getComputedStyle(document.documentElement)
     .getPropertyValue('--font-sans')
@@ -65,7 +67,7 @@ export default function LearningCurveChart({
     data: values,
     smooth,
     symbol: 'circle',
-    symbolSize: 6,
+    symbolSize: 8,
     yAxisIndex: 0,
     xAxisIndex: 0, // usa el eje categórico
     lineStyle: { width: 2, color: colorList[idx % colorList.length] },
@@ -80,7 +82,7 @@ export default function LearningCurveChart({
       text: 'Curva de aprendizaje',
       left: 'center',
       textStyle: {
-        fontSize: 13,
+        fontSize: 14,
         fontFamily,
         color: colors['color-primary-text'],
         fontWeight: '600',
@@ -192,7 +194,7 @@ export default function LearningCurveChart({
       {
         type: 'text',
         left: '25%',
-        top: 265,
+        top: 305,
         z: 5,
         style: {
           text: 'Parte 1',
@@ -203,7 +205,7 @@ export default function LearningCurveChart({
       {
         type: 'text',
         left: '67%',
-        top: 265,
+        top: 305,
         z: 5,
         style: {
           text: 'Parte 2',
@@ -214,9 +216,24 @@ export default function LearningCurveChart({
     ],
   };
 
+  const chartRef = useRef(null);
+  useEffect(() => {
+    const handleResize = () => {
+      try { chartRef.current?.getEchartsInstance()?.resize(); } catch (_) {}
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div className="w-fit h-fit rounded-md">
-      <ReactECharts option={option} style={{ height: '280px', width: '500px' }} />
+    <div className={`rounded-md ${className}`} style={{ width: '100%', height }}>
+      <ReactECharts
+        ref={chartRef}
+        option={option}
+        style={{ width: '100%', height: '100%' }}
+        notMerge
+        lazyUpdate
+      />
     </div>
   );
 }

@@ -69,7 +69,7 @@ export default function SearchBar({
   // Placeholder: en combobox siempre "Buscar por trabajador"
   const placeholderText = useCombobox
     ? "Buscar por trabajador"
-    : (filterByCompany ? "Buscar por trabajador o empresa" : "Buscar por trabajador");
+    : (filterByCompany ? "Buscar trabajador o empresa" : "Buscar trabajador");
 
   return (
     <div

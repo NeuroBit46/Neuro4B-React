@@ -20,7 +20,6 @@ export default function CreateReport() {
   return (
     <PageLayout
       title="Generar informe"
-      tooltip="Para generar un informe, seleccione al menos un trabajador y una plantilla."
       headerAction={{ center: <SearchBar onBuscar={setTextoBusqueda} /> }}
     >
       {/* Card de trabajadores */}
@@ -30,7 +29,7 @@ export default function CreateReport() {
             Trabajadores
           </CardTitle> */}
           <CardDescription className="text-xs text-secondary-text leading-snug">
-            Seleccione un trabajador por cada informe
+            Seleccione el trabajador para generar el informe
           </CardDescription>
         </CardHeader>
         <CardContent className="px-3 pt-0 pb-3">

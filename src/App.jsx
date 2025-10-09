@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import CreateReport from './pages/CreateReport';
@@ -49,23 +49,39 @@ export default function App() {
     const isLoginRoute = location.pathname === '/login';
     const hasHeader = isAuthenticated && !isLoginRoute;
 
+    // Actualiza una variable CSS --app-height para manejar cambios de barra de URL móvil / resize
+    useLayoutEffect(() => {
+      const setVh = () => {
+        const vh = window.innerHeight;
+        document.documentElement.style.setProperty('--app-height', `${vh}px`);
+      };
+      setVh();
+      window.addEventListener('resize', setVh);
+      window.addEventListener('orientationchange', setVh);
+      return () => {
+        window.removeEventListener('resize', setVh);
+        window.removeEventListener('orientationchange', setVh);
+      };
+    }, []);
+
+    const gridRows = hasHeader ? 'auto 1fr' : '1fr';
+
     return (
-      <div className="grid grid-rows-[4rem_1fr] bg-primary h-screen relative">
+      <div
+        className="grid bg-primary relative overflow-x-hidden overflow-y-auto w-full min-w-0"
+        style={{
+          gridTemplateRows: gridRows,
+          minHeight: '100dvh',
+          width: '100%',
+        }}
+      >
         {/* Sidebar solo si está autenticado y no es login */}
         {hasHeader && (
-          <aside className="my-2 mx-3 z-2 glass-primary rounded-sm">
-            <Sidebar onLogout={handleLogout} />
+          <aside className="z-2 w-full">
+            <div className="glass-primary rounded-sm mx-3 mt-2 mb-1 py-2">
+              <Sidebar onLogout={handleLogout} />
+            </div>
           </aside>
-        )}
-
-        {/* Botón menú solo si hay header */}
-        {hasHeader && (
-          <button
-            onClick={() => setMenuVisible(true)}
-            className="sm:hidden fixed top-4 left-4 z-50 bg-primary px-4 py-1 rounded-full"
-          >
-            {Icons.menu}
-          </button>
         )}
 
         {/* Sidebar móvil */}
@@ -83,8 +99,8 @@ export default function App() {
 
         {/* IMPORTANTE: posicionar el main en la fila correcta */}
         <main
-          className={`h-full bg-primary overflow-hidden relative ${
-            hasHeader ? 'row-start-2' : 'row-start-1 row-span-2'
+          className={`min-h-0 bg-primary overflow-hidden relative w-full max-w-full min-w-0 ${
+            hasHeader ? '' : ''
           }`}
         >
           <Routes>

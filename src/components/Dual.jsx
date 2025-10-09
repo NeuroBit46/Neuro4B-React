@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { useCSSVariables } from './useCSSVariables.jsx';
 import { applyFontToChart } from '../utils/applyFontToChart';
 
-const DualYAxisChart = ({ data = [] }) => {
+// maxTiempo: opcional si se quiere fijar techo para tiempo (sino deja que ECharts calcule)
+// Escala de 'Aciertos' configurable:
+//  - auto (por defecto): usa el máximo observado (>=1)
+//  - binary: fija el máximo en 1 (para datos 0/1)
+//  - zeroToFour: fija el máximo en 4 (para datos en 0..4)
+// Props responsive: width (default '100%'), height (default 280) y className opcional.
+const DualYAxisChart = ({
+  data = [],
+  maxAciertos, // deprecado (ignorando)
+  maxTiempo,
+  aciertosScaleMode = 'auto', // 'auto' | 'binary' | 'zeroToFour'
+  width = '100%',
+  height = 280,
+  className = '',
+  style = {},
+}) => {
   const fontFamily = getComputedStyle(document.documentElement)
     .getPropertyValue('--font-sans')
     .trim();
@@ -24,6 +39,17 @@ const DualYAxisChart = ({ data = [] }) => {
   const aciertosDataNum = data.map(d => Number(d.aciertos));
   const tiempoDataNum = data.map(d => Number(d.tiempo));
 
+    // Calcular máximo de aciertos según modo (binary, zeroToFour, auto)
+    const observedMaxAciertos = aciertosDataNum.reduce((m,v)=> (Number.isFinite(v) && v>m ? v : m), 0);
+    let yAxisMaxAciertos;
+    if (aciertosScaleMode === 'binary') {
+      yAxisMaxAciertos = 1;
+    } else if (aciertosScaleMode === 'zeroToFour') {
+      yAxisMaxAciertos = 4;
+    } else {
+      yAxisMaxAciertos = observedMaxAciertos > 0 ? observedMaxAciertos : 1;
+    }
+
   const aciertosDataItems = aciertosDataNum.map(v => ({
     value: v,
     itemStyle: {
@@ -42,7 +68,7 @@ const DualYAxisChart = ({ data = [] }) => {
       textStyle: {
         color: colorPrimaryText,
         fontFamily,
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 600,
       },
     },
@@ -94,11 +120,8 @@ const DualYAxisChart = ({ data = [] }) => {
         type: 'value',
         name: 'Aciertos',
         position: 'left',
-        min: function (value) {
-          const range = value.max - value.min || 1;
-          const offset = range * 0.1;
-          return Math.max(0, value.min - offset);
-        },
+        min: 0,
+        max: yAxisMaxAciertos,
         axisLabel: {
           color: colorSecondaryText,
         },
@@ -114,6 +137,8 @@ const DualYAxisChart = ({ data = [] }) => {
         type: 'value',
         name: 'Tiempo (sg)',
         position: 'right',
+        min: 0,
+        max: typeof maxTiempo === 'number' ? maxTiempo : undefined,
         axisLine: {show: false},
         axisTick: {show: false},
         axisLabel: {
@@ -171,7 +196,7 @@ const DualYAxisChart = ({ data = [] }) => {
       {
         type: 'text',
         left: '25%',
-        top: 265,
+        top: 305,
         z: 5,
         style: {
           text: 'Parte 1',
@@ -182,7 +207,7 @@ const DualYAxisChart = ({ data = [] }) => {
       {
         type: 'text',
         left: '67%',
-        top: 265,
+        top: 305,
         z: 5,
         style: {
           text: 'Parte 2',
@@ -195,9 +220,31 @@ const DualYAxisChart = ({ data = [] }) => {
 
   const option = applyFontToChart(baseOption, fontFamily);
 
+  const chartRef = useRef(null);
+  useEffect(() => {
+    const handleResize = () => {
+      try {
+        chartRef.current?.getEchartsInstance()?.resize();
+      } catch (_) {
+        /* noop */
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div className="w-fit h-fit rounded-sm">
-      <ReactECharts option={option} style={{ height: '280px', width: '550px' }} />
+    <div
+      className={`rounded-sm ${className}`}
+      style={{ width, height, ...style }}
+    >
+      <ReactECharts
+        ref={chartRef}
+        option={option}
+        style={{ width: '100%', height: '100%' }}
+        notMerge
+        lazyUpdate
+      />
     </div>
   );
 };

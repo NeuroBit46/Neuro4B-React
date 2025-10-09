@@ -1,12 +1,9 @@
-import { useState } from "react";
-import { Icons } from "../constants/Icons";
-import { FiltroSwitch } from "./BarGroupChart";
-import ScoreRangesCard from "./ScoreRangesCard";
-import SemiGauge from "./SemiGauge";
 import DualYAxisChart from "./Dual";
-import BarGroupChartECharts from "./BarChart";
 import RawSummaryCards from "./RawSummaryCards";
 import LearningCurveChart from "./LearningCurveChart";
+import CardPunt from "./CardPunt";
+import GroupedMetricsCard from "./GroupedMetricsCard";
+import { Card } from "./ui/card";
 
 export default function WorkingMemoryView({ section, getColorSet }) {
   const {
@@ -20,48 +17,47 @@ export default function WorkingMemoryView({ section, getColorSet }) {
     background
   } = section;
 
-  const categorias = ["PuntajeDuro", "PT", "PC"];
+  const filtros = ["Servicios correctos", "Consultas", "Aciertos netos", "Tiempo de servicio"]; // orden preferido
   const grupos = ["P1", "P2", "Total"];
-  const filtros = ["Servicios correctos", "Consultas", "Aciertos netos", "Tiempo de servicio"];
-  const [activeFiltro, setActiveFiltro] = useState(filtros[0]);
+  const categorias = ["PD", "PT", "PC"]; // PD = PuntajeDuro
   const datosPorFiltro = {
     "Servicios correctos": {
-      "P1": { PuntajeDuro: 28, PT: 56, PC: 72 },
-      "P2": { PuntajeDuro: 25, PT: 49, PC: 46 },
-      "Total": { PuntajeDuro: 53, PT: 51, PC: 55 }
+      P1: { PuntajeDuro: 27, PT: 48, PC: 43 },
+      P2: { PuntajeDuro: 28, PT: 65, PC: 94 },
+      Total: { PuntajeDuro: 55, PT: 62, PC: 90 }
     },
     "Consultas": {
-      "P1": { PuntajeDuro: 2, PT: 40, PC: 17 },
-      "P2": { PuntajeDuro: 16, PT: 33, PC: 5 },
-      "Total": { PuntajeDuro: 19, PT: 35, PC: 7 }
+      P1: { PuntajeDuro: 19, PT: 31, PC: 3 },
+      P2: { PuntajeDuro: 27, PT: 29, PC: 2 },
+      Total: { PuntajeDuro: 46, PT: 29, PC: 2 }
     },
     "Aciertos netos": {
-      "P1": { PuntajeDuro: 25, PT: 45, PC: 33 },
-      "P2": { PuntajeDuro: 9, PT: 39, PC: 14 },
-      "Total": { PuntajeDuro: 34, PT: 42, PC: 21 }
+      P1: { PuntajeDuro: 9, PT: 32, PC: 4 },
+      P2: { PuntajeDuro: 1, PT: 27, PC: 1 },
+      Total: { PuntajeDuro: 10, PT: 31, PC: 3 }
     },
     "Tiempo de servicio": {
-      "P1": { PuntajeDuro: 212.1, PT: 55, PC: 69 },
-      "P2": { PuntajeDuro: 375.5, PT: 46, PC: 33 },
-      "Total": { PuntajeDuro: 587.6, PT: 39, PC: 13 }
+      P1: { PuntajeDuro: 393.4, PT: 31, PC: 4 },
+      P2: { PuntajeDuro: 434.1, PT: 33, PC: 5 },
+      Total: { PuntajeDuro: 827.5, PT: 32, PC: 4 }
     },
   };
 
   const datos = [
-    { aciertos: 3, tiempo: 47.9 },
-    { aciertos: 3, tiempo: 34.9 },
-    { aciertos: 4, tiempo: 26.5 },
-    { aciertos: 3, tiempo: 32.1 },
-    { aciertos: 4, tiempo: 26.9 },
-    { aciertos: 4, tiempo: 21.1 },
-    { aciertos: 4, tiempo: 22.8 },
-    { aciertos: 2, tiempo: 48.2 },
-    { aciertos: 0, tiempo: 57.4 },
-    { aciertos: 0, tiempo: 65.7 },
-    { aciertos: 1, tiempo: 53.8 },
-    { aciertos: 1, tiempo: 54.9 },
-    { aciertos: 4, tiempo: 55.7 },
-    { aciertos: 1, tiempo: 39.8 },
+    { aciertos: 0, tiempo: 68.2 },
+    { aciertos: 1, tiempo: 66.2 },
+    { aciertos: 1, tiempo: 56.6 },
+    { aciertos: 2, tiempo: 56 },
+    { aciertos: 0, tiempo: 70.7 },
+    { aciertos: 3, tiempo: 31 },
+    { aciertos: 2, tiempo: 44.7 },
+    { aciertos: 0, tiempo: 63.7 },
+    { aciertos: 0, tiempo: 61.8 },
+    { aciertos: 0, tiempo: 63.1 },
+    { aciertos: 1, tiempo: 57.5 },
+    { aciertos: 0, tiempo: 62.9 },
+    { aciertos: 0, tiempo: 63.4 },
+    { aciertos: 0, tiempo: 61.8 },
   ];
 
   const getNivelFromValue = (value) => {
@@ -79,75 +75,81 @@ export default function WorkingMemoryView({ section, getColorSet }) {
   };
 
   const resumenRaw = {
-    aciertosP1: datosPorFiltro["Aciertos netos"]["P1"].PuntajeDuro,
-    aciertosP2: datosPorFiltro["Aciertos netos"]["P2"].PuntajeDuro,
-    aciertosTotal: datosPorFiltro["Aciertos netos"]["Total"].PuntajeDuro,
-    tiempoP1: datosPorFiltro["Tiempo de servicio"]["P1"].PuntajeDuro,
-    tiempoP2: datosPorFiltro["Tiempo de servicio"]["P2"].PuntajeDuro,
-    tiempoTotal: datosPorFiltro["Tiempo de servicio"]["Total"].PuntajeDuro,
+    aciertosP1: datosPorFiltro["Aciertos netos"].P1.PuntajeDuro,
+    aciertosP2: datosPorFiltro["Aciertos netos"].P2.PuntajeDuro,
+    aciertosTotal: datosPorFiltro["Aciertos netos"].Total.PuntajeDuro,
+    tiempoP1: datosPorFiltro["Tiempo de servicio"].P1.PuntajeDuro,
+    tiempoP2: datosPorFiltro["Tiempo de servicio"].P2.PuntajeDuro,
+    tiempoTotal: datosPorFiltro["Tiempo de servicio"].Total.PuntajeDuro,
   };
 
-  const aciertosPorRonda = [1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1];
+  const aciertosPorRonda = [0, 1, 1, 2, 0, 3, 2, 0, 0, 0, 1, 0, 0, 0];
   const aciertosAcumulados = aciertosPorRonda.map((valor, idx) =>
     aciertosPorRonda.slice(0, idx + 1).reduce((a, b) => a + b, 0)
   );
 
-  const tiempoPorRonda = [8.3, 8.5, 8, 6.8, 5.1, 6.1, 6.6, 6.1, 6.2, 7.6, 6.3, 5.7, 9.9, 7];
+  const tiempoPorRonda = [68.2, 66.2, 56.6, 56, 70.7, 31, 44.7, 63.7, 61.8, 63.1, 57.5, 62.9, 63.4, 61.8];
   const eficienciaPorRonda = aciertosPorRonda.map((a, i) =>
     tiempoPorRonda[i] > 0 ? a / tiempoPorRonda[i] : 0
   );
-    
-  const bubbleData = {
-    "Servicios Correctos": [2, 3, 1, 4, 0, 2, 3, 1, 2, 4, 3, 2, 1, 0],
-    "Consultas": [1, 0, 2, 3, 4, 2, 1, 3, 0, 2, 4, 1, 2, 3],
-    "Aciertos netos": [3, 2, 4, 1, 0, 3, 2, 4, 1, 0, 3, 2, 1, 4]
+
+  const buildGroup = (filtro) => {
+    const data = datosPorFiltro[filtro];
+    return {
+      title: filtro,
+      columnHeaders: grupos,
+      rows: categorias.map(cat => ({
+        label: cat,
+        values: grupos.map(grp => {
+          const row = data[grp];
+          if (!row) return '-';
+          if (cat === 'PD') return row.PuntajeDuro;
+          return row[cat];
+        })
+      }))
+    };
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center space-x-2">
-            <span className="text-primary-text">{Icons[icon]}</span>
-            <h1 className="text-sm text-primary-text font-medium">{title}</h1>
+  <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4" style={{ rowGap: 'var(--planif-gap-5)', maxWidth: '1400px' }}>
+      {/* Grid superior de métricas (similar a Planification): 4 bloques responsivos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 w-full" style={{ gap: 'var(--planif-gap-6)' }}>
+        {filtros.map((filtro) => (
+          <div key={filtro} className="flex flex-col h-full" style={{ rowGap: 'var(--planif-gap-3)' }}>
+            <CardPunt label={filtro} punt={datosPorFiltro[filtro].Total.PT} />
+            <GroupedMetricsCard
+              group={buildGroup(filtro)}
+              panelClassName="bg-gradient-to-br from-white/70 to-white/50 dark:from-zinc-900/70 dark:to-zinc-900/50 h-full"
+            />
           </div>
-          <p className="text-xs text-secondary-text">{miniDesc}</p>
-        </div>
+        ))}
       </div>
-
-      <div className="grid grid-cols-[0.6fr_1.2fr_0.3fr] gap-4">
-        <div className="space-y-2">
-          <FiltroSwitch
-            filtros={filtros}
-            active={activeFiltro}
-            onChange={setActiveFiltro}
+      {/* Sección inferior alineada al layout de Planificación: grid 12 (7/5) */}
+      <div className="grid grid-cols-12 w-full items-stretch" style={{ gap: 'var(--planif-gap-x-main)' }}>
+        <Card className="col-span-12 xl:col-span-6 planif-card-pad flex flex-col lg:items-center lg:flex-row w-full" style={{ gap: 'var(--planif-gap-6)' }}>
+          {/* <div className="flex flex-row lg:flex-col justify-between lg:justify-start w-full lg:w-auto" style={{ gap: 'var(--planif-gap-4)' }}>
+            <RawSummaryCards totals={resumenRaw} />
+          </div> */}
+          <div className="flex-1 min-h-[300px]">
+            <DualYAxisChart data={datos} className="h-[320px]" height={320} aciertosScaleMode="zeroToFour" />
+          </div>
+        </Card>
+  <Card className="col-span-12 xl:col-span-6 planif-card-pad w-full flex flex-col" style={{ gap: 'var(--planif-gap-4)' }}>
+          <LearningCurveChart
+            xLabels={['R1','R2','R3','R4','R5','R6','R7','R8','R9','R10','R11','R12','R13','R14']}
+            seriesData={{
+              'Rendimiento': aciertosAcumulados,
+            }}
+            aciertosPorRonda={aciertosPorRonda}
+            tiempoPorRonda={tiempoPorRonda}
+            yNameAbsolute="Rendimiento"
+            yMinAbsolute={0}
+            yMaxAbsolute={10}
+            smooth
+            className="w-full"
+            height={320}
           />
-          <BarGroupChartECharts
-            activeFiltro={activeFiltro}
-            grupos={grupos}
-            categorias={categorias}
-            datos={datosPorFiltro[activeFiltro]}
-          />
-        </div>
-
-        <DualYAxisChart data={datos} />
-        {/* <div className="flex flex-col items-center space-y-4">
-          <SemiGauge value={tscore} color={color} background={background} />
-          <RawSummaryCards
-            totals={resumenRaw}
-          />
-        </div> */}
-        <LearningCurveChart
-          xLabels={['R1','R2','R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10', 'R11', 'R12', 'R13','R14']}
-          seriesData={{
-            'Aciertos acumulados': aciertosAcumulados,
-            'Eficiencia': eficienciaPorRonda,
-          }}
-          yName="Rendimiento"
-          smooth={true}
-          lineMin={0}
-          lineMax={14}
-        />
+        </Card>
       </div>
     </div>
   );

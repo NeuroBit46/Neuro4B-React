@@ -21,7 +21,7 @@ export default function TemplateSelector({
     { name: "Informe Gerencia", file: null, desc: "Versión en preparación." },
   ],
   title = "Plantilla de informe",
-  description = "Seleccione el formato base para generar el informe",
+  description = "Seleccione el perfil de informe a generar",
   showPreviewAction = true,
   compact = true,
   className = "",

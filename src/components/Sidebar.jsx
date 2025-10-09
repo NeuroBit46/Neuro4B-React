@@ -30,7 +30,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
           path: "/dashboard?section=Nesplora%20Ice%20Cream",
           children: ["Planificación", "Memoria de trabajo", "Flexibilidad cognitiva"],
         },
-        { name: "EEG", path: "/dashboard?section=EEG" },
+        { name: "Electroencefalograma", path: "/dashboard?section=EEG" },
       ],
     },
     { name: "Generar informe", iconKey: "report", path: "/generar-informe" },
@@ -213,8 +213,8 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
                               );
                             }
 
-                            // EEG (sin NavigationMenuLink)
-                            const isEegActive = sectionQS === "EEG";
+                            // Electroencefalograma (sin NavigationMenuLink)
+                            const isEegActive = sectionQS === "Electroencefalograma";
                             return (
                               <NavLink
                                 key={sub.name}
@@ -248,11 +248,11 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
             aria-expanded={profileMenuOpen}
           >
             <div
-              className={`w-6 h-6 rounded-full border flex items-center justify-center
+              className={`rounded-full flex items-center justify-center
                 ${profileMenuOpen ? 'border-primary' : 'border-primary-bg'}`}
             >
               {React.cloneElement(Icons.user, {
-                className: `!text-lg shrink-0 ${profileMenuOpen ? 'text-primary' : 'text-primary-bg'}`
+                className: `!text-xl shrink-0 ${profileMenuOpen ? 'text-primary' : 'text-primary-bg'}`
               })}
             </div>
             <span className="font-medium text-xs">{user.name}</span>

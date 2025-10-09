@@ -22,7 +22,7 @@ export default function TransformData(){
       <Card className="border-border/70 shadow-xs p-2 pt-3 gap-1">
         <CardHeader className="px-3 pt-0 pb-0 space-y-0">
           <CardDescription className="text-xs text-secondary-text leading-snug">
-            Seleccione un trabajador para transformar sus datos
+            Seleccione el trabajador para transformar sus datos
           </CardDescription>
         </CardHeader>
         <CardContent className="px-3 pt-0 pb-3">

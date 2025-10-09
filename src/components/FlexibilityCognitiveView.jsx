@@ -64,64 +64,94 @@
 //   );
 // }
 
-import { useState } from "react";
 import { Icons } from "../constants/Icons";
-import BarGroupChart from "./BarGroupChart";
-import VisualGroup from "./MetricBar";
-import ScoreRangesCard from "./ScoreRangesCard";
-import SemiGauge from "./SemiGauge";
+import GroupedMetricsCard from "./GroupedMetricsCard";
+import CardPunt from "./CardPunt";
+import IndicatorCard from "./IndicatorCard";
 
 export default function FlexibilityCognitiveView({ section, getColorSet }) {
-  const { title, tscore, metrics, miniDesc, icon, nivel, color, background } = section;
-  const categorias = ["PD", "PT", "PC"];
-  const datosPorFiltro = {
-    "Switching": {
-      "Switching": { PD: -37, PT: 36, PC: 9 },
-      "Switching aciertos": { PD: 17, PT: 47, PC: 37 },
-      "Switching tiempo": { PD: -12, PT: 36, PC: 8 }
-    },
-    "Índices": {
-      "Interferencia": { PD: -49, PT: 59, PC: 83 },
-      "Perseveraciones": { PD: 0, PT: 62, PC: 89 },
-      "Tiempo de servicio": { PD: 375.5, PT: 46, PC: 33 }
-    },
+  const { title, tscore, miniDesc, icon, color, background } = section;
+
+  // Datos base (mismos 6 indicadores solicitados)
+  const datos = {
+    "Switching": { PD: -16, PT: 61, PC: 86 },
+    "Switching aciertos": { PD: -5, PT: 65, PC: 94 },
+    "Switching tiempo": { PD: -2, PT: 62, PC: 88 },
+    "Interferencia": { PD: -82, PT: 70, PC: 98 },
+    "Perseveraciones": { PD: 0, PT: 61, PC: 87 },
+    "Tiempo de servicio": { PD: 434.1, PT: 33, PC: 5 },
   };
-  const grupos = [
-    ...Object.entries(datosPorFiltro["Switching"]).map(([key]) => key),
-    ...Object.entries(datosPorFiltro["Índices"]).map(([key]) => key),
+
+  const metricNames = [
+    "Switching",
+    "Switching aciertos",
+    "Switching tiempo",
+    "Interferencia",
+    "Perseveraciones",
+    "Tiempo de servicio",
   ];
-  const datosUnificados = {
-    ...datosPorFiltro["Switching"],
-    ...datosPorFiltro["Índices"],
+
+  // Construye el objeto "group" que consume GroupedMetricsCard
+  const buildGroup = (metricName) => {
+    const d = datos[metricName] || {};
+    return {
+      title: metricName,
+      columnHeaders: ["Valor"],
+      rows: ["PD", "PT", "PC"].map(label => ({
+        label,
+        values: [d[label] !== undefined ? d[label] : '—']
+      }))
+    };
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-row justify-between space-y-2">
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center space-x-2 py-1">
-            <span className="text-primary-text">{Icons[icon]}</span>
-            <h1 className="text-sm text-primary-text font-medium">{title}</h1>
+    <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4" style={{ rowGap: 'var(--planif-gap-5rem)', maxWidth: '1400px' }}>
+
+      {/* Grid 6 tarjetas: 2 filas x 3 columnas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 w-full" style={{ gap: 'var(--planif-gap-6,1.5rem)' }}>
+        {metricNames.map(name => (
+          <div key={name} className="flex flex-col h-full" style={{ rowGap: 'var(--planif-gap-3,0.75rem)' }}>
+            <CardPunt label={name} punt={datos[name]?.PT} />
+            <GroupedMetricsCard
+              group={buildGroup(name)}
+              panelClassName="bg-gradient-to-br from-white/70 to-white/50 dark:from-zinc-900/70 dark:to-zinc-900/50 h-full"
+            />
           </div>
-          <p className="text-xs text-secondary-text">
-            {miniDesc}
-          </p>
-        </div>
-        <div className="flex flex-row items-start justify-between space-x-8">
-          <SemiGauge value={tscore} color={color} background={background} />
-          <ScoreRangesCard getColorSet={getColorSet} />
-        </div>
+        ))}
       </div>
 
-      <div className="flex flex-col-3">
-        <div className="space-y-5">
-          <BarGroupChart
-            activeFiltro={null}
-            grupos={grupos}
-            categorias={categorias}
-            datos={datosUnificados}
-          />
-        </div>
+      {/* Indicadores: una sola fila en pantallas grandes; se envuelven en 1 o 2 columnas en tamaños menores */}
+      <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-4" style={{ gap: 'var(--planif-gap-5)' }}>
+        <IndicatorCard
+          icon={Icons.monitEjec}
+          title="Monitorización de ejecución"
+          description="El trabajador ha completado la ejecución de la prueba con corrección de errores en: Parte 1: 0. Parte 2:1."
+        />
+        <IndicatorCard
+          icon={Icons.monitTiempo}
+          title="Monitorización de tiempo"
+          description="El trabajador no ha usado la referencia para revisar su tiempo de ejecución durante la prueba."
+        />
+        <IndicatorCard
+          icon={Icons.estiloCogn}
+          title="Estilo cognitivo"
+          description="Observar la mediana de consultas frente al sujeto puede indicar una condición de toma de decisiones adversa al riesgo, con aumento de opciones seguras, o arriesgada."
+        />
+        <IndicatorCard
+          icon={Icons.helpMemo}
+          title="Consultas en la tarea de memoria de trabajo"
+          description="El trabajador ha consultado las referencias a su disposición para esta tarea 6 veces."
+        />
+        <IndicatorCard
+          icon={Icons.helpPlan}
+          title="Consultas en la tarea de planificación"
+          description="El trabajador no ha consultado las referencias a su disposición para esta tarea."
+        />
+        <IndicatorCard
+          icon={Icons.mediana}
+          title="Mediana de consultas"
+          description="En su grupo normativo la mediana de consultas para aprender la tarea es 3 en aprendizaje y 0 en planificación."
+        />
       </div>
     </div>
   );

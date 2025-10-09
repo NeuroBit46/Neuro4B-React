@@ -16,17 +16,17 @@
   --color-primary-text: rgb(36, 59, 60);
   --color-secondary-text: rgb(104, 142, 144);
   --color-muted-jade: rgb(79, 143, 137);
-  --color-primary-bg: rgb(240, 250, 249);
+  --color-primary-bg: rgb(250, 255, 255);
   --color-secondary-bg: rgb(227, 242, 240);
   --color-tertiary-bg: rgb(152, 176, 172);
   --color-success: rgb(86, 176, 161, 0.15);
   --color-error: rgb(236, 212, 210);
-  --color-very-low:   rgba(232, 142, 142, 1); /* Rojo pastel suave */
-  --color-low:        rgba(239, 174, 133, 1); /* Naranja melocotón */
-  --color-medium:     rgba(235, 210, 145, 1); /* Amarillo mantequilla */
-  --color-high:       rgba(137, 176, 222, 1); /* Azul cielo suave */
-  --color-very-high:  rgba(132, 198, 145, 1); /* Verde menta fresco */
-  --color-neutral: rgba(166, 148, 204, 1); /* Morado lavanda suave */
+  --color-very-low:   rgba(224, 120, 120, 0.65); /* Rojo rosado pastel */
+  --color-low:        rgba(236, 160, 120, 0.65); /* Coral suave */
+  --color-medium:     rgba(240, 205, 120, 0.65); /* Dorado mantequilla */
+  --color-high:       rgba(150, 170, 220, 0.65); /* Azul lavanda */
+  --color-very-high:  rgba(140, 200, 160, 0.65); /* Verde agua menta */
+  --color-neutral:    rgba(166, 148, 204, 1);    /* Lavanda suave */
 }
 
 .zoomed-look {
@@ -74,7 +74,7 @@
   backdrop-filter: blur(4px);
   background-color: rgba(67, 174, 185, 0.25);
   border: 1px solid rgba(215, 235, 232, 0.5);
-  box-shadow: 0 8px 20px rgba(78, 185, 197, 0.15);
+  box-shadow: 0 8px 20px rgba(78, 185, 197, 0.10);
   transition: box-shadow 0.3s ease, box-shadow 0.3s ease;
 }
 .glass-tertiary-bg {
@@ -478,6 +478,11 @@ html, body, #root {
   --planif-gap-4: calc(1rem * var(--planif-scale));
   --planif-gap-5: calc(1.25rem * var(--planif-scale));
   --planif-gap-6: calc(1.5rem * var(--planif-scale));
+  /* Nuevos tamaños extendidos */
+  --planif-gap-7: calc(1.75rem * var(--planif-scale));
+  --planif-gap-8: calc(2rem * var(--planif-scale));
+  --planif-gap-9: calc(2.25rem * var(--planif-scale));
+  --planif-gap-10: calc(2.5rem * var(--planif-scale));
   --planif-space-2-5: calc(0.625rem * var(--planif-scale));
   --planif-gap-x-main: calc(2.5rem * var(--planif-scale)); /* antes gap-x-10 */
   --planif-space-x-bottom: calc(2rem * var(--planif-scale)); /* antes space-x-8 */
