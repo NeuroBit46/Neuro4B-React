@@ -36,19 +36,19 @@ export default function CardPunt({ title, label, punt, suffix = 'Total' }) {
         <Icon icon="streamline-plump:star-circle-solid" className="text-lg" />
       </div>
 
-      <CardContent className="flex flex-col p-0 flex-1 ml-2">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-medium text-primary-text truncate">
+      <CardContent className="flex flex-row justify-between items-center p-0 pb-1 flex-1 ml-2">
+        <div className="flex flex-col items-start gap-2">
+          <p className="text-base font-semibold text-primary-text truncate">
             {title ?? (label ? `${label} ${suffix}` : '')}
           </p>
           <Badge
-            className="h-4 px-1.5 rounded-full text-[10px] font-semibold border shrink-0"
+            className="h-4 px-1.5 rounded-full text-sm font-semibold border shrink-0"
             style={{ background: badgeBg, color: badgeText, borderColor: badgeBorder }}
           >
             {nivelLabel}
           </Badge>
         </div>
-        <p className="text-sm font-semibold text-primary-text">
+        <p className="text-lg font-semibold text-primary-text mr-4">
           {punt}
         </p>
       </CardContent>

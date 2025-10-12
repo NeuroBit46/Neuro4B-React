@@ -28,7 +28,7 @@ export default function CreateReport() {
           {/* <CardTitle className="text-sm font-semibold text-primary-text">
             Trabajadores
           </CardTitle> */}
-          <CardDescription className="text-xs text-secondary-text leading-snug">
+          <CardDescription className="text-sm text-secondary-text leading-snug">
             Seleccione el trabajador para generar el informe
           </CardDescription>
         </CardHeader>

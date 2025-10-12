@@ -28,7 +28,11 @@ const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Helpers
 const limpiar = (txt) => (txt || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-const normalizeRuta = (ruta) => (ruta?.startsWith("archivos/") ? `/media/${ruta}` : ruta);
+const normalizeRuta = (ruta) => (
+  ruta && (ruta.startsWith("archivos/") || ruta.startsWith("/archivos/"))
+    ? `/media/${ruta.replace(/^\//, '')}`
+    : ruta
+);
 const formatFecha = (raw) => {
   if (!raw) return "—";
   const dateOnly = typeof raw === "string" && raw.length > 10 ? raw.substring(0, 10) : raw;

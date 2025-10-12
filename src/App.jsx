@@ -122,12 +122,16 @@ export default function App() {
               }
             />
             <Route
-              path="/transformar-datos"
+              path="/exportar-datos"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <TransformData />
                 </PrivateRoute>
               }
+            />
+            <Route
+              path="/transformar-datos"
+              element={<Navigate to="/exportar-datos" replace />}
             />
             <Route
               path="/archivos-trabajadores"

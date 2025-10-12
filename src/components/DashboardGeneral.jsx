@@ -1,12 +1,10 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import ReactECharts from "echarts-for-react";
 
 import PageLayout from "../components/PageLayout";
 import SearchBar from "../components/SearchBar";
 import useWorkers from "../components/UseWorkers";
 
-import SemiGauge from "../components/SemiGauge";
 import MetricBar from "../components/MetricBar";
 
 import PlanificationView from "../components/PlanificationView";
@@ -14,7 +12,6 @@ import WorkingMemoryView from "../components/WorkingMemoryView";
 import FlexibilityCognitiveView from "../components/FlexibilityCognitiveView";
 
 import EEGDashboard from "../components/EEGDashboard";
-import { Icons } from "../constants/Icons";
 import { getNivelKey, getNivelLabel, getColorSet as getColorSetNivel } from "../lib/nivel";
 import CardPunt from "../components/CardPunt";
 
@@ -460,21 +457,21 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
             <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4 space-y-4" style={{ maxWidth: '1400px' }}>
               <div className="grid gap-4 md:grid-cols-3">
                 {/* Promedio */}
-                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-3 h-full py-3 px-2">
+                {/* <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-3 h-full py-3 px-2">
                   <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
                   <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
-                    {/* Header compacto */}
+                    
                     <div className="flex items-start justify-between px-2">
                       <div className="flex items-center gap-2">
                         <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80">
                           {Icons.average}
                         </span>
-                        <h3 className="text-[12px] text-primary-text font-semibold leading-snug">
+                        <h3 className="text-sm text-primary-text font-semibold leading-snug">
                           Promedio global normalizado
                         </h3>
                       </div>
                       <Badge
-                        className="h-4.5 px-2 py-0 text-[11px] font-medium rounded-full border"
+                        className="h-4.5 px-2 py-0 text-xs font-medium rounded-full border"
                         style={{
                           background: `rgb(from ${statusColor} r g b / 0.18)`,
                           color: `rgb(from ${statusColor} r g b / 0.92)`,
@@ -484,7 +481,7 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
                         {estadoGeneral.toUpperCase()}
                       </Badge>
                     </div>
-                    {/* Ring más grande, menos padding */}
+                    
                     <div className="flex-1 flex items-center justify-center px-1 pb-1">
                       <div className="w-[120px] h-[120px] relative">
                         <ReactECharts option={resumenRingOption} style={{ width: "100%", height: "100%" }} />
@@ -495,21 +492,21 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
                       </div>
                     </div>
                   </div>
-                </Card>
+                </Card> */}
                 {/* Índice 0 */}
                 {secciones[0] && (
                   <CardPunt label={secciones[0].title} punt={secciones[0].tscore} />
                 )}
 
                 {/* Radar (row-span-3) */}
-                <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-3 h-full py-3">
+                {/* <Card className="relative flex flex-col p-0 overflow-hidden shadow-sm border-0 row-span-3 h-full py-3">
                   <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(neutralColor)} />
                   <div className="flex flex-col flex-1 rounded-sm bg-gradient-to-br from-white to-white/90 dark:from-zinc-900 dark:to-zinc-900/80">
                     <div className="flex items-center px-4 gap-2">
                       <span className="w-6 h-6 rounded-sm flex items-center justify-center text-[12px] font-bold shadow-sm bg-primary/80 text-primary-bg">
                         {Icons.radar || "R"}
                       </span>
-                      <h3 className="text-[12px] text-primary-text font-semibold leading-snug">
+                      <h3 className="text-sm text-primary-text font-semibold leading-snug">
                         Distribución por índice
                       </h3>
                     </div>
@@ -523,7 +520,7 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
                       />
                     </div>
                   </div>
-                </Card>
+                </Card> */}
 
                 {/* Índice 1 */}
                 {secciones[1] && (
@@ -543,10 +540,10 @@ const RADAR_HEIGHT = `h-[${CLUSTER_CARD_HEIGHT * 2 + 16}px]`; // 456px
                     <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
                     <div className="rounded-sm bg-gradient-to-br from-white to-white/95 dark:from-zinc-900 dark:to-zinc-900/80 p-4 h-full flex flex-col">
                       <CardHeader className="p-0 mb-3 flex flex-row items-center justify-between">
-                        <CardTitle className="text-sm font-semibold flex items-center gap-2 text-primary-text">
-                          <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text-[13px] font-bold shadow-sm bg-primary/80">
+                        <CardTitle className="text-base font-semibold flex items-center gap-2 text-primary-text">
+                          {/* <span className="w-6 h-6 p-1 rounded-sm flex items-center justify-center text- font-bold shadow-sm bg-primary/80">
                             {Icons[sec.icon]}
-                          </span>
+                          </span> */}
                           {sec.title}
                         </CardTitle>
                       </CardHeader>

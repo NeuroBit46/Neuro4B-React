@@ -34,7 +34,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
       ],
     },
     { name: "Generar informe", iconKey: "report", path: "/generar-informe" },
-    { name: "Transformar datos", iconKey: "transform", path: "/transformar-datos" },
+    { name: "Exportar datos", iconKey: "transform", path: "/exportar-datos" },
   ];
 
   const location = useLocation();

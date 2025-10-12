@@ -11,7 +11,7 @@ export const Icons = {
     <Icon icon="eos-icons:configuration-file" className={`${size} ${color}`} />
   ),
   transform: (size = 'text-2xl', color = 'text-primary-bg') => (
-    <Icon icon="tabler:transform-filled" className={`${size} ${color}`} />
+    <Icon icon="line-md:file-export-filled" className={`${size} ${color}`} />
   ),
   close: (size = 'text-2xl', color = 'text-secondary-text') => (
     <Icon icon="gg:close-o" className={`${size} ${color}`} />

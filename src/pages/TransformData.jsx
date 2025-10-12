@@ -16,13 +16,13 @@ export default function TransformData(){
 
   return (
     <PageLayout
-      title="Transformar datos"
+      title="Exportar datos"
       headerAction={{ center: <SearchBar onBuscar={setTextoBusqueda} /> }}
     >
       <Card className="border-border/70 shadow-xs p-2 pt-3 gap-1">
         <CardHeader className="px-3 pt-0 pb-0 space-y-0">
-          <CardDescription className="text-xs text-secondary-text leading-snug">
-            Seleccione el trabajador para transformar sus datos
+          <CardDescription className="text-sm text-secondary-text leading-snug">
+            Seleccione un trabajador para exportar sus datos de Nesplora Ice Cream a Excel
           </CardDescription>
         </CardHeader>
         <CardContent className="px-3 pt-0 pb-3">

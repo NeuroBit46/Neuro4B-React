@@ -20,7 +20,6 @@ export default function TemplateSelector({
     { name: "Informe Supervisor", file: "/plantillas/supervisor.pdf", desc: "Detalle operativo para mandos medios." },
     { name: "Informe Gerencia", file: null, desc: "Versión en preparación." },
   ],
-  title = "Plantilla de informe",
   description = "Seleccione el perfil de informe a generar",
   showPreviewAction = true,
   compact = true,
@@ -40,10 +39,7 @@ export default function TemplateSelector({
     <>
       <Card className={`border-border/70 shadow-xs mt-4 gap-1 p-0 pb-5 ${className}`}>
         <CardHeader className="pt-3 pb-0">
-          {/* <CardTitle className="text-sm font-semibold text-primary-text">
-            {title}
-          </CardTitle> */}
-          <CardDescription className="text-xs text-secondary-text leading-relaxed">
+          <CardDescription className="text-sm text-secondary-text leading-relaxed">
             {description}
           </CardDescription>
         </CardHeader>
@@ -83,14 +79,14 @@ export default function TemplateSelector({
                       <span className="inline-flex text-primary/80">
                         {Icons.fileTemplate?.("size-4") ?? Icons.file?.("size-4")}
                       </span>
-                      <span className="font-medium text-xs text-primary-text truncate">
+                      <span className="font-medium text-sm text-primary-text truncate">
                         {tpl.name}
                       </span>
 
                       {!tpl.file && (
                         <Badge
                           variant="outline"
-                          className="px-1.5 py-0 h-5 text-[10px]"
+                          className="px-1.5 py-0 h-5 text-xs"
                         >
                           Próximamente
                         </Badge>
@@ -99,7 +95,7 @@ export default function TemplateSelector({
                       {selected && (
                         <Badge
                           variant="outline"
-                          className="px-2 py-0 h-5 text-[10px] font-medium border-primary/60 text-primary bg-primary/10"
+                          className="px-2 py-0 h-5 text-xs font-medium border-primary/60 text-primary bg-primary/10"
                         >
                           Seleccionada
                         </Badge>
@@ -107,7 +103,7 @@ export default function TemplateSelector({
                     </div>
 
                     {tpl.desc && (
-                      <p className="text-[10px] leading-snug text-secondary-text/80 line-clamp-2">
+                      <p className="text-xs leading-snug text-secondary-text/80 line-clamp-2">
                         {tpl.desc}
                       </p>
                     )}
@@ -123,7 +119,7 @@ export default function TemplateSelector({
                         e.stopPropagation();
                         handlePreview(tpl);
                       }}
-                      className="h-6 px-3 text-[10px] ml-1 border-primary/30 text-primary hover:bg-primary/10"
+                      className="h-6 px-3 text-xs ml-1 border-primary/30 text-primary hover:bg-primary/10"
                     >
                       {loading === tpl.name ? "…" : "Vista previa"}
                     </Button>

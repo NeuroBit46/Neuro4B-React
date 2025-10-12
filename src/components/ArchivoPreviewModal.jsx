@@ -1,15 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import PdfPreview from "./PdfPreview";
 import ExcelPreview from "./ExcelPreview";
 import WordPreview from "./WordPreview";
 import { formatBytes, formatDate } from "../utils/fileUtils";
 import { Icons } from "../constants/Icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function ArchivoPreviewModal({ file, onClose }) {
   const [tipo, setTipo] = useState("desconocido");
   const [loading, setLoading] = useState(true);
+  const [meta, setMeta] = useState({ columnsCount: 0, rowsCount: 0 });
+
+  // Evita recrear la función en cada render
+  const handleMeta = useCallback(
+    (m) => setMeta({ columnsCount: m?.columnsCount || 0, rowsCount: m?.rowsCount || 0 }),
+    []
+  );
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -28,144 +46,147 @@ export default function ArchivoPreviewModal({ file, onClose }) {
     if (file.type) {
       const t = file.type.toLowerCase();
       if (t.includes("pdf")) setTipo("pdf");
-      else if (
-        t.includes("sheet") ||
-        t.includes("excel") ||
-        t.includes("spreadsheet")
-      ) setTipo("excel");
-      else if (
-        t.includes("word") ||
-        t.includes("officedocument.wordprocessingml")
-      ) setTipo("word");
+      else if (t.includes("sheet") || t.includes("excel") || t.includes("spreadsheet")) setTipo("excel");
+      else if (t.includes("word") || t.includes("officedocument.wordprocessingml")) setTipo("word");
       else setTipo("desconocido");
     } else {
       const ext = file.url.split(".").pop().toLowerCase();
       if (ext === "pdf") setTipo("pdf");
-      else if (["xls", "xlsx"].includes(ext)) setTipo("excel");
+      else if (["xls", "xlsx", "csv"].includes(ext)) setTipo("excel");
       else if (["doc", "docx"].includes(ext)) setTipo("word");
       else setTipo("desconocido");
     }
   }, [file]);
 
   const isPublicFile =
-    file.url?.startsWith("/plantillas/") ||
-    file.url?.startsWith("/pdfs/") ||
-    file.url?.startsWith("/public/");
+    file?.url?.startsWith("/plantillas/") ||
+    file?.url?.startsWith("/pdfs/") ||
+    file?.url?.startsWith("/public/");
 
-  const fullUrl = file.url?.startsWith("/media/")
-    ? `${API_BASE}${file.url}`
-    : isPublicFile
-    ? file.url
-    : file.url?.startsWith("http")
-    ? file.url
-    : `${API_BASE}/${file.url?.replace(/^\/+/, "")}`;
+  const fullUrl = useMemo(() => {
+    if (!file?.url) return "";
+    return file.url.startsWith("/media/")
+      ? `${API_BASE}${file.url}`
+      : isPublicFile
+      ? file.url
+      : file.url.startsWith("http")
+      ? file.url
+      : `${API_BASE}/${file.url.replace(/^\/+/, "")}`;
+  }, [file, isPublicFile]);
+
+  const title = file?.name || "Vista previa";
 
   const renderVista = () => {
     if (!file || !file.url) return null;
-
-    let preview = null;
     if (tipo === "pdf") {
-      preview = <PdfPreview src={fullUrl} onLoadEnd={() => setLoading(false)} />;
-    } else if (tipo === "excel") {
-      preview = <ExcelPreview file={fullUrl} onLoadEnd={() => setLoading(false)} />;
-    } else if (tipo === "word") {
-      preview = <WordPreview file={fullUrl} onLoadEnd={() => setLoading(false)} zoom={0.9} />;
+      return <PdfPreview src={fullUrl} onLoadEnd={() => setLoading(false)} />;
     }
-
-    return (
-      <div className="relative min-h-[220px]">
-        {(tipo === "pdf" || tipo === "excel" || tipo === "word") && preview}
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-zinc-900/70 z-10">
-            <p className="text-center text-gray-500 dark:text-gray-300 italic py-6">
-              ⏳ Cargando archivo...
-            </p>
-          </div>
-        )}
-        {!loading && tipo === "desconocido" && (
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <p className="text-center text-red-500 italic py-6">
-              ⚠️ Formato no soportado.
-            </p>
-          </div>
-        )}
-      </div>
-    );
+    if (tipo === "excel") {
+      return (
+        <ExcelPreview
+          file={fullUrl}
+          onLoadEnd={() => setLoading(false)}
+          onMetaChange={handleMeta}
+        />
+      );
+    }
+    if (tipo === "word") {
+      return <WordPreview file={fullUrl} onLoadEnd={() => setLoading(false)} zoom={0.9} />;
+    }
+    return null;
   };
 
   return (
-    <div className="fixed inset-0 glass-secondary-bg z-50 flex items-center justify-center min-h-screen">
-      <div
-        className={`bg-primary-bg rounded-xl p-6 w-full max-w-4xl max-h-[90vh] shadow-xl overflow-y-auto border-l-4 ${
-          tipo === "excel"
-            ? "border-primary"
-            : tipo === "word"
-            ? "border-high"
-            : "border-secondary"
-        } flex flex-col gap-4`}
-      >
-        {/* Encabezado */}
-        <div className="flex justify-between items-center">
-          <h2 className="font-semibold text-lg">
-            {file?.name || "Vista previa"}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-secondary-text cursor-pointer hover:text-secondary text-sm transition-colors duration-200"
-          >
-            {Icons.close("text-2xl", "text-current")}
-          </button>
-        </div>
+    <Dialog open onOpenChange={(open) => { if (!open) onClose?.(); }}>
+      {/* Altura explícita: permite que h-full de los hijos funcione y haya scroll */}
+      <DialogContent className="min-w-2xl h-[85vh] p-0 flex flex-col min-h-0 [&>button]:hidden">
+        <DialogHeader className="px-6 pt-5 pb-0">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <DialogTitle className="truncate">{title}</DialogTitle>
 
-        {/* Metadata */}
-        <div className="flex flex-wrap gap-2 text-sm">
-          {file?.size > 0 && (
-            <span className="bg-gray-200 px-2 py-1 rounded-full">
-              📦 {formatBytes(file.size)}
-            </span>
-          )}
-          {file?.uploadedAt && (
-            <span className="bg-gray-200 px-2 py-1 rounded-full">
-              🗓️ {formatDate(file.uploadedAt)}
-            </span>
-          )}
-          <span className="bg-gray-200 px-2 py-1 rounded-full">
-            📁 {tipo.toUpperCase()}
-          </span>
+              {/* DialogDescription debe contener solo texto (renderiza <p>) */}
+              <DialogDescription className="sr-only">
+                Vista previa del archivo
+              </DialogDescription>
 
-          {/* Descargar */}
-          {file?.url && (
-            <a
-              href={fullUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`text-sm ml-auto relative group font-medium ${
-                tipo === "excel"
-                  ? "text-primary"
-                  : tipo === "word"
-                  ? "text-high"
-                  : "text-secondary"
-              }`}
-            >
-              <span className="relative z-10">Descargar</span>
-              <span
-                className={`absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-200 ${
-                  tipo === "excel"
-                    ? "bg-primary"
-                    : tipo === "word"
-                    ? "bg-high"
-                    : "bg-secondary"
-                }`}
+              {/* Badges y metadatos fuera del <p> de DialogDescription */}
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                {file?.size > 0 && (
+                  <Badge variant="secondary">📦 {formatBytes(file.size)}</Badge>
+                )}
+                {file?.uploadedAt && (
+                  <Badge variant="secondary">🗓️ {formatDate(file.uploadedAt)}</Badge>
+                )}
+                <Badge variant={tipo === "excel" ? "default" : "secondary"}>
+                  {tipo.toUpperCase()}
+                </Badge>
+                {tipo === "excel" && (
+                  <>
+                    <Badge variant="outline">{meta.columnsCount} columnas</Badge>
+                    <Badge variant="outline">{meta.rowsCount} filas</Badge>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Descargar */}
+            {file?.url && (
+              <Button asChild variant={tipo === "excel" ? "default" : "secondary"} size="sm" className="shrink-0">
+                <a href={fullUrl} target="_blank" rel="noopener noreferrer">Descargar</a>
+              </Button>
+            )}
+          </div>
+        </DialogHeader>
+
+        <Separator />
+
+        {/* Body ocupa el alto restante del modal (altura definida) */}
+        <div className="relative px-4 flex-1 min-h-0 overflow-hidden">
+          {/* Wrapper que da altura explícita a los previews */}
+          <div className="h-full min-h-0">
+            {tipo === "excel" && (
+              <ExcelPreview
+                file={fullUrl}
+                onLoadEnd={() => setLoading(false)}
+                onMetaChange={handleMeta}
+                height="100%"   // ahora 100% es altura real
               />
-            </a>
+            )}
+
+            {tipo === "pdf" && (
+              <div className="h-full min-h-0">
+                <PdfPreview
+                  src={fullUrl}
+                  onLoadEnd={() => setLoading(false)}
+                />
+              </div>
+            )}
+
+            {tipo === "word" && (
+              <div className="h-full min-h-0">
+                <WordPreview
+                  file={fullUrl}
+                  onLoadEnd={() => setLoading(false)}
+                  zoom={0.9}
+                />
+              </div>
+            )}
+          </div>
+
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-zinc-900/70 z-10">
+              <p className="text-center text-gray-500 dark:text-gray-300 italic py-6">
+                ⏳ Cargando archivo...
+              </p>
+            </div>
           )}
         </div>
 
-        {/* Vista previa */}
-        <div className="bg-gray-100 p-4 rounded-md flex-1 overflow-auto">
-          {renderVista()}
-        </div>
-      </div>
-    </div>
+        <DialogFooter className="px-6 pb-5">
+          <Button variant="outline" onClick={onClose} className="ml-auto">Cerrar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

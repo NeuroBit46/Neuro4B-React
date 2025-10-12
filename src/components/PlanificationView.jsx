@@ -1,12 +1,6 @@
-import { useState } from "react";
 import { Icons } from "../constants/Icons";
-import { FiltroSwitch } from "./BarGroupChart";
-import ScoreRangesCard from "./ScoreRangesCard";
-import SemiGauge from "./SemiGauge";
 import DualYAxisChart from "./Dual";
-import BarGroupChartECharts from "./BarChart";
 import { getNivelKey, getNivelLabel } from "../lib/nivel";
-import RawSummaryCards from "./RawSummaryCards";
 import LearningCurveChart from "./LearningCurveChart";
 import CardPunt from "./CardPunt";
 import GroupedMetricsCard from "./GroupedMetricsCard";
@@ -15,12 +9,7 @@ import { Card } from "./ui/card";
 
 export default function PlanificationView({ section, getColorSet }) {
   const {
-    title,
     tscore,
-    metrics,
-    miniDesc,
-    icon,
-    nivel,
   } = section;
 
   const categorias = ["PD", "PT", "PC"]; // PD mostrará el valor de PuntajeDuro (alias visual)

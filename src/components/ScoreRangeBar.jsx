@@ -56,7 +56,7 @@ export function ScoreRangeBar({
       {/* Barra de bandas */}
       <div
         className="relative w-full flex overflow-hidden rounded-full"
-        style={{ height: thickness, minWidth: '360px', maxHeight: '20px' }}
+        style={{ height: thickness, minWidth: '440px', maxHeight: '20px' }}
       >
         {ordered.map((b, idx) => {
           const colVar = b.color; // ej: var(--color-medium)
@@ -75,7 +75,7 @@ export function ScoreRangeBar({
               }}
             >
               {showLabels && (
-                <span className="text-[0.55rem] sm:text-[0.6rem] font-semibold tracking-wide px-1 text-center leading-tight select-none" style={{ color: labelColor }}>
+                <span className="text-xs font-semibold tracking-wide px-1 text-center leading-tight select-none" style={{ color: labelColor }}>
                   {b.label}
                 </span>
               )}

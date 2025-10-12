@@ -1,9 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import PageLayout from "../components/PageLayout";
-import TabsNesplora from "../components/TabsNesplora";
-import TabsDashboard from "../components/TabsDashboard";
-import SemiGauge from "../components/SemiGauge";
 import PlanificationView from "../components/PlanificationView";
 import WorkingMemoryView from "../components/WorkingMemoryView";
 import FlexibilityCognitiveView from "../components/FlexibilityCognitiveView";
@@ -223,7 +220,6 @@ export default function Dashboard() {
                       <p className="text-center text-xs font-medium" style={{ color }}>
                         {nivel}
                       </p>
-                      <SemiGauge value={tscore} color={color} background={background} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-x-12 gap-y-6 mt-6">
