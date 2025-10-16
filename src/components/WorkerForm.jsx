@@ -25,6 +25,7 @@ export default function WorkerForm({
 }) {
   const isView = mode === 'ver';
   const isEdit = mode === 'editar';
+  const isCreate = mode === 'crear';
 
   const [name, setName]           = useState(initialData.name || '');
   const [company, setCompany]     = useState(initialData.company || '');
@@ -267,6 +268,7 @@ export default function WorkerForm({
                 forceDisabled={loading}
                 fileLabel={pdfName ? `${pdfName}` : 'Archivo PDF Nesplora'}
                 onClick={() => !loading && pdfFile && openFileModal(pdfFile)}
+                disablePreview={isCreate}
               />
               {isEdit && pdfFile && (
                 <div className="flex justify-center space-x-4 mt-2">
@@ -290,6 +292,7 @@ export default function WorkerForm({
                 forceDisabled={loading}
                 fileLabel={excelName ? `${excelName}` : 'Archivo Excel EEG'}
                 onClick={() => !loading && excelFile && openFileModal(excelFile)}
+                disablePreview={isCreate}
               />
               {isEdit && excelFile && (
                 <div className="flex justify-center space-x-4 mt-2">

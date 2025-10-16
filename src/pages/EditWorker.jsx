@@ -48,7 +48,7 @@ export default function EditWorker() {
       const res = await fetch(`${API_BASE}/api/editar/${id}/`, { method: "POST", body: formData });
       if (!res.ok) throw new Error("Error al actualizar trabajador");
       if (meta?.pdfChanged) await runOCR();
-      navigate("/archivos-trabajadores");
+      navigate("/gestionar-trabajadores");
     } catch (e) {
       console.error(e);
       alert("No se pudo actualizar el trabajador");
