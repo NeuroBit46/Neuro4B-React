@@ -217,9 +217,7 @@ const DropzoneField = forwardRef(
                         e.stopPropagation();
                         onClick?.(e); // abrir preview
                       }}
-                      className="text-sm px-2 py-1 rounded-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 text-primary/80 transition cursor-pointer"
                     >
-                      Ver
                     </button>
                   )}
                   {onRemove && !completelyDisabled && (

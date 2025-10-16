@@ -207,7 +207,7 @@ export default function WorkerForm({
                   readOnly={isView}
                   disabled={loading}
                   placeholder={viewPlaceholder('name', name, 'Ingrese nombre completo del trabajador')}
-                  className={`text-primary-text placeholder:text-secondary-text/70 ${isView ? 'disabled:opacity-100' : ''}`}
+                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm ${isView ? 'disabled:opacity-100' : ''}`}
                 />
               </div>
             )}
@@ -225,7 +225,7 @@ export default function WorkerForm({
                   readOnly={isView}
                   disabled={loading}
                   placeholder={viewPlaceholder('company', company, 'Ingrese empresa del trabajador')}
-                  className={`text-primary-text placeholder:text-secondary-text/70 ${isView ? 'disabled:opacity-100' : ''}`}
+                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm ${isView ? 'disabled:opacity-100' : ''}`}
                 />
               </div>
             )}
@@ -243,7 +243,7 @@ export default function WorkerForm({
                   readOnly={isView}
                   disabled={loading}
                   placeholder={viewPlaceholder('position', position, 'Ingrese cargo del trabajador')}
-                  className={`text-primary-text placeholder:text-secondary-text/70 ${isView ? 'disabled:opacity-100' : ''}`}
+                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm ${isView ? 'disabled:opacity-100' : ''}`}
                 />
               </div>
             )}
@@ -271,12 +271,12 @@ export default function WorkerForm({
                 disablePreview={isCreate}
               />
               {isEdit && pdfFile && (
-                <div className="flex justify-center space-x-4 mt-2">
+                <div className="flex justify-evenly space-x-4 mt-2">
                   <ButtonBase size="sm" variant="secondary" onClick={handlePdfReplace} disabled={loading}>
-                    Cambiar archivo
+                    Cambiar PDF
                   </ButtonBase>
-                  <ButtonBase size="sm" variant="secondary" onClick={handlePdfRemove} disabled={loading}>
-                    Eliminar archivo
+                  <ButtonBase size="sm" className='glass-secondary text-secondary' onClick={handlePdfRemove} disabled={loading}>
+                    Eliminar PDF
                   </ButtonBase>
                 </div>
               )}
@@ -295,12 +295,12 @@ export default function WorkerForm({
                 disablePreview={isCreate}
               />
               {isEdit && excelFile && (
-                <div className="flex justify-center space-x-4 mt-2">
-                  <ButtonBase size="sm" variant="neutral" onClick={handleExcelReplace} disabled={loading}>
-                    Cambiar archivo
+                <div className="flex justify-evenly space-x-4 mt-2">
+                  <ButtonBase size="sm" variant="primary" onClick={handleExcelReplace} disabled={loading}>
+                    Cambiar EXCEL
                   </ButtonBase>
-                  <ButtonBase size="sm" className='glass-neutral-bg' onClick={handleExcelRemove} disabled={loading}>
-                    Eliminar archivo
+                  <ButtonBase size="sm" className='glass-primary-bg text-primary' onClick={handleExcelRemove} disabled={loading}>
+                    Eliminar EXCEL
                   </ButtonBase>
                 </div>
               )}
