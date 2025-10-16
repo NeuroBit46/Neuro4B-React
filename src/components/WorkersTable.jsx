@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   useReactTable,
@@ -48,7 +48,6 @@ export default function WorkersTable({
   setSelectedWorkers,
   onArchivoClick,
   onDeleteSuccess,
-
   // NUEVAS PROPS
   pagination = false,
   pageSize = 10,
@@ -59,6 +58,9 @@ export default function WorkersTable({
 }) {
   const navigate = useNavigate();
   const [confirmRow, setConfirmRow] = useState(null);
+  // Estado interno para actualizar la UI sin recargar
+  const [rowsState, setRowsState] = useState(workers);
+  useEffect(() => setRowsState(workers), [workers]);
 
   // Pre-filtrado por texto (nombre/empresa)
   const data = useMemo(() => {
@@ -67,10 +69,10 @@ export default function WorkersTable({
     // const sorted = [...workers].sort((a, b) => { ... });
     // return sorted.filter(...);
 
-    return workers.filter(
+    return rowsState.filter(
       (w) => limpiar(w.nombre).includes(f) || limpiar(w.empresa).includes(f)
     );
-  }, [workers, textoBusqueda]);
+  }, [rowsState, textoBusqueda]);
 
   const col = createColumnHelper();
 
@@ -265,8 +267,15 @@ export default function WorkersTable({
   // Eliminar trabajador
   const handleEliminar = async (row) => {
     try {
-      const res = await fetch(`${API_BASE}/api/eliminar/${row.id}/`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE}/api/eliminar/${row.id}/`, { method: "DELETE", credentials: "include" });
       if (!res.ok) throw new Error("No se pudo eliminar");
+      // 1) Actualizar lista local (UI inmediata)
+      setRowsState((prev) => prev.filter((w) => w.id !== row.id));
+      // 2) Limpiar selección si afectó al seleccionado
+      if (selectedWorkers?.[0] === row.id) {
+        setSelectedWorkers?.([]);
+      }
+      // 3) Notificar al padre (por si también sincroniza su estado)
       onDeleteSuccess?.(row.id);
 
       // Ajustar página si la actual queda sin filas tras la actualización

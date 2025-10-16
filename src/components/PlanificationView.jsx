@@ -28,7 +28,7 @@ export default function PlanificationView({ section, getColorSet }) {
 
   const categorias = ["PD", "PT", "PC"];
   const grupos = ["P1", "P2", "Total"];
-  const KEY_ACIERTOS = "Aciertos totales";
+  const KEY_ACIERTOS = "Aciertos";
   const KEY_TIEMPO = "Tiempo de asignación";
 
   const coerceNumber = (val) => {
@@ -110,14 +110,14 @@ export default function PlanificationView({ section, getColorSet }) {
       <div className="grid grid-cols-1 w-full items-center" style={{ gap: 'var(--planif-gap-x-main)' }}>
         <div className="col-span-12 md:col-span-8 grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--planif-gap-5)' }}>
           <div className="flex flex-col h-full" style={{ rowGap: 'var(--planif-gap-3)' }}>
-            <CardPunt label="Aciertos Totales (PT)" punt={formatMaybeNumber(aciertos.Total.PT) ?? "—"} />
+            <CardPunt label="Aciertos" punt={formatMaybeNumber(aciertos.Total.PT) ?? "—"} />
             <GroupedMetricsCard
               group={buildGroup(KEY_ACIERTOS)}
               panelClassName="bg-gradient-to-br from-white/70 to-white/50 dark:from-zinc-900/70 dark:to-zinc-900/50 h-full"
             />
           </div>
           <div className="flex flex-col h-full" style={{ rowGap: 'var(--planif-gap-3)' }}>
-            <CardPunt label="Tiempo de Asignación Total (PT)" punt={formatMaybeNumber(tiempoAsignacion.Total.PT) ?? "—"} />
+            <CardPunt label="Tiempo de Asignación" punt={formatMaybeNumber(tiempoAsignacion.Total.PT) ?? "—"} />
             <GroupedMetricsCard
               group={buildGroup(KEY_TIEMPO)}
               panelClassName="bg-gradient-to-br from-white/70 to-white/50 dark:from-zinc-900/70 dark:to-zinc-900/50 h-full"

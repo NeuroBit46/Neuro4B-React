@@ -172,7 +172,7 @@ export default function App() {
             {/* Raíz: decide una sola vez según estado */}
             <Route
               path="/"
-              element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />}
+              element={<Navigate to={isAuthenticated ? "/gestionar-trabajadores" : "/login"} replace />}
             />
 
             {/* 404 */}

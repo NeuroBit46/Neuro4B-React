@@ -3,6 +3,8 @@ import ButtonBase from './ButtonBase';
 import useWorkers from './UseWorkers';
 import { Badge } from '@/components/ui/badge'; // <-- agregado
 
+const API_BASE = (import.meta.env.VITE_API_BASE || '').replace(/\/+$/, '');
+
 export default function ButtonCreateReport({
   buttonLabel = 'Generar informe',
   requireTemplate = false,
@@ -82,7 +84,10 @@ export default function ButtonCreateReport({
     try {
       revokePreviousUrl();
 
-      const response = await fetch(`/api/descargar-informe/${pk}/`);
+      const response = await fetch(`${API_BASE}/api/descargar-informe/${pk}/`, {
+        method: 'GET',
+        credentials: 'include',
+      });
       if (!response.ok) {
         stopProgressSim(100);
         setGenerating(false);

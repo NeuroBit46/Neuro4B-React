@@ -18,6 +18,7 @@ const DualYAxisChart = ({
   height = 280,
   className = '',
   style = {},
+  barOpacity = 0.5, // NUEVO: controla opacidad de barras (0..1)
 }) => {
   const fontFamily = getComputedStyle(document.documentElement)
     .getPropertyValue('--font-sans')
@@ -50,11 +51,12 @@ const DualYAxisChart = ({
       yAxisMaxAciertos = observedMaxAciertos > 0 ? observedMaxAciertos : 1;
     }
 
+  const barOpacityClamped = Math.max(0, Math.min(1, barOpacity));
   const aciertosDataItems = aciertosDataNum.map(v => ({
     value: v,
     itemStyle: {
       color: v === 0 ? colorSecondary : colorPrimary,
-      opacity: 0.9,
+      opacity: barOpacityClamped,
     },
   }));
 
@@ -160,7 +162,10 @@ const DualYAxisChart = ({
         xAxisIndex: 0,
         barMinHeight: 5,
         label: { show: false },
-        itemStyle: { color: colorPrimary },
+        itemStyle: { color: colorPrimary, opacity: barOpacityClamped },
+        emphasis: {
+          itemStyle: { opacity: Math.min(1, barOpacityClamped + 0.3) },
+        },
       },
       {
         name: 'Tiempo de servicio',

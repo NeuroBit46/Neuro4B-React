@@ -32,7 +32,7 @@ export function LoginForm({ className, setIsAuthenticated, ...props }) {
         localStorage.setItem("refresh", data.refresh);
         localStorage.setItem("user", JSON.stringify(data.user));
         setIsAuthenticated && setIsAuthenticated(data.access); // pasa token
-        navigate("/dashboard", { replace: true });
+        navigate("/gestionar-trabajadores", { replace: true });
       } else {
         setError(data.error || "Credenciales incorrectas");
       }
