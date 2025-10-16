@@ -3,14 +3,13 @@ import ButtonBase from './ButtonBase';
 import useWorkers from './UseWorkers';
 import { Badge } from '@/components/ui/badge'; // <-- agregado
 
-const API_BASE = (import.meta.env.VITE_API_BASE || '').replace(/\/+$/, '');
-
 export default function ButtonCreateReport({
   buttonLabel = 'Generar informe',
   requireTemplate = false,
   selectedWorkers = [],
   selectedTpl = null,
   autoDownload = false,
+  API_BASE = import.meta.env.VITE_API_BASE, // igual que ButtonTransformData
 }) {
   const { workers } = useWorkers();
 
@@ -63,6 +62,13 @@ export default function ButtonCreateReport({
     setProgress(final);
   };
 
+  // Normaliza base; si no hay env, usa el mismo origen
+  const getApiBase = () => {
+    const raw = (API_BASE ?? '').toString().trim();
+    const base = raw ? raw.replace(/\/+$/, '') : window.location.origin.replace(/\/+$/, '');
+    return base;
+  };
+
   const generateReport = async () => {
     if (!canGenerate || generating) return;
 
@@ -84,7 +90,8 @@ export default function ButtonCreateReport({
     try {
       revokePreviousUrl();
 
-      const response = await fetch(`${API_BASE}/api/descargar-informe/${pk}/`, {
+      const base = getApiBase();
+      const response = await fetch(`${base}/api/descargar-informe/${pk}/`, {
         method: 'GET',
         credentials: 'include',
       });
