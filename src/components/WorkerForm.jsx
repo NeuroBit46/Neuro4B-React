@@ -269,8 +269,10 @@ export default function WorkerForm({
                 fileLabel={pdfName ? `${pdfName}` : 'Archivo PDF Nesplora'}
                 onClick={() => !loading && pdfFile && openFileModal(pdfFile)}
                 disablePreview={isCreate}
+                showPointer={!isCreate}
+                enableHover={!isCreate}
               />
-              {isEdit && pdfFile && (
+              {(isEdit || isCreate) && pdfFile && (
                 <div className="flex justify-evenly space-x-4 mt-2">
                   <ButtonBase size="sm" variant="secondary" onClick={handlePdfReplace} disabled={loading}>
                     Cambiar PDF
@@ -293,8 +295,10 @@ export default function WorkerForm({
                 fileLabel={excelName ? `${excelName}` : 'Archivo Excel EEG'}
                 onClick={() => !loading && excelFile && openFileModal(excelFile)}
                 disablePreview={isCreate}
+                showPointer={!isCreate}
+                enableHover={!isCreate}
               />
-              {isEdit && excelFile && (
+              {(isEdit || isCreate) && excelFile && (
                 <div className="flex justify-evenly space-x-4 mt-2">
                   <ButtonBase size="sm" variant="primary" onClick={handleExcelReplace} disabled={loading}>
                     Cambiar EXCEL

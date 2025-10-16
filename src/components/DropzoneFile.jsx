@@ -27,6 +27,8 @@ const DropzoneField = forwardRef(
       className = "",
       innerClassName = "",
       disablePreview = false, // NUEVO: oculta/desactiva "Ver" y el click de preview
+      showPointer = true,     // NUEVO: controla cursor pointer en el dropzone
+      enableHover = true,     // NUEVO: controla estados visuales de hover/drag
     },
     ref
   ) => {
@@ -74,6 +76,34 @@ const DropzoneField = forwardRef(
     const fileType = detectFileType();
 
     const canPreview = !!file && !completelyDisabled && !disablePreview;
+
+    // Colores de hover/ring según tipo de archivo
+    const hoverRingCls =
+      fileType === 'pdf'
+        ? 'hover:border-secondary/75 focus-visible:ring-secondary/25 focus:border-secondary/60'
+        : (fileType === 'csv' || fileType === 'excel')
+          ? 'hover:border-primary/75 focus-visible:ring-primary/25 focus:border-primary/60'
+          : 'hover:border-primary/50 focus-visible:ring-primary/25 focus:border-primary/60';
+
+    // Borde durante drag activo según tipo
+    const dragBorderCls =
+      (enableHover && isDragActive)
+        ? (fileType === 'pdf'
+            ? 'border-secondary/75'
+            : (fileType === 'csv' || fileType === 'excel')
+              ? 'border-primary/75'
+              : 'border-primary/60')
+        : '';
+
+    // Borde interno (dashed) durante drag activo según tipo
+    const innerDragBorderCls =
+      (enableHover && isDragActive)
+        ? (fileType === 'pdf'
+            ? '!border-secondary/75'
+            : (fileType === 'csv' || fileType === 'excel')
+              ? '!border-primary/75'
+              : '!border-primary/60')
+        : '';
 
     const handleClick = e => {
       e.stopPropagation();
@@ -134,12 +164,13 @@ const DropzoneField = forwardRef(
             className: [
               "relative rounded-md border border-border/60 transition",
               "p-4 sm:p-5",
-              "cursor-pointer",
+              showPointer ? "cursor-pointer" : "cursor-default",
               "bg-gradient-to-br from-background to-background/95",
-              "hover:border-primary/50",
+              enableHover ? hoverRingCls : "",
+              !enableHover && "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
               completelyDisabled && "opacity-60 pointer-events-none",
-              isDragActive && "border-transparent",
-              isDragReject && "border-destructive/60",
+              dragBorderCls,
+              (enableHover && isDragReject) && "border-destructive/60",
               innerClassName
             ].join(' ')
           })}
@@ -158,10 +189,10 @@ const DropzoneField = forwardRef(
           <div
             className={[
               "pointer-events-none absolute inset-0 rounded-md",
-              "opacity-0 group-hover:opacity-100 transition-opacity",
+              enableHover ? "opacity-0 group-hover:opacity-100 transition-opacity" : "opacity-0",
               "bg-[conic-gradient(var(--tw-gradient-stops))]",
               accent,
-              isDragActive && "opacity-100 animate-pulse"
+              (enableHover && isDragActive) && "opacity-100 animate-pulse"
             ].join(' ')}
             style={{
               mask: "linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)",
@@ -180,7 +211,7 @@ const DropzoneField = forwardRef(
               "flex flex-col items-center justify-center text-center",
               "min-h-[140px] sm:min-h-[120px] px-4",
               subtleBg,
-              isDragActive && "!border-primary/60",
+              innerDragBorderCls,
               isPreviewMode ? "border-border/40" : "border-border/60",
             ].join(' ')}
           >

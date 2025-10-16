@@ -1,6 +1,7 @@
 // filepath: c:\Users\vania\OneDrive\Documentos\GitHub\Neuro4B-React\src\components\WordPreview.jsx
 import { useEffect, useRef, useState, useCallback } from "react";
 import { renderAsync } from "docx-preview";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function WordPreview({ file, onLoadEnd, className = "" }) {
   const containerRef = useRef(null);
@@ -59,7 +60,7 @@ export default function WordPreview({ file, onLoadEnd, className = "" }) {
   }, [loadDocx]);
 
   return (
-    <div className={`w-full h-full overflow-auto ${className}`}>
+    <div className={`w-full h-full ${className}`}>
       {error && (
         <div className="text-red-500 italic text-center py-4">
           {error}
@@ -71,9 +72,13 @@ export default function WordPreview({ file, onLoadEnd, className = "" }) {
         </div>
       )}
       {!error && (
-        <div className="flex flex-col items-center gap-6 py-4">
-          <div ref={containerRef} className="flex flex-col items-center gap-6 w-full" />
-        </div>
+        <ScrollArea type="auto" className="h-full w-full [--scrollbar-size:12px] pr-2 pb-2">
+          <div className="flex flex-col items-center gap-6 py-4">
+            <div ref={containerRef} className="flex flex-col items-center gap-6 w-full" />
+          </div>
+          <ScrollBar orientation="vertical" forceMount className="z-30" />
+          <ScrollBar orientation="horizontal" forceMount className="z-30" />
+        </ScrollArea>
       )}
     </div>
   );

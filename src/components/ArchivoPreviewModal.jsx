@@ -99,7 +99,7 @@ export default function ArchivoPreviewModal({ file, onClose }) {
   return (
     <Dialog open onOpenChange={(open) => { if (!open) onClose?.(); }}>
       {/* Altura explícita: permite que h-full de los hijos funcione y haya scroll */}
-      <DialogContent className="min-w-2xl h-[85vh] p-0 flex flex-col min-h-0 [&>button]:hidden">
+      <DialogContent className="min-w-2xl h-[85vh] p-0 flex flex-col min-h-0 overflow-hidden [&>button]:hidden">
         <DialogHeader className="px-6 pt-5 pb-0">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
@@ -141,35 +141,26 @@ export default function ArchivoPreviewModal({ file, onClose }) {
 
         <Separator />
 
-        {/* Body ocupa el alto restante del modal (altura definida) */}
+        {/* Body ocupa el alto restante del modal */}
         <div className="relative px-4 flex-1 min-h-0 overflow-hidden">
-          {/* Wrapper que da altura explícita a los previews */}
-          <div className="h-fit min-h-0">
+          {/* Wrapper con altura 100% para que ScrollArea funcione */}
+          <div className="h-full min-h-0">
             {tipo === "excel" && (
               <ExcelPreview
                 file={fullUrl}
                 onLoadEnd={() => setLoading(false)}
                 onMetaChange={handleMeta}
-                height="100%"   // ahora 100% es altura real
+                height="100%"
               />
             )}
-
             {tipo === "pdf" && (
-              <div className="h-fit min-h-0">
-                <PdfPreview
-                  src={fullUrl}
-                  onLoadEnd={() => setLoading(false)}
-                />
+              <div className="h-full min-h-0">
+                <PdfPreview src={fullUrl} onLoadEnd={() => setLoading(false)} />
               </div>
             )}
-
             {tipo === "word" && (
-              <div className="h-fit min-h-0">
-                <WordPreview
-                  file={fullUrl}
-                  onLoadEnd={() => setLoading(false)}
-                  zoom={0.9}
-                />
+              <div className="h-full min-h-0">
+                <WordPreview file={fullUrl} onLoadEnd={() => setLoading(false)} />
               </div>
             )}
           </div>
