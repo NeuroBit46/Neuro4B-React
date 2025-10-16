@@ -262,7 +262,7 @@ export default function Dashboard() {
   return (
     <PageLayout
       title={dynamicTitle}
-      titleAddon={renderTitleAddon()}
+      // titleAddon={renderTitleAddon()}
       headerAction={{
         left: selectedWorker && (
           <div className="text-xs text-primary-text text-right">
@@ -303,9 +303,9 @@ export default function Dashboard() {
 
               {/* Subíndices */}
               <div className="grid gap-4 md:grid-cols-3">
-               {seccionesPT.map((sec) => (
+               {/* {seccionesPT.map((sec) => (
                  <CardPunt key={sec.title} label={sec.title} punt={sec.tscore} />
-               ))}
+               ))} */}
                {seccionesPT.map((sec) => (
                  <Card key={sec.title || sec.icon} className="relative p-0 border-0 shadow-sm overflow-hidden h-full">
                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
