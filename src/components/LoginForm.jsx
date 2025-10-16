@@ -52,7 +52,7 @@ export function LoginForm({ className, setIsAuthenticated, ...props }) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0 glass-primary text-primary-text">
+      <Card className="overflow-hidden p-0 glass-primary-bg text-primary-text">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
@@ -72,18 +72,19 @@ export function LoginForm({ className, setIsAuthenticated, ...props }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className={"bg-white"}
                 />
               </div>
 
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Contraseña</Label>
-                  <a
+                  {/* <a
                     href="#"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     ¿Olvidaste tu contraseña?
-                  </a>
+                  </a> */}
                 </div>
                 <Input
                   id="password"
@@ -91,6 +92,7 @@ export function LoginForm({ className, setIsAuthenticated, ...props }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  className={"bg-white"}
                 />
               </div>
 
@@ -98,7 +100,7 @@ export function LoginForm({ className, setIsAuthenticated, ...props }) {
                 <div className="text-red-500 text-sm text-center">{error}</div>
               )}
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" variant={"neutral"} className="w-full">
                 Iniciar sesión
               </Button>
             </div>
