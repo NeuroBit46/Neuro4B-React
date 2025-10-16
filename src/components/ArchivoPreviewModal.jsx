@@ -132,7 +132,7 @@ export default function ArchivoPreviewModal({ file, onClose }) {
 
             {/* Descargar */}
             {file?.url && (
-              <Button asChild variant={tipo === "excel" ? "default" : "secondary"} size="sm" className="shrink-0">
+              <Button asChild variant="neutral" size="sm" className="shrink-0">
                 <a href={fullUrl} target="_blank" rel="noopener noreferrer">Descargar</a>
               </Button>
             )}
@@ -144,7 +144,7 @@ export default function ArchivoPreviewModal({ file, onClose }) {
         {/* Body ocupa el alto restante del modal (altura definida) */}
         <div className="relative px-4 flex-1 min-h-0 overflow-hidden">
           {/* Wrapper que da altura explícita a los previews */}
-          <div className="h-full min-h-0">
+          <div className="h-fit min-h-0">
             {tipo === "excel" && (
               <ExcelPreview
                 file={fullUrl}
@@ -155,7 +155,7 @@ export default function ArchivoPreviewModal({ file, onClose }) {
             )}
 
             {tipo === "pdf" && (
-              <div className="h-full min-h-0">
+              <div className="h-fit min-h-0">
                 <PdfPreview
                   src={fullUrl}
                   onLoadEnd={() => setLoading(false)}
@@ -164,7 +164,7 @@ export default function ArchivoPreviewModal({ file, onClose }) {
             )}
 
             {tipo === "word" && (
-              <div className="h-full min-h-0">
+              <div className="h-fit min-h-0">
                 <WordPreview
                   file={fullUrl}
                   onLoadEnd={() => setLoading(false)}

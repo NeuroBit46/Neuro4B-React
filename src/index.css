@@ -70,6 +70,22 @@
   border: 1px solid rgba(236, 153, 146, 0.4);
 }
 
+.glass-neutral-bg {
+  backdrop-filter: blur(4px);
+  background-color: rgba(166, 148, 204, 0.15);
+  border: 1px solid rgba(166, 148, 204, 0.3);
+  box-shadow: 0 8px 20px rgba(166, 148, 204, 0.10);
+  transition: box-shadow 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-neutral {
+  backdrop-filter: blur(4px);
+  background-color: rgba(166, 148, 204, 0.25);
+  border: 1px solid rgba(166, 148, 204, 0.3);
+  box-shadow: 0 8px 20px rgba(166, 148, 204, 0.10);
+  transition: box-shadow 0.3s ease, box-shadow 0.3s ease;
+}
+
 .glass-secondary-bg {
   backdrop-filter: blur(4px);
   background-color: rgba(67, 174, 185, 0.25);
@@ -77,6 +93,7 @@
   box-shadow: 0 8px 20px rgba(78, 185, 197, 0.10);
   transition: box-shadow 0.3s ease, box-shadow 0.3s ease;
 }
+
 .glass-tertiary-bg {
   backdrop-filter: blur(4px);
   background-color: rgba(79, 143, 137, 0.35);

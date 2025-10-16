@@ -13,20 +13,22 @@ export default function ConfirmModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 glass-secondary-bg"
+        className="absolute inset-0 glass-neutral-bg"
         onClick={onCancel}
         aria-hidden="true"
       />
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-sm bg-secondary-bg rounded-md shadow-md">
+      <div className="relative z-10 w-full max-w-sm bg-primary-bg rounded-md shadow-md">
         <div className="px-6 py-5 space-y-4 text-center">
-          <h2 className="text-base font-semibold text-primary-text">{title}</h2>
-          <p className="text-sm text-primary-text">{message}</p>
-          <div className="pt-2 flex items-center justify-center gap-3">
-            <ButtonBase variant="primary" size="sm" onClick={onConfirm}>
+          <h2 className="text-lg font-semibold text-primary-text">{title}</h2>
+          <div className="text-base text-primary-text whitespace-pre-line">
+            {message}
+          </div>
+          <div className="pt-2 flex items-center justify-around gap-3">
+            <ButtonBase variant="neutral" size="base" onClick={onConfirm}>
               Confirmar
             </ButtonBase>
-            <ButtonBase variant="disabledSecondary" size="sm" onClick={onCancel} className='cursor-pointer'>
+            <ButtonBase size="base" onClick={onCancel} className='cursor-pointer glass-neutral-bg text-neutral'>
               Cancelar
             </ButtonBase>
           </div>

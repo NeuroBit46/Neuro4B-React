@@ -4,7 +4,7 @@ import useWorkers from './UseWorkers';
 import { Badge } from '@/components/ui/badge'; // <-- agregado
 
 export default function ButtonTransformData({
-  buttonLabel = 'Transformar datos',
+  buttonLabel = 'Exportar datos',
   selectedWorkers = [],
   API_BASE = import.meta.env.VITE_API_BASE,
 }) {
@@ -88,7 +88,7 @@ export default function ButtonTransformData({
       if (!res.ok) {
         stopProgressSim(100);
         setGenerating(false);
-        setError('No se pudieron transformar los datos. Intenta de nuevo.');
+        setError('No se pudieron exportar los datos. Intenta de nuevo.');
         return;
       }
 
@@ -102,7 +102,7 @@ export default function ButtonTransformData({
       console.error('Error transformación:', e);
       stopProgressSim(100);
       setGenerating(false);
-      setError('No se pudieron transformar los datos. Revisa tu conexión.');
+      setError('No se pudieron exportar los datos. Revisa tu conexión.');
     }
   };
 
@@ -110,7 +110,7 @@ export default function ButtonTransformData({
     if (!fileUrl) return;
     const link = document.createElement('a');
     link.href = fileUrl;
-    link.download = generatedFileName || 'datos-transformados.xlsx';
+    link.download = generatedFileName || 'datos-exportados.xlsx';
     link.click();
   };
 
@@ -124,13 +124,13 @@ export default function ButtonTransformData({
           <ButtonBase
             onClick={handleTransform}
             disabled={!canTransform || generating}
-            variant="primary"
+            variant="neutral"
             size="md"
             className="relative overflow-hidden min-w-[170px] justify-center"
             isLoading={false} // oculto spinner propio; usamos barra interna
           >
             <span className="relative z-10 flex items-center gap-1.5">
-              {generating ? 'Transformando…' : buttonLabel}
+              {generating ? 'Exportando...' : buttonLabel}
             </span>
             {generating && (
               <span
@@ -162,7 +162,7 @@ export default function ButtonTransformData({
                 {pct}%
               </div>
               <span className="hidden sm:inline text-secondary-text/70">
-                Procesando datos…
+                Exportando datos…
               </span>
             </div>
         )}
@@ -204,7 +204,7 @@ export default function ButtonTransformData({
         {/* Oculto para lectores de pantalla */}
         {generating && (
           <span className="sr-only">
-            Progreso de transformación {pct} por ciento
+            Progreso de exportación {pct} por ciento
           </span>
         )}
       </div>

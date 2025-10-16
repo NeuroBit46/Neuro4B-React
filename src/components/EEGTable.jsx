@@ -116,7 +116,7 @@ export default function EEGTable({
   const resolvedHeight = React.useMemo(() => {
     if (typeof height === "number") return `${height}px`;
     const h = (height || "").toString().trim();
-    if (!h || h === "100%") return "55vh";
+    if (!h || h === "100%") return "59.5vh";
     return h; // "60vh", "480px", etc.
   }, [height]);
 

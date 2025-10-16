@@ -16,6 +16,8 @@ const mapVariant = (v) => {
       return "outline";
     case "destructive":
       return "destructive";
+    case "neutral":
+      return "neutral";
     default:
       return "default";
   }

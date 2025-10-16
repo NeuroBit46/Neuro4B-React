@@ -188,14 +188,14 @@ export default function WorkerForm({
       {/* Card: Datos del trabajador */}
       <Card className="rounded-sm shadow-xs gap-2 py-4">
         <CardHeader>
-          <CardTitle className='text-sm text-primary-text'>Datos del trabajador</CardTitle>
+          <CardTitle className='text-base text-primary-text'>Datos del trabajador</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-5">
             {/* Nombre */}
             {!shouldHide(name) && (
               <div className="flex flex-col">
-                <label className="text-xs font-medium text-secondary-text mb-1 flex items-center gap-2">
+                <label className="text-sm font-medium text-secondary-text mb-1 flex items-center gap-2">
                   {renderIcon(Icons.workers, dimName)}
                   Nombre
                 </label>
@@ -214,7 +214,7 @@ export default function WorkerForm({
             {/* Empresa */}
             {!shouldHide(company) && (
               <div className="flex flex-col">
-                <label className="text-xs font-medium text-secondary-text mb-1 flex items-center gap-2">
+                <label className="text-sm font-medium text-secondary-text mb-1 flex items-center gap-2">
                   {renderIcon(Icons.company, dimCompany)}
                   Empresa
                 </label>
@@ -232,7 +232,7 @@ export default function WorkerForm({
             {/* Cargo */}
             {!shouldHide(position) && (
               <div className="flex flex-col">
-                <label className="text-xs font-medium text-secondary-text mb-1 flex items-center gap-2">
+                <label className="text-sm font-medium text-secondary-text mb-1 flex items-center gap-2">
                   {renderIcon(Icons.position, dimPosition)}
                   Cargo
                 </label>
@@ -253,7 +253,7 @@ export default function WorkerForm({
       {/* Card: Archivos */}
       <Card className="rounded-sm shadow-xs gap-0 py-4">
         <CardHeader>
-          <CardTitle className='text-sm text-primary-text'>Archivos</CardTitle>
+          <CardTitle className='text-base text-primary-text'>Archivos</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20">
@@ -293,10 +293,10 @@ export default function WorkerForm({
               />
               {isEdit && excelFile && (
                 <div className="flex justify-center space-x-4 mt-2">
-                  <ButtonBase size="sm" variant="secondary" onClick={handleExcelReplace} disabled={loading}>
+                  <ButtonBase size="sm" variant="neutral" onClick={handleExcelReplace} disabled={loading}>
                     Cambiar archivo
                   </ButtonBase>
-                  <ButtonBase size="sm" variant="secondary" onClick={handleExcelRemove} disabled={loading}>
+                  <ButtonBase size="sm" className='glass-neutral-bg' onClick={handleExcelRemove} disabled={loading}>
                     Eliminar archivo
                   </ButtonBase>
                 </div>
@@ -309,14 +309,14 @@ export default function WorkerForm({
           <CardFooter className="flex items-center justify-center gap-8 mt-4">
             <ButtonBase
               onClick={handleSubmit}
-              variant="primary"
+              variant="neutral"
               size="md"
               disabled={loading}
               className="flex items-center gap-2"
               // showLoadingBar  // evita duplicar start/done; la página ya los llama
-              loadingText={isEdit ? "Actualizando trabajador..." : "Creando trabajador..."}
+              loadingText={isEdit ? "Editando trabajador..." : "Añadiendo trabajador..."}
             >
-              {isEdit ? "Actualizar trabajador" : "Crear trabajador"}
+              {isEdit ? "Editar trabajador" : "Añadir trabajador"}
             </ButtonBase>
 
             {globalLoading && (

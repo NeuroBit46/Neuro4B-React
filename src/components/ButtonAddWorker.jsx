@@ -9,7 +9,7 @@ export default function ButtonAddWorker() {
   };
 
   return (
-    <ButtonBase onClick={handleClick} variant="primary" size="sm" className="flex items-center gap-2">
+    <ButtonBase onClick={handleClick} variant="neutral" size="sm" className="flex items-center gap-2">
       Añadir trabajador
     </ButtonBase>
   );

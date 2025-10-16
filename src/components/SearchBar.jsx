@@ -30,10 +30,10 @@ export default function SearchBar({
     return Number.isFinite(n) ? n : 0;
   };
 
-  // Orden: id de mayor a menor (más reciente primero)
+  const workersArr = Array.isArray(workers) ? workers : [];
   const workersSorted = useMemo(() => {
-    return [...workers].sort((a, b) => getIdNum(b) - getIdNum(a));
-  }, [workers]);
+    return [...workersArr].sort((a, b) => getIdNum(b) - getIdNum(a));
+  }, [workersArr]);
 
   // Aplica el filtro sobre la lista ordenada
   const filtrados = workersSorted.filter((w) =>
@@ -74,7 +74,7 @@ export default function SearchBar({
   return (
     <div
       ref={anchorRef}
-      className="relative w-full max-w-xs ml-10 text-primary-text glass-secondary-bg rounded-lg"
+      className="relative w-full max-w-xs ml-10 text-primary-text glass-neutral-bg rounded-lg"
     >
       <div className="flex">
         {Icons.search}
@@ -85,7 +85,7 @@ export default function SearchBar({
           onFocus={() => useCombobox && setOpen(true)}
           onBlur={() => useCombobox && setTimeout(() => setOpen(false), 150)}
           placeholder={placeholderText}
-          className="w-full px-4 py-1.5 pl-13 text-xs rounded-full focus:outline-none"
+          className="w-full px-4 py-1.5 pl-13 text-sm rounded-full focus:outline-none"
         />
       </div>
 

@@ -205,7 +205,7 @@ export default function WorkersTable({
               <div className="flex items-center justify-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 p-0" aria-label="Acciones">
+                    <Button variant="ghost" size="icon" className="h-7 w-7 p-0 glass-neutral-bg" aria-label="Acciones">
                       <span className="scale-125">{Icons.options}</span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -224,7 +224,7 @@ export default function WorkersTable({
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="text-destructive focus:text-destructive cursor-pointer"
+                      className="text-destructive/80 focus:text-destructive/70 cursor-pointer"
                       onClick={() => setConfirmRow(row.original)}
                     >
                       Eliminar
@@ -426,7 +426,11 @@ export default function WorkersTable({
       <ConfirmModal
         open={!!confirmRow}
         title="Eliminar trabajador"
-        message={confirmRow ? `¿Seguro que desea eliminar a ${confirmRow.nombre}? Esta acción no se puede deshacer.` : ""}
+        message={
+          confirmRow
+            ? `¿Seguro que desea eliminar a ${confirmRow.nombre}?\nEsta acción no se puede deshacer`
+            : ""
+        }
         onConfirm={() => confirmRow && handleEliminar(confirmRow)}
         onCancel={() => setConfirmRow(null)}
       />

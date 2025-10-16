@@ -12,7 +12,7 @@ export default defineConfig({
     allowedHosts: ['neurobit.duckdns.org'],
     proxy: {
       '/api': {
-        target: 'http://190.162.134.254:1238', // tu backend local
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: true,
       }

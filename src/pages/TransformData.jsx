@@ -39,7 +39,7 @@ export default function TransformData(){
       </Card>
 
       <ButtonTransformData
-        buttonLabel="Transformar datos"
+        buttonLabel="Exportar datos"
         selectedWorkers={selectedWorkers}
       />
     </PageLayout>

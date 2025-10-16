@@ -3,14 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import Sidebar from './components/Sidebar';
 import CreateReport from './pages/CreateReport';
 import TransformData from './pages/TransformData';
-import WorkerFiles from './pages/WorkerFiles';
+import WorkerFiles from "./pages/WorkerFiles";
 import AddWorker from './pages/AddWorker';
 import DetailWorker from './pages/DetailWorker';
 import EditWorker from './pages/EditWorker';
 import Dashboard from './pages/Dashboard';
 import { Icons } from './constants/Icons';
 import LoginPage from './pages/Login';
-import DashboardGeneral from './components/DashboardGeneral';
+import DashboardGeneral from './components/DashboardGeneral copy';
 
 // Componente para rutas privadas
 function PrivateRoute({ children, isAuthenticated }) {
@@ -134,7 +134,7 @@ export default function App() {
               element={<Navigate to="/exportar-datos" replace />}
             />
             <Route
-              path="/archivos-trabajadores"
+              path="/gestionar-trabajadores"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <WorkerFiles />

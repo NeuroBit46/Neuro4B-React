@@ -132,7 +132,7 @@ export default function ButtonCreateReport({
           <ButtonBase
             onClick={generateReport}
             disabled={!canGenerate || generating}
-            variant="primary"
+            variant="neutral"
             size="md"
             className="relative overflow-hidden min-w-[170px] justify-center"
             isLoading={false}

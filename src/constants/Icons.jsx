@@ -16,9 +16,9 @@ export const Icons = {
   close: (size = 'text-2xl', color = 'text-secondary-text') => (
     <Icon icon="gg:close-o" className={`${size} ${color}`} />
   ),
-  search: <Icon icon="lets-icons:search" className='text-xl absolute left-4 top-1/2 -translate-y-1/2 text-secondary-text pointer-events-none' />,
+  search: <Icon icon="lets-icons:search" className='text-xl absolute left-4 top-1/2 -translate-y-1/2 text-neutral pointer-events-none' />,
   unavailable: <Icon icon="gg:unavailable" className='text-2xl text-secondary-text'/>,
-  options: <Icon icon='simple-line-icons:options' className='text-2xl text-secondary cursor-pointer'/>,
+  options: <Icon icon='simple-line-icons:options' className='text-2xl text-neutral cursor-pointer'/>,
   read: <Icon icon='flowbite:eye-solid' className='text-xl text-primary'/>,
   edit: <Icon icon='mynaui:edit-solid' className='text-xl text-primary'/>,
   delete: <Icon icon='mdi:delete' className='text-xl text-secondary'/>,

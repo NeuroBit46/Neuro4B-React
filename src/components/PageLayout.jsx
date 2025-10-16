@@ -1,14 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import InfoTooltip from './InfoTooltip';
 
-/**
- * PageLayout
- * - Si se pasa la prop `title`, se usa directamente.
- * - Si NO se pasa `title`, intenta inferir un título a partir de la ruta actual.
- *   Útil para no repetir lógica simple en cada página.
- * - Rutas con parámetros (/:id) se reconocen por prefix.
- * - Se puede extender el mapa sin romper compatibilidad.
- */
 export default function PageLayout({ title, tooltip, headerAction, titleAddon, children }) {
   const location = useLocation();
 
@@ -43,9 +35,9 @@ export default function PageLayout({ title, tooltip, headerAction, titleAddon, c
       {/* Header con centro absoluto para que permanezca centrado sin importar el ancho lateral */}
       <div className="shrink-0 z-1 isolate relative flex items-center rounded-sm px-6 py-2 bg-white border-b border-primary/10 min-h-[54px]">
         {/* Bloque izquierdo (título, tooltip, addon) */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
-            <h1 className="text-md font-semibold text-primary-text pl-2" data-testid="page-title">
+            <h1 className="text-lg font-bold text-primary-text pl-2" data-testid="page-title">
               {effectiveTitle}
             </h1>
             {tooltip && <InfoTooltip message={tooltip} />}
@@ -64,7 +56,7 @@ export default function PageLayout({ title, tooltip, headerAction, titleAddon, c
             {headerAction?.center && (
               <div
                 className="pointer-events-auto flex items-center"
-                style={{ minWidth: '300px', width: 'clamp(300px, 50vw, 300px)' }}
+                style={{ minWidth: '300px', width: 'clamp(320px, 50vw, 300px)' }}
               >
                 {headerAction.center}
               </div>

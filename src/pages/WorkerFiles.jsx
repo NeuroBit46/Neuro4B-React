@@ -11,10 +11,11 @@ export default function WorkerFiles(){
 
   return (
     <PageLayout
-      title="Archivos trabajadores"
+      title="Gestionar trabajadores"
+      titleAddon={showAddButton ? <ButtonAddWorker /> : null}
       headerAction={{
         center: <SearchBar onBuscar={setTextoBusqueda} />,
-        right: showAddButton ? <ButtonAddWorker /> : null
+        // right: showAddButton ? <ButtonAddWorker /> : null
       }}
     >
       <WorkersList
@@ -27,7 +28,7 @@ export default function WorkerFiles(){
         stickyHeader={false}
         bodyMaxHeightClass={undefined}
         footerPinned={true}
-        pageMinHeightClass="flex-1 min-h-0"   // <- reemplaza 80vh por layout relativo
+        pageMinHeightClass="flex-1 min-h-0"
       />
     </PageLayout>
   );

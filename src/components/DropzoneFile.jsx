@@ -191,18 +191,18 @@ const DropzoneField = forwardRef(
 
               {file ? (
                 <div className="space-y-1">
-                  <p className="text-[11px] uppercase tracking-wide font-medium text-secondary-text/70">
+                  <p className="text-sm uppercase tracking-wide font-medium text-secondary-text/70">
                     {fileType === 'pdf'
                       ? 'Archivo PDF Nesplora'
                       : (fileType === 'csv' || fileType === 'excel')
                         ? 'Archivo Excel EEG'
                         : 'Archivo'}
                   </p>
-                  <p className="text-xs font-semibold text-primary-text break-all max-w-[220px]">
+                  <p className="text-sm font-semibold text-primary-text break-all max-w-[220px]">
                     {file.name || fileLabel}
                   </p>
                   {sizeLabel && (
-                    <p className="text-[10px] text-secondary-text/60">
+                    <p className="text-sm text-secondary-text/60">
                       {sizeLabel}
                     </p>
                   )}
@@ -213,7 +213,7 @@ const DropzoneField = forwardRef(
                         e.stopPropagation();
                         onClick?.(e); // abrir preview zoom in
                       }}
-                      className="text-[10px] px-2 py-1 rounded-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 text-primary/80 transition"
+                      className="text-sm px-2 py-1 rounded-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 text-primary/80 transition cursor-pointer"
                     >
                       Ver
                     </button>
@@ -224,7 +224,7 @@ const DropzoneField = forwardRef(
                           e.stopPropagation();
                           onRemove();
                         }}
-                        className="text-[10px] px-2 py-1 rounded-sm border border-destructive/40 text-destructive/80 hover:bg-destructive/10 hover:border-destructive/60 transition"
+                        className="text-sm px-2 py-1 rounded-sm border border-destructive/40 text-destructive/80 hover:bg-destructive/10 hover:border-destructive/60 transition"
                       >
                         Quitar
                       </button>
@@ -232,7 +232,7 @@ const DropzoneField = forwardRef(
                   </div>
                 </div>
               ) : (
-                <p className="text-[11px] leading-relaxed text-secondary-text/80 max-w-[240px]">
+                <p className="text-sm leading-relaxed text-secondary-text/80 max-w-[240px]">
                   {isDragActive
                     ? 'Suelta el archivo aquí'
                     : placeholderLabel}
@@ -240,7 +240,7 @@ const DropzoneField = forwardRef(
               )}
 
               {isDragReject && (
-                <p className="mt-2 text-[11px] text-destructive">
+                <p className="mt-2 text-sm text-destructive">
                   Tipo de archivo no permitido
                 </p>
               )}

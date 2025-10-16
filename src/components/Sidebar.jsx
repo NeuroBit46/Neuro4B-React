@@ -20,7 +20,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
   };
 
   const items = [
-    { name: "Archivos trabajadores", iconKey: "workers", path: "/archivos-trabajadores" },
+    { name: "Gestionar trabajadores", iconKey: "workers", path: "/gestionar-trabajadores" },
     {
       name: "Dashboard",
       iconKey: "dashboard",
@@ -69,9 +69,9 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
     return p.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   })();
 
-  function isArchivosActive(path) {
+  function isGestionarActive(path) {
     return (
-      path === "/archivos-trabajadores" ||
+      path === "/gestionar-trabajadores" ||
       path.startsWith("/anadir-trabajador")  ||
       path.startsWith("/ver-trabajador")     ||
       path.startsWith("/detalles-trabajador")||
@@ -108,7 +108,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
         <NavigationMenuList className="flex gap-6 px-4">
           {items.map((item) => {
             if (!item.subItems) {
-              const activeArchivos = item.name === "Archivos trabajadores" && isArchivosActive(normalizedPath);
+              const activeGestionar = item.name === "Gestionar trabajadores" && isGestionarActive(normalizedPath);
               const isExactActive = location.pathname === item.path;
 
               return (
@@ -117,8 +117,8 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
                     to={item.path}
                     className={() =>
                       `flex flex-row items-center gap-2 px-4 py-2 rounded transition-colors ${
-                        item.name === "Archivos trabajadores"
-                          ? activeArchivos
+                        item.name === "Gestionar trabajadores"
+                          ? activeGestionar
                             ? "bg-white/60"
                             : "bg-transparent hover:bg-white/40"
                           : isExactActive
@@ -130,15 +130,15 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
                     <>
                       {Icons[item.iconKey](
                         "!text-lg shrink-0", // tamaño propio y no encogible
-                        item.name === "Archivos trabajadores"
-                          ? activeArchivos
+                        item.name === "Gestionar trabajadores"
+                          ? activeGestionar
                             ? "text-primary"
                             : "text-primary-bg"
                           : isExactActive
                             ? "text-primary"
                             : "text-primary-bg"
                       )}
-                      <span className="text-xs">{item.name}</span> {/* tipografía pequeña solo en el texto */}
+                      <span className="text-xs">{item.name}</span> {/* usa el nombre del item */}
                     </>
                   </NavLink>
                 </NavigationMenuItem>
