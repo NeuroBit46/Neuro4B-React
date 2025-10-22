@@ -15,14 +15,12 @@ import { getNivelKey, getNivelLabel, getColorSet as getColorSetNivel } from "../
 import CardPunt from "../components/CardPunt";
 import useWorkerData from "./UseWorkerData";
 
-// shadcn/u
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge"; // <-- añadido
+import { Badge } from "@/components/ui/badge";
 import ScoreRangeBar from "./ScoreRangeBar";
 
-// ==== Helpers de color (faltaban) ====
 const hexToRgb = (hex) => {
-  if (!hex) return [31, 41, 55]; // gris por defecto
+  if (!hex) return [31, 41, 55];
   const h = hex.replace('#', '').trim();
   if (h.length === 3) {
     const r = parseInt(h[0] + h[0], 16);
@@ -51,9 +49,7 @@ const toRGBA = (color, alpha = 1) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 const withAlpha = (color, alpha) => toRGBA(color, alpha);
-// =====================================
 
-// Añadidos: halo y estilos de nivel
 const buildHalo = (c) => ({
   padding: 1,
   background: `linear-gradient(135deg, ${c} 0%, rgba(255,255,255,0) 70%)`,
@@ -71,12 +67,9 @@ const buildNivelBadgeStyle = (sec) => {
   };
 };
 
-// ----------------- Helpers -----------------
-// Convierte etiquetas que terminan en PD/PT/PC a su versión "Total" en español
 const labelToTotalEs = (raw) => {
   const base = String(raw || "").replace(/\s+(PD|PT|PC)\s*$/i, "").trim();
 
-  // Normaliza variantes
   const b = base
     .replace(/^Tiempo\s+Servicio\b/i, "Tiempo de Servicio")
     .replace(/^Tiempo\s+Servicios\b/i, "Tiempo de Servicios")
@@ -95,8 +88,6 @@ const labelToTotalEs = (raw) => {
   return `${b} Total`;
 };
 
-// Filtra una sección dejando solo métricas cuyo label termina en el sufijo (por defecto 'PT')
-// y renombra visualmente a "Total"
 const filterSectionBySuffix = (sec, suffix = "PT") => {
   if (!sec) return null;
   const suf = String(suffix).trim().toUpperCase();
@@ -109,7 +100,6 @@ const filterSectionBySuffix = (sec, suffix = "PT") => {
   return { ...sec, metrics };
 };
 
-// T-score defensivo (20–80) a partir de las métricas cuando el backend no lo entrega
 const computeTscore = (sec) => {
   if (!sec) return 50;
   if (typeof sec.tscore === "number" && Number.isFinite(sec.tscore)) return sec.tscore;
@@ -117,7 +107,6 @@ const computeTscore = (sec) => {
     .map((m) => Number(m?.value))
     .filter((n) => Number.isFinite(n));
   if (!nums.length) return 50;
-  // Normalización simple para distintas escalas
   const norm = nums.map((v) => {
     if (v < 0) return 0;
     if (v <= 100) return v / 100;
@@ -125,7 +114,7 @@ const computeTscore = (sec) => {
     return 1;
   });
   const avg = norm.reduce((a, b) => a + b, 0) / norm.length;
-  return Math.round(20 + avg * 60); // 20..80
+  return Math.round(20 + avg * 60);
 };
 const decorateSection = (sec) => {
   if (!sec) return null;
@@ -138,7 +127,6 @@ const decorateSection = (sec) => {
 
 export const getColorSet = getColorSetNivel;
 
-// Localiza títulos de secciones al español en el resumen
 const localizeSectionTitle = (sec) => {
   if (!sec) return sec;
   const t = String(sec.title || "").toLowerCase();
@@ -148,14 +136,12 @@ const localizeSectionTitle = (sec) => {
   return sec;
 };
 
-// ----------------- Componente -----------------
 export default function Dashboard() {
   const [searchParams] = useSearchParams();
   const [textoBusqueda, setTextoBusqueda] = useState("");
   const { workers } = useWorkers();
   const [selectedWorker, setSelectedWorker] = useState(null);
 
-  // Autoselecciona el primero disponible para cargar datos dinámicos sin romper la vista
   useEffect(() => {
     if (!selectedWorker && Array.isArray(workers) && workers.length) {
       setSelectedWorker(workers[0]);
@@ -168,57 +154,16 @@ export default function Dashboard() {
 
   const section = searchParams.get("section") || "Nesplora Ice Cream";
 
-  // Datos dinámicos desde backend
   const api = useWorkerData(selectedWorker?.id);
-  // Full (para las vistas detalladas)
   const planificacion = decorateSection(api?.planificacion);
   const memoriaTrabajo = decorateSection(api?.memoriaTrabajo);
   const flexibilidad = decorateSection(api?.flexibilidad);
-  // Solo PT (para el dashboard/resumen) + títulos en español
   const planificacionPT = decorateSection(filterSectionBySuffix(api?.planificacion, "PT"));
   const memoriaTrabajoPT = decorateSection(filterSectionBySuffix(api?.memoriaTrabajo, "PT"));
   const flexibilidadPT = decorateSection(filterSectionBySuffix(api?.flexibilidad, "PT"));
   const seccionesPT = [planificacionPT, memoriaTrabajoPT, flexibilidadPT].filter(Boolean).map(localizeSectionTitle);
   const loading = !!api?.loading;
 
-  // Promedio ajustado a escala 20–80
-  const promedio = seccionesPT.length
-    ? Math.round(((seccionesPT.reduce((a, s) => a + s.tscore, 0) / seccionesPT.length) - 20) / 60 * 100)
-    : 0;
-
-  const estadoGeneral =
-    promedio >= 83 ? "Excelente" :   // T-score >= 70
-    promedio >= 66 ? "Bueno" :       // T-score >= 60
-    promedio >= 35 ? "Regular" :     // T-score >= 41
-    promedio >= 18 ? "Bajo" :        // T-score >= 31
-                    "Crítico";      // T-score <= 30
-
-
-  // ================= NUEVO: usar variables de nivel para statusColor =================
-  const promedioTScore = Math.round((promedio / 100) * (80 - 20) + 20); // inverso para volver a 20–80
-  const statusNivelKey = getNivelKey(promedioTScore);                  // MuyAlto / Alto / ...
-  const { color: statusColor, background: statusBg } = getColorSet(statusNivelKey);
-  // statusBg ya viene como rgba(r,g,b,0.15)
-  const statusBorder = toRGBA(statusColor, 0.35);
-  // ================================================================================
-  const primaryTextColor = useMemo(() => {
-    if (typeof window === 'undefined') return '#1f2937';
-    return (
-      getComputedStyle(document.documentElement)
-        .getPropertyValue('--color-primary-text')
-        .trim() || '#1f2937'
-    );
-  }, []);
-
-  const neutralColor = useMemo(() => {
-    if (typeof window === 'undefined') return '#a694cc'; // fallback
-    const val = getComputedStyle(document.documentElement)
-      .getPropertyValue('--color-neutral')
-      .trim();
-    return val || '#a694cc';
-  }, []);
-
-  // --- Título dinámico para el layout ---
   const tabLabelMap = {
     resumen: 'Dashboard',
     planificacion: 'Planificación',
@@ -262,7 +207,7 @@ export default function Dashboard() {
   return (
     <PageLayout
       title={dynamicTitle}
-      // titleAddon={renderTitleAddon()}
+      titleAddon={renderTitleAddon()}
       headerAction={{
         left: selectedWorker && (
           <div className="text-xs text-primary-text text-right">
@@ -303,9 +248,9 @@ export default function Dashboard() {
 
               {/* Subíndices */}
               <div className="grid gap-4 md:grid-cols-3">
-               {/* {seccionesPT.map((sec) => (
+               {seccionesPT.map((sec) => (
                  <CardPunt key={sec.title} label={sec.title} punt={sec.tscore} />
-               ))} */}
+               ))}
                {seccionesPT.map((sec) => (
                  <Card key={sec.title || sec.icon} className="relative p-0 border-0 shadow-sm overflow-hidden h-full">
                    <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
