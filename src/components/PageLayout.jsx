@@ -9,7 +9,7 @@ export default function PageLayout({ title, tooltip, headerAction, titleAddon, c
     '/dashboard': 'Dashboard',
     '/generar-informe': 'Generar informe',
     '/transformar-datos': 'Transformar datos',
-    '/archivos-trabajadores': 'Archivos trabajadores',
+    '/gestionar-trabajadores': 'Gestionar trabajadores',
     '/añadir-trabajador': 'Añadir trabajador',
     '/gestionar-trabajadores': 'Gestionar trabajadores',
   };
