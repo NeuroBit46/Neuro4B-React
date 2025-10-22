@@ -86,59 +86,60 @@ function buildAuthHeader(raw) {
 }
 
 const originalFetch = window.fetch.bind(window);
+window.fetch = (url, options = {}) =>
+  originalFetch(url, { credentials: "include", ...options });
+// window.fetch = (input, init = {}) => {
+//   const url = typeof input === 'string' ? input : input?.url || '';
+//   const isAbsolute = /^https?:\/\//i.test(url);
+//   const headers = new Headers(init.headers || {});
+//   if (!headers.has('Accept')) headers.set('Accept', 'application/json, text/plain, */*');
 
-window.fetch = (input, init = {}) => {
-  const url = typeof input === 'string' ? input : input?.url || '';
-  const isAbsolute = /^https?:\/\//i.test(url);
-  const headers = new Headers(init.headers || {});
-  if (!headers.has('Accept')) headers.set('Accept', 'application/json, text/plain, */*');
+//   // Authorization: SOLO si está habilitado por env y hay token
+//   if (!headers.has('Authorization') && isApiRequest(url) && USE_AUTH_HEADER) {
+//     const t = getAccessToken();
+//     if (t) headers.set('Authorization', buildAuthHeader(t));
+//   }
 
-  // Authorization: SOLO si está habilitado por env y hay token
-  if (!headers.has('Authorization') && isApiRequest(url) && USE_AUTH_HEADER) {
-    const t = getAccessToken();
-    if (t) headers.set('Authorization', buildAuthHeader(t));
-  }
+//   // CSRF y credentials
+//   const method = (init.method || 'GET').toUpperCase();
+//   const needsCsrf = sameOrigin(url) && !['GET','HEAD','OPTIONS','TRACE'].includes(method);
+//   if (needsCsrf && !headers.has('X-CSRFToken')) {
+//     const csrftoken = getCookie('csrftoken');
+//     if (csrftoken) headers.set('X-CSRFToken', csrftoken);
+//   }
+//   const credentials =
+//     init.credentials ??
+//     (isApiRequest(url) ? 'include' : (isAbsolute ? 'omit' : 'include'));
 
-  // CSRF y credentials
-  const method = (init.method || 'GET').toUpperCase();
-  const needsCsrf = sameOrigin(url) && !['GET','HEAD','OPTIONS','TRACE'].includes(method);
-  if (needsCsrf && !headers.has('X-CSRFToken')) {
-    const csrftoken = getCookie('csrftoken');
-    if (csrftoken) headers.set('X-CSRFToken', csrftoken);
-  }
-  const credentials =
-    init.credentials ??
-    (isApiRequest(url) ? 'include' : (isAbsolute ? 'omit' : 'include'));
-
-  return originalFetch(input, { ...init, headers, credentials })
-    .then(async (res) => {
-      if (isApiRequest(url) && !isAuthEndpoint(url)) {
-        const status = res.status;
-        const hadAuthHeader = headers.has('Authorization');
-        const hasSessionCookie = document.cookie.includes('sessionid=');
-        if (AUTH_DEBUG) {
-          console.debug('[auth]', method, url, '->', status, { hadAuthHeader, hasSessionCookie });
-        }
-        const shouldLogoutStatuses = new Set([401, 403, 419, 440, 498, 499]);
-        if (shouldLogoutStatuses.has(status) && (hadAuthHeader || hasSessionCookie)) {
-          logoutAndRedirect(`HTTP ${status} on ${url}`);
-          return res;
-        }
-      }
-      return res;
-    })
-    .catch((err) => {
-      if (isApiRequest(url) && !isAuthEndpoint(url)) {
-        const hadAuthHeader = headers.has('Authorization');
-        const hasSessionCookie = document.cookie.includes('sessionid=');
-        if (AUTH_DEBUG) console.debug('[auth] network error', method, url, { hadAuthHeader, hasSessionCookie });
-        if (hadAuthHeader || hasSessionCookie) {
-          logoutAndRedirect(`Network error on ${url}`);
-        }
-      }
-      throw err;
-    });
-};
+//   return originalFetch(input, { ...init, headers, credentials })
+//     .then(async (res) => {
+//       if (isApiRequest(url) && !isAuthEndpoint(url)) {
+//         const status = res.status;
+//         const hadAuthHeader = headers.has('Authorization');
+//         const hasSessionCookie = document.cookie.includes('sessionid=');
+//         if (AUTH_DEBUG) {
+//           console.debug('[auth]', method, url, '->', status, { hadAuthHeader, hasSessionCookie });
+//         }
+//         const shouldLogoutStatuses = new Set([401, 403, 419, 440, 498, 499]);
+//         if (shouldLogoutStatuses.has(status) && (hadAuthHeader || hasSessionCookie)) {
+//           logoutAndRedirect(`HTTP ${status} on ${url}`);
+//           return res;
+//         }
+//       }
+//       return res;
+//     })
+//     .catch((err) => {
+//       if (isApiRequest(url) && !isAuthEndpoint(url)) {
+//         const hadAuthHeader = headers.has('Authorization');
+//         const hasSessionCookie = document.cookie.includes('sessionid=');
+//         if (AUTH_DEBUG) console.debug('[auth] network error', method, url, { hadAuthHeader, hasSessionCookie });
+//         if (hadAuthHeader || hasSessionCookie) {
+//           logoutAndRedirect(`Network error on ${url}`);
+//         }
+//       }
+//       throw err;
+//     });
+// };
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
