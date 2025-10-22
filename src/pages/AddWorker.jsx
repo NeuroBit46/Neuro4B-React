@@ -78,7 +78,7 @@ export default function AddWorker() {
       if (data.pdfFile) await transformPDF(result.id);
 
       if (mountedRef.current && opRef.current === myOp && location.key === originKey) {
-        navigate("/archivos-trabajadores");
+        navigate("/gestionar-trabajadores");
       }
     } catch (err) {
       console.error(err);
