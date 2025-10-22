@@ -1,27 +1,23 @@
 # ---------- Build React ----------
 FROM node:24 AS builder
-# work inside /react (inside the image)
 WORKDIR /react
 
-# 1) Copy only package files first (better layer caching)
+# copia de paquetes para cache eficiente
 COPY react/package*.json ./
-
-# 2) Install deps
-# prefer npm ci if you have a lockfile; fallback to npm install
 RUN npm ci || npm install
 
-# 3) Copy the rest of the React app
+# copia del proyecto React
 COPY react/ .
 
-# 4) Build with optional API base
+# build con Vite (puedes dejar VITE_API_BASE vacío si usas proxy /api)
 ARG VITE_API_BASE
 ENV VITE_API_BASE=${VITE_API_BASE}
 RUN npm run build
 
 # ---------- Runtime (Nginx) ----------
 FROM nginx:1.29.1
-# Serve the built SPA
+# archivos estaticos
 COPY --from=builder /react/dist /var/www/react
 
-# Ship nginx config inside the image (no bind-mounts)
+# ⬇️ MUY IMPORTANTE: copiar la config
 COPY nginx/nginx-setup.conf /etc/nginx/conf.d/default.conf
