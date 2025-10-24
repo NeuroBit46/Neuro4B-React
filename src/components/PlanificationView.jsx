@@ -6,8 +6,9 @@ import CardPunt from "./CardPunt";
 import GroupedMetricsCard from "./GroupedMetricsCard";
 import IndicatorCard from "./IndicatorCard";
 import { Card } from "./ui/card";
+import ScoreRangeBar from "./ScoreRangeBar";
 
-export default function PlanificationView({ section, getColorSet }) {
+export default function PlanificationView({ section, getColorSet, titleAddon }) {
   const {
     tscore,
     data: plan = {}, // <- viene de useWorkerData.planificacion.data
@@ -106,9 +107,13 @@ export default function PlanificationView({ section, getColorSet }) {
 
   return (
     <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4" style={{ rowGap: 'var(--planif-gap-5)', maxWidth: '1400px' }}>
+      <Card className="px-4 flex flex-row gap-10 py-2 border-0 shadow-sm">
+        {titleAddon}
+        <ScoreRangeBar />
+      </Card>
       {/* Sección superior: Aciertos y Tiempo con P1/P2/Total (PD/PT/PC) */}
       <div className="grid grid-cols-1 w-full items-center" style={{ gap: 'var(--planif-gap-x-main)' }}>
-        <div className="col-span-12 md:col-span-8 grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--planif-gap-5)' }}>
+        <div className="col-span-12 md:col-span-8 grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--planif-gap-10)' }}>
           <div className="flex flex-col h-full" style={{ rowGap: 'var(--planif-gap-3)' }}>
             <CardPunt label="Aciertos" punt={formatMaybeNumber(aciertos.Total.PT) ?? "—"} />
             <GroupedMetricsCard

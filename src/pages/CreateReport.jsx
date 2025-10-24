@@ -41,6 +41,7 @@ export default function CreateReport() {
             pagination={false}
             stickyHeader={true}
             bodyMaxHeightClass="max-h-[35vh]"
+            hideInformeColumn={true}
           />
         </CardContent>
       </Card>

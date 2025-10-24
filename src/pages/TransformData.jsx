@@ -34,6 +34,8 @@ export default function TransformData(){
             pagination={false}
             stickyHeader={true}
             bodyMaxHeightClass="max-h-[35vh]"
+            hideInformeColumn={true}
+            hideEEGColumn={true}
           />
         </CardContent>
       </Card>

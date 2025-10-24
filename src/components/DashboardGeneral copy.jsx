@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import PageLayout from "../components/PageLayout";
 import SearchBar from "../components/SearchBar";
@@ -141,6 +141,7 @@ export default function Dashboard() {
   const [textoBusqueda, setTextoBusqueda] = useState("");
   const { workers } = useWorkers();
   const [selectedWorker, setSelectedWorker] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!selectedWorker && Array.isArray(workers) && workers.length) {
@@ -188,18 +189,34 @@ export default function Dashboard() {
     const sec = sectionMap[activeIndex];
     if (!sec) return null;
 
+    // Mapea el índice activo a la ruta
+    const tabRouteMap = {
+      1: "planificacion",
+      2: "memoria",
+      3: "flexibilidad",
+    };
+    const route = tabRouteMap[activeIndex];
+
     return (
       <div className="ml-3">
-        <Card
-          className="p-1.5 px-8 rounded-sm shadow-sm border border-border/60 glass-primary-bg dark:bg-zinc-800/60 flex flex-row items-center gap-5"
-          style={buildNivelBadgeStyle(sec)}
+        <button
+          type="button"
+          className="focus:outline-none"
+          onClick={() => route && navigate(`?tab=${route}`)}
+          tabIndex={0}
+          aria-label={`Ir a vista de ${sec.title}`}
         >
-          <span className="text-[12px] font-semibold text-primary-text tracking-wide">Total</span>
-          <span className="text-normal font-bold text-primary-text">{sec.tscore}</span>
-          <Badge className="text-[12px] px-2 py-0" style={buildNivelBadgeStyle(sec)}>
-            {sec.nivel}
-          </Badge>
-        </Card>
+          <Card
+            className="p-1.5 px-8 rounded-sm shadow-sm border border-border/60 glass-primary-bg dark:bg-zinc-800/60 flex flex-row items-center gap-10 hover:ring-2 hover:ring-primary/40 transition"
+            style={buildNivelBadgeStyle(sec)}
+          >
+            <span className="text-xs font-semibold text-primary-text tracking-wide">Total</span>
+            <span className="text-normal font-bold text-primary-text">{sec.tscore}</span>
+            <Badge className="text-xs px-2 py-0" style={buildNivelBadgeStyle(sec)}>
+              {sec.nivel}
+            </Badge>
+          </Card>
+        </button>
       </div>
     );
   };
@@ -207,7 +224,7 @@ export default function Dashboard() {
   return (
     <PageLayout
       title={dynamicTitle}
-      titleAddon={renderTitleAddon()}
+      //titleAddon={renderTitleAddon()}
       headerAction={{
         left: selectedWorker && (
           <div className="text-xs text-primary-text text-right">
@@ -225,9 +242,13 @@ export default function Dashboard() {
             onSeleccionar={(w) => setSelectedWorker(w)}
           />
         ),
-        right: (
-          <ScoreRangeBar />
-        )
+        // right: (
+        //   section === "Nesplora Ice Cream" && activeIndex > 0
+        //     ? <ScoreRangeBar />
+        //     : section !== "EEG" && section !== "Nesplora Ice Cream"
+        //       ? <ScoreRangeBar />
+        //       : null
+        // )
       }}
     >
       {section === "Nesplora Ice Cream" && (
@@ -245,7 +266,9 @@ export default function Dashboard() {
 
           {selectedWorker && !loading && activeIndex === 0 && (
             <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4 space-y-4" style={{ maxWidth: '1400px' }}>
-
+              <Card className="px-4 py-2 border-0 shadow-sm">
+                <ScoreRangeBar />
+              </Card>
               {/* Subíndices */}
               <div className="grid gap-4 md:grid-cols-3">
                {seccionesPT.map((sec) => (
@@ -282,13 +305,25 @@ export default function Dashboard() {
           )}
 
           {selectedWorker && !loading && activeIndex === 1 && (
-            <PlanificationView section={planificacion} getColorSet={getColorSet} />
+            <PlanificationView
+              section={planificacion}
+              getColorSet={getColorSet}
+              titleAddon={renderTitleAddon()}
+            />
           )}
           {selectedWorker && !loading && activeIndex === 2 && (
-            <WorkingMemoryView section={memoriaTrabajo} getColorSet={getColorSet} />
+            <WorkingMemoryView
+              section={memoriaTrabajo}
+              getColorSet={getColorSet}
+              titleAddon={renderTitleAddon()}
+            />
           )}
           {selectedWorker && !loading && activeIndex === 3 && (
-            <FlexibilityCognitiveView section={flexibilidad} getColorSet={getColorSet} />
+            <FlexibilityCognitiveView
+              section={flexibilidad}
+              getColorSet={getColorSet}
+              titleAddon={renderTitleAddon()}
+            />
           )}
         </div>
       )}

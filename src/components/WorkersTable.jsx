@@ -48,27 +48,22 @@ export default function WorkersTable({
   setSelectedWorkers,
   onArchivoClick,
   onDeleteSuccess,
-  // NUEVAS PROPS
   pagination = false,
   pageSize = 10,
   stickyHeader = false,
   bodyMaxHeightClass,
   footerPinned = false,
   pageMinHeightClass,
+  hideInformeColumn = false,
+  hideEEGColumn = false,
 }) {
   const navigate = useNavigate();
   const [confirmRow, setConfirmRow] = useState(null);
-  // Estado interno para actualizar la UI sin recargar
   const [rowsState, setRowsState] = useState(workers);
   useEffect(() => setRowsState(workers), [workers]);
 
-  // Pre-filtrado por texto (nombre/empresa)
   const data = useMemo(() => {
     const f = limpiar(textoBusqueda);
-    // Antes: se ordenaba acá y luego la tabla volvía a ordenar => resultados inesperados
-    // const sorted = [...workers].sort((a, b) => { ... });
-    // return sorted.filter(...);
-
     return rowsState.filter(
       (w) => limpiar(w.nombre).includes(f) || limpiar(w.empresa).includes(f)
     );
@@ -87,7 +82,6 @@ export default function WorkersTable({
           </div>
         ),
       }),
-      // Empresa: Badge "fit" (no w-full), truncado dentro del badge si es largo
       col.accessor("empresa", {
         header: () => "Empresa",
         cell: ({ getValue }) => (
@@ -98,7 +92,6 @@ export default function WorkersTable({
           </div>
         ),
       }),
-      // NUEVA columna: Cargo (también como Badge "fit")
       col.accessor("cargo", {
         header: () => "Cargo",
         cell: ({ getValue }) => (
@@ -112,11 +105,10 @@ export default function WorkersTable({
       col.accessor((row) => row.fecha, {
         id: "fecha",
         header: () => "Fecha",
-        sortDescFirst: true, // primer clic en "Fecha" va a desc
+        sortDescFirst: true,
         sortingFn: (a, b) => {
           const idA = Number(a.original?.id) || 0;
           const idB = Number(b.original?.id) || 0;
-          // comparator ascendente por id (React Table invierte cuando desc=true)
           return idA - idB;
         },
         cell: ({ row }) => <span className="text-primary-text">{formatFecha(row.original.fecha)}</span>,
@@ -174,12 +166,11 @@ export default function WorkersTable({
       }),
     ];
 
-    // Insertar columna de selección AL INICIO en modo seleccionar
     if (!actionsMode) {
       cols.unshift(
         col.display({
           id: "seleccionar",
-          header: () => null,            // sin título
+          header: () => null,
           enableSorting: false,
           cell: ({ row }) => (
             <div className="flex items-center justify-center">
@@ -238,9 +229,18 @@ export default function WorkersTable({
         })
       );
     }
+    
+    let filteredCols = cols;
+    if (hideInformeColumn) {
+      filteredCols = filteredCols.filter(c => c.id !== "informe");
+    }
+    if (hideEEGColumn) {
+      filteredCols = filteredCols.filter(c => c.id !== "excel");
+    }
+    return filteredCols;
 
     return cols;
-  }, [actionsMode, navigate, onArchivoClick, selectedWorkers, setSelectedWorkers]);
+  }, [actionsMode, navigate, onArchivoClick, selectedWorkers, setSelectedWorkers, hideInformeColumn]);
 
   // Tabla con/ sin paginación
   const table = useReactTable({

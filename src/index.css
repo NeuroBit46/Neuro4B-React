@@ -21,6 +21,7 @@
   --color-tertiary-bg: rgb(152, 176, 172);
   --color-success: rgb(86, 176, 161, 0.15);
   --color-error: rgb(236, 212, 210);
+  --color-word:  rgba(150, 170, 220, 1);
   --color-very-low:   rgba(224, 120, 120, 0.65); /* Rojo rosado pastel */
   --color-low:        rgba(236, 160, 120, 0.65); /* Coral suave */
   --color-medium:     rgba(240, 205, 120, 0.65); /* Dorado mantequilla */

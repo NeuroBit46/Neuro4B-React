@@ -14,6 +14,7 @@ import {
 } from './ui/card';
 import { useLoadingBar } from "@/components/LoadingBar";
 import { Progress } from "./ui/progress";
+import ButtonWithProgress from './ButtonWithProgress';
 
 export default function WorkerForm({
   mode = 'crear',
@@ -314,18 +315,32 @@ export default function WorkerForm({
       </Card>
         {!isView && (
           <CardFooter className="flex items-center justify-center gap-8 mt-4">
-            <ButtonBase
-              onClick={handleSubmit}
+            <ButtonWithProgress
+              buttonLabel={isEdit ? "Editar trabajador" : "Añadir trabajador"}
+              onAction={async () => {
+                if (!name.trim()) throw new Error('El nombre es obligatorio');
+                const newData = { name, company, position, pdfFile, excelFile };
+                const meta = {
+                  mode,
+                  pdfChanged: isEdit ? pdfFile instanceof File : true,
+                };
+                if (onSubmit) {
+                  await onSubmit({ data: newData, meta });
+                }
+                return { nombre: name };
+              }}
+              progressText={isEdit ? "Editando trabajador..." : "Añadiendo trabajador..."}
+              readyText={`El trabajador ${name} ha sido ${isEdit ? "editado" : "creado"} exitosamente`}
+              errorText="No se pudo crear el trabajador. Intente nuevamente."
+              downloadLabel=""
+              showDownload={false}
               variant="neutral"
               size="md"
+              minWidth={170}
               disabled={loading}
-              className="flex items-center gap-2"
-              // showLoadingBar  // evita duplicar start/done; la página ya los llama
-              loadingText={isEdit ? "Editando trabajador..." : "Añadiendo trabajador..."}
-            >
-              {isEdit ? "Editar trabajador" : "Añadir trabajador"}
-            </ButtonBase>
-
+              allowNoFile
+            />
+{/* 
             {globalLoading && (
               <div className="flex items-center gap-0">
                 <Progress
@@ -337,12 +352,19 @@ export default function WorkerForm({
                   {Math.min(100, Math.round(progress))}%
                 </span>
               </div>
-            )}
+            )} */}
           </CardFooter>
         )}
 
-      {showModal && (
-        <ArchivoPreviewModal file={activeFile} onClose={() => setShowModal(false)} />
+      {/* Modal: Previsualización de archivo */}
+      {showModal && activeFile && (
+        <ArchivoPreviewModal
+          open={showModal}
+          onClose={() => setShowModal(false)}
+          file={activeFile}
+          // solo para evitar el warning de React al cerrar el modal
+          key={activeFile.url}
+        />
       )}
     </div>
   );

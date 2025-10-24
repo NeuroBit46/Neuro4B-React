@@ -3,8 +3,9 @@ import LearningCurveChart from "./LearningCurveChart";
 import CardPunt from "./CardPunt";
 import GroupedMetricsCard from "./GroupedMetricsCard";
 import { Card } from "./ui/card";
+import ScoreRangeBar from "./ScoreRangeBar";
 
-export default function WorkingMemoryView({ section, getColorSet }) {
+export default function WorkingMemoryView({ section, getColorSet, titleAddon }) {
   const { data: mem = {} } = section || {};
 
   const filtros = ["Servicios correctos", "Consultas", "Aciertos netos", "Tiempo de servicio"];
@@ -58,6 +59,10 @@ export default function WorkingMemoryView({ section, getColorSet }) {
 
   return (
     <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4" style={{ rowGap: 'var(--planif-gap-5)', maxWidth: '1400px' }}>
+          <Card className="px-4 flex flex-row gap-10 py-2 border-0 shadow-sm">
+            {titleAddon}
+            <ScoreRangeBar />
+          </Card>
       {/* Grid superior: 4 bloques (cada filtro con su Total PT) */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 w-full" style={{ gap: 'var(--planif-gap-6)' }}>
         {filtros.map((filtro) => (

@@ -11,7 +11,6 @@ export default function PageLayout({ title, tooltip, headerAction, titleAddon, c
     '/transformar-datos': 'Transformar datos',
     '/gestionar-trabajadores': 'Gestionar trabajadores',
     '/añadir-trabajador': 'Añadir trabajador',
-    '/gestionar-trabajadores': 'Gestionar trabajadores',
   };
 
   // Rutas que empiezan con estos prefijos (dinámicas)

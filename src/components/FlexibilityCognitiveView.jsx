@@ -2,8 +2,10 @@ import { Icons } from "../constants/Icons";
 import GroupedMetricsCard from "./GroupedMetricsCard";
 import CardPunt from "./CardPunt";
 import IndicatorCard from "./IndicatorCard";
+import ScoreRangeBar from "./ScoreRangeBar";
+import { Card } from "./ui/card";
 
-export default function FlexibilityCognitiveView({ section, getColorSet }) {
+export default function FlexibilityCognitiveView({ section, getColorSet, titleAddon }) {
   const { data = {}, raw } = section || {};
   const sw = data?.switching || {};
   const interferencia = data?.interferencia || {};
@@ -91,7 +93,11 @@ export default function FlexibilityCognitiveView({ section, getColorSet }) {
   const medianaDesc = `Medianas de consultas — Aprendizaje: ${fmt(medianaTarea)} · Planificación: ${fmt(medianaPlan)}.`;
 
   return (
-    <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4" style={{ rowGap: 'var(--planif-gap-5rem)', maxWidth: '1400px' }}>
+    <div className="planif-vars flex flex-col w-full mx-auto px-2 sm:px-4 space-y-5" style={{ rowGap: 'var(--planif-gap-5rem)', maxWidth: '1400px' }}>
+      <Card className="px-4 flex flex-row gap-10 py-2 border-0 shadow-sm">
+        {titleAddon}
+        <ScoreRangeBar />
+      </Card>
       {/* Grid 6 tarjetas: 2 filas x 3 columnas */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 w-full" style={{ gap: 'var(--planif-gap-6,1.5rem)' }}>
         {metricNames.map((name) => (
