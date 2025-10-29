@@ -17,7 +17,7 @@ export default defineConfig({
         // o si corres backend en compose durante dev:
         target: 'http://neurobit.duckdns.org:8000',
         changeOrigin: true,
-        secure: true,
+        secure: false,
       }
     }
   },
