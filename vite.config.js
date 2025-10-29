@@ -15,7 +15,7 @@ export default defineConfig({
         // para dev local fuera de docker:
         //target: 'http://localhost:8000',
         // o si corres backend en compose durante dev:
-        target: 'http://backend:8000',
+        target: 'http://neurobit.duckdns.org:8000',
         changeOrigin: true,
         secure: true,
       }
