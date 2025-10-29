@@ -12,7 +12,10 @@ export default defineConfig({
     allowedHosts: ['neurobit.duckdns.org'],
     proxy: {
       '/api': {
-        target: 'http://http://190.162.134.254:8000',
+        // para dev local fuera de docker:
+        //target: 'http://localhost:8000',
+        // o si corres backend en compose durante dev:
+        target: 'http://backend:8000',
         changeOrigin: true,
         secure: true,
       }
