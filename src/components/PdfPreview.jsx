@@ -4,7 +4,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf-worker/pdf.worker.min.js";
 
-const API_BASE = import.meta.env.VITE_API_BASE;
+// const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
 
 export default function PdfPreview({ src, onLoadEnd }) {
   const [numPages, setNumPages] = useState(null);

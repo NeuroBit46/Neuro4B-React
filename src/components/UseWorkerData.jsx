@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-const API_BASE = (import.meta.env.VITE_API_BASE || "http://190.162.134.254:8000").replace(/\/$/, "");
+// const API_BASE = (import.meta.env.VITE_API_BASE || "http://190.162.134.254:8000").replace(/\/$/, "");
+const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
+
 
 async function fetchExcelJson(pk, signal) {
   const base = API_BASE;

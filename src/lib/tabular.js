@@ -1,4 +1,5 @@
-const API_BASE = (import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000").replace(/\/+$/, "");
+// const API_BASE = (import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000").replace(/\/+$/, "");
+const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
 
 export async function fetchTabularByUrl(fileUrl, { token, withCredentials = false, signal } = {}) {
   const headers = {};
