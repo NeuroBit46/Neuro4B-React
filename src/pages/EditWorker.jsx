@@ -8,7 +8,8 @@ export default function EditWorker() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [workerData, setWorkerData] = useState(null);
-  const API_BASE = import.meta.env.VITE_API_BASE;
+  // const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
 
   const BAR_KEY = `ocr-worker-${id}`;
   const { start, done } = useLoadingBar(BAR_KEY);

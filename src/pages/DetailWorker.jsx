@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import WorkerForm from '../components/WorkerForm';
 import PageLayout from '../components/PageLayout';
 
-const API_BASE = import.meta.env.VITE_API_BASE;
+// const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
 
 export default function DetailWorker() {
   const { id } = useParams();

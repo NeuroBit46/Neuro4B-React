@@ -8,7 +8,8 @@ export default function AddWorker() {
   const navigate = useNavigate();
   const location = useLocation();
   const [status, setStatus] = useState(null);
-  const API_BASE = import.meta.env.VITE_API_BASE;
+  // const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
 
   const mountedRef = useRef(true);
   const opRef = useRef(0);

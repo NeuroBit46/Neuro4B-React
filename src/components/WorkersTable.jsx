@@ -24,7 +24,8 @@ import {
 import ConfirmModal from "./ConfirmModal";
 import { Icons } from "../constants/Icons";
 
-const API_BASE = import.meta.env.VITE_API_BASE;
+// const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
 
 // Helpers
 const limpiar = (txt) => (txt || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
