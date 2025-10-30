@@ -27,7 +27,7 @@
   --color-medium:     rgba(240, 205, 120, 0.65); /* Dorado mantequilla */
   --color-high:       rgba(150, 170, 220, 0.65); /* Azul lavanda */
   --color-very-high:  rgba(140, 200, 160, 0.65); /* Verde agua menta */
-  --color-neutral:    rgba(166, 148, 204, 1);    /* Lavanda suave */
+  --color-neutral:    rgb(166, 148, 204);    /* Lavanda suave */
 }
 
 .zoomed-look {
@@ -532,4 +532,14 @@ html, body, #root {
 }
 
 /* (Eliminada .planif-zoom legacy: se migró a tokens) */
+
+/* Puedes poner esto en tu archivo global de estilos o en el CSS del componente */
+.input-no-spinner::-webkit-outer-spin-button,
+.input-no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.input-no-spinner[type="number"] {
+  -moz-appearance: textfield;
+}
 

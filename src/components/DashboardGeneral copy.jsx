@@ -271,35 +271,94 @@ export default function Dashboard() {
               </Card>
               {/* Subíndices */}
               <div className="grid gap-4 md:grid-cols-3">
-               {seccionesPT.map((sec) => (
-                 <CardPunt key={sec.title} label={sec.title} punt={sec.tscore} />
-               ))}
-               {seccionesPT.map((sec) => (
-                 <Card key={sec.title || sec.icon} className="relative p-0 border-0 shadow-sm overflow-hidden h-full">
-                   <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
-                   <div className="rounded-sm bg-gradient-to-br from-white to-white/95 dark:from-zinc-900 dark:to-zinc-900/80 p-4 h-full flex flex-col">
-                     <CardHeader className="p-0 mb-3 flex flex-row items-center justify-between">
-                       <CardTitle className="text-base font-semibold flex items-center gap-2 text-primary-text">
-                          {sec.title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-0 flex-1">
-                        <div className="grid grid-cols-1 gap-3">
-                         {sec.metrics.map((metric, idx) => (
-                            <MetricBar
-                              key={idx}
-                              title={metric.label}
-                              value={metric.value}
-                              scale={1}
-                              getColorSetFromValue={(v) => getColorSet(getNivelKey(v))}
-                              getNivelFromValue={(v) => getNivelLabel(getNivelKey(v))}
-                            />
-                          ))}
+                {seccionesPT.map((sec, idx) => {
+                  // Mapeo de índice a ruta/tab
+                  const tabRouteMap = ["planificacion", "memoria", "flexibilidad"];
+                  const route = tabRouteMap[idx];
+                  const ringColor = sec.color || "#3b82f6";
+
+                  return (
+                    <button
+                      key={sec.title}
+                      type="button"
+                      className="focus:outline-none w-full cursor-pointer"
+                      onClick={() => navigate(`?tab=${route}`)}
+                      tabIndex={0}
+                      aria-label={`Ir a vista de ${sec.title}`}
+                      style={{
+                        // Efecto ring dinámico al focus/hover
+                        transition: "box-shadow 0.2s",
+                      }}
+                    >
+                      <CardPunt
+                        label={sec.title}
+                        punt={sec.tscore}
+                        className="transition"
+                        style={{
+                          boxShadow: `0 0 0 0px ${ringColor}`,
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.boxShadow = `0 0 0 3px ${ringColor}`}
+                        onMouseLeave={e => e.currentTarget.style.boxShadow = `0 0 0 0px ${ringColor}`}
+                        onFocus={e => e.currentTarget.style.boxShadow = `0 0 0 3px ${ringColor}`}
+                        onBlur={e => e.currentTarget.style.boxShadow = `0 0 0 0px ${ringColor}`}
+                      />
+                    </button>
+                  );
+                })}
+                {/* Si tienes otro map para Card, también define ringColor ahí */}
+                {seccionesPT.map((sec, idx) => {
+                  const tabRouteMap = ["planificacion", "memoria", "flexibilidad"];
+                  const route = tabRouteMap[idx];
+                  const ringColor = sec.color || "#3b82f6";
+
+                  return (
+                    <button
+                      key={sec.title || sec.icon}
+                      type="button"
+                      className="focus:outline-none w-full cursor-pointer"
+                      onClick={() => navigate(`?tab=${route}`)}
+                      tabIndex={0}
+                      aria-label={`Ir a vista de ${sec.title}`}
+                      style={{
+                        transition: "box-shadow 0.2s",
+                      }}
+                    >
+                      <Card
+                        className="relative p-0 border-0 shadow-sm overflow-hidden h-full transition"
+                        style={{
+                          boxShadow: `0 0 0 0px ${ringColor}`,
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.boxShadow = `0 0 0 3px ${ringColor}`}
+                        onMouseLeave={e => e.currentTarget.style.boxShadow = `0 0 0 0px ${ringColor}`}
+                        onFocus={e => e.currentTarget.style.boxShadow = `0 0 0 3px ${ringColor}`}
+                        onBlur={e => e.currentTarget.style.boxShadow = `0 0 0 0px ${ringColor}`}
+                      >
+                        <div className="absolute inset-0 rounded-sm pointer-events-none" style={buildHalo(sec.color)} />
+                        <div className="rounded-sm bg-gradient-to-br from-white to-white/95 dark:from-zinc-900 dark:to-zinc-900/80 p-4 h-full flex flex-col">
+                          <CardHeader className="p-0 mb-3 flex flex-row items-center justify-between">
+                            <CardTitle className="text-base font-semibold flex items-center gap-2 text-primary-text">
+                              {sec.title}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-0 flex-1">
+                            <div className="grid grid-cols-1 gap-3">
+                              {sec.metrics.map((metric, idx) => (
+                                <MetricBar
+                                  key={idx}
+                                  title={metric.label}
+                                  value={metric.value}
+                                  scale={1}
+                                  getColorSetFromValue={(v) => getColorSet(getNivelKey(v))}
+                                  getNivelFromValue={(v) => getNivelLabel(getNivelKey(v))}
+                                />
+                              ))}
+                            </div>
+                          </CardContent>
                         </div>
-                      </CardContent>
-                    </div>
-                  </Card>
-                ))}
+                      </Card>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}

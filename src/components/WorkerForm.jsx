@@ -5,6 +5,7 @@ import { Icons } from '../constants/Icons';
 // import { WorkerInput } from './WorkerInput';
 import ArchivoPreviewModal from './ArchivoPreviewModal';
 import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 import {
   Card,
   CardHeader,
@@ -36,6 +37,7 @@ export default function WorkerForm({
   const [pdfName, setPdfName]     = useState(initialData.pdfName || '');
   const [excelName, setExcelName] = useState(initialData.excelName || '');
   const [loading, setLoading]     = useState(false);
+  const [observations, setObservations] = useState(initialData.observations || '');
 
   const [showModal, setShowModal]   = useState(false);
   const [activeFile, setActiveFile] = useState(null);
@@ -208,7 +210,7 @@ export default function WorkerForm({
                   readOnly={isView}
                   disabled={loading}
                   placeholder={viewPlaceholder('name', name, 'Ingrese nombre completo del trabajador')}
-                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm ${isView ? 'disabled:opacity-100' : ''}`}
+                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm focus:ring-2 focus:ring-primary/40 ${isView ? 'disabled:opacity-100' : ''}`}
                 />
               </div>
             )}
@@ -226,7 +228,7 @@ export default function WorkerForm({
                   readOnly={isView}
                   disabled={loading}
                   placeholder={viewPlaceholder('company', company, 'Ingrese empresa del trabajador')}
-                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm ${isView ? 'disabled:opacity-100' : ''}`}
+                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm focus:ring-2 focus:ring-primary/40 ${isView ? 'disabled:opacity-100' : ''}`}
                 />
               </div>
             )}
@@ -244,7 +246,26 @@ export default function WorkerForm({
                   readOnly={isView}
                   disabled={loading}
                   placeholder={viewPlaceholder('position', position, 'Ingrese cargo del trabajador')}
-                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm ${isView ? 'disabled:opacity-100' : ''}`}
+                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm focus:ring-2 focus:ring-primary/40 ${isView ? 'disabled:opacity-100' : ''}`}
+                />
+              </div>
+            )}
+
+            {/* Observaciones */}
+            {!shouldHide(observations) && (
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-secondary-text mb-1 flex items-center gap-2">
+                  {renderIcon(Icons.notes || Icons.comment, isView && isEmpty(observations))}
+                  Observaciones
+                </label>
+                <Textarea
+                  value={observations}
+                  onChange={e => setObservations(e.target.value)}
+                  readOnly={isView}
+                  disabled={loading}
+                  placeholder={viewPlaceholder('observations', observations, 'Ingrese observaciones adicionales')}
+                  className={`text-primary-text placeholder:text-secondary-text/70 text-sm rounded-md border border-border/60 bg-transparent px-3 py-2 min-h-[80px] max-h-[220px] resize-vertical focus:ring-2 focus:ring-primary/40 focus:border-primary ${isView ? 'disabled:opacity-100' : ''}`}
+                  rows={4}
                 />
               </div>
             )}
@@ -319,7 +340,7 @@ export default function WorkerForm({
               buttonLabel={isEdit ? "Editar trabajador" : "Añadir trabajador"}
               onAction={async () => {
                 if (!name.trim()) throw new Error('El nombre es obligatorio');
-                const newData = { name, company, position, pdfFile, excelFile };
+                const newData = { name, company, position, pdfFile, excelFile, observations };
                 const meta = {
                   mode,
                   pdfChanged: isEdit ? pdfFile instanceof File : true,

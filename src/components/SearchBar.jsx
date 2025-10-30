@@ -37,7 +37,7 @@ export default function SearchBar({
 
   // Aplica el filtro sobre la lista ordenada
   const filtrados = workersSorted.filter((w) =>
-    limpiar(w?.name).includes(limpiar(texto)) ||
+    limpiar(w?.nombre).includes(limpiar(texto)) ||
     (filterByCompany && limpiar(w?.company).includes(limpiar(texto)))
   );
 

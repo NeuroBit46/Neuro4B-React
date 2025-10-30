@@ -28,6 +28,7 @@ export const Icons = {
   flexibilityCognitive: <Icon icon='material-symbols:cognition-rounded' className='text-xl text-primary-bg'/>,
   company: <Icon icon='ic:round-business-center' className='text-xl text-primary'/>,
   position: <Icon icon='material-symbols:id-card-rounded' className='text-xl text-primary'/>,
+  notes: <Icon icon='material-symbols:note-alt' className='text-xl text-primary'/>,
   menu: <Icon icon='mage:dots-menu' className='text-2xl text-primary-bg'/>,
   dropdown: <Icon icon='iconoir:arrow-down-tag' className='text-2xl text-primary'/>,
   time: <Icon icon='material-symbols:avg-time-rounded' className='text-xl text-neutral'/>,
