@@ -65,6 +65,7 @@ const API_BASE = (import.meta.env.VITE_API_BASE ?? "/api").replace(/\/+$/, "");
       formData.append("nombre", data.name || "");
       formData.append("empresa", data.company || "");
       formData.append("cargo", data.position || "");
+      formData.append("observaciones", data.observations || "");
 
       if (data.pdfFile) formData.append("pdf_file", data.pdfFile);
       if (data.excelFile) formData.append("eeg_file", data.excelFile);

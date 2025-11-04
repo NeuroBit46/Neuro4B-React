@@ -14,13 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import AverageCard from "./AverageCard";
 import { Activity } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export default function EEGDashboard({ workerId }) {
   const [data, setData] = useState([]);
   const [averages, setAverages] = useState({});
   const [variableA, setVariableA] = useState("Atencion");
   const [variableB, setVariableB] = useState("");
-  const [range, setRange] = useState([0, 10]);
+  const [range, setRange] = useState([0, data.length > 0 ? data.length - 1 : 0]);
   const [startMin, setStartMin] = useState("");
   const [startSec, setStartSec] = useState("");
   const [endMin, setEndMin] = useState("");
@@ -70,27 +71,8 @@ export default function EEGDashboard({ workerId }) {
   }, [workerId]);
 
   useEffect(() => {
-    if (rangeInitializedRef.current) return;
     if (!Array.isArray(data) || data.length === 0) return;
-    const timeToSeconds = (t) => {
-      const parts = String(t || "").split(":").map(Number);
-      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-      if (parts.length === 2) return parts[0] * 60 + parts[1];
-      return NaN;
-    };
-    let dt = 1;
-    if (data.length >= 2) {
-      const s0 = timeToSeconds(data[0]?.Hora);
-      const s1 = timeToSeconds(data[1]?.Hora);
-      if (Number.isFinite(s0) && Number.isFinite(s1) && s1 > s0) {
-        dt = Math.max(1, s1 - s0);
-      }
-    }
-    const minSeconds = 90;
-    const neededPoints = Math.max(2, Math.ceil(minSeconds / dt));
-    const maxIndex = data.length - 1;
-    const endIndex = Math.min(neededPoints - 1, maxIndex);
-    setRange([0, endIndex]);
+    setRange([0, data.length - 1]);
     rangeInitializedRef.current = true;
   }, [data]);
 
@@ -136,15 +118,30 @@ export default function EEGDashboard({ workerId }) {
     setRange([startIdx, endIdx]);
   };
 
+  useEffect(() => {
+    if (!parsedData.length) return;
+    // Inicio
+    const [startIdx, endIdx] = range;
+    const startHora = parsedData[startIdx]?.Hora || "00:00";
+    const endHora = parsedData[endIdx]?.Hora || "00:00";
+    const [startMinVal, startSecVal] = startHora.split(":");
+    const [endMinVal, endSecVal] = endHora.split(":");
+    setStartMin(startMinVal || "");
+    setStartSec(startSecVal || "");
+    setEndMin(endMinVal || "");
+    setEndSec(endSecVal || "");
+  }, [range, parsedData]);
+
   return (
     <div className="bg-white p-4 rounded-sm shadow-xs text-xs text-neutral">
       {/* Fila de selectores, filtro de tiempo y promedios */}
-      <div className="flex gap-6 items-center mb-6">
+      <div className="flex gap-6 items-center justify-between mb-2">
         {/* Selectores a la izquierda */}
         <div className="flex gap-4">
           <Select value={variableA} onValueChange={setVariableA}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-55 cursor-pointer glass-neutral-bg text-sm">
               <SelectValue placeholder="Variable 1" />
+              <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
             </SelectTrigger>
             <SelectContent>
               {options.map(({ key, label }) => (
@@ -152,6 +149,7 @@ export default function EEGDashboard({ workerId }) {
                   key={key}
                   value={key}
                   disabled={key === variableB}
+                  className="cursor-pointer text-sm"
                 >
                   {label}
                 </SelectItem>
@@ -160,11 +158,12 @@ export default function EEGDashboard({ workerId }) {
           </Select>
 
           <Select value={variableB} onValueChange={v => setVariableB(v === "__none__" ? "" : v)}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-55 cursor-pointer glass-primary-bg text-sm">
               <SelectValue placeholder="Variable 2 (opcional)" />
+              <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem key="__none__" value="__none__">
+              <SelectItem key="__none__" value="__none__" className="cursor-pointer text-sm">
                 Ninguna
               </SelectItem>
               {options.map(({ key, label }) => (
@@ -172,6 +171,7 @@ export default function EEGDashboard({ workerId }) {
                   key={key}
                   value={key}
                   disabled={key === variableA}
+                  className="cursor-pointer text-sm"
                 >
                   {label}
                 </SelectItem>
@@ -179,28 +179,9 @@ export default function EEGDashboard({ workerId }) {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Promedio(s) a la derecha */}
-        <div className="flex gap-4 ml-auto">
-          {variableA && averages[variableA] != null && (
-            <AverageCard
-              icon={Activity}
-              variableName={`${variablesLabels[variableA] || variableA.replace(/_/g, " ")} promedio`}
-              average={averages[variableA].toFixed(2)}
-            />
-          )}
-          {variableB && averages[variableB] != null && (
-            <AverageCard
-              icon={Activity}
-              variableName={`${variablesLabels[variableB] || variableB.replace(/_/g, " ")} promedio`}
-              average={averages[variableB].toFixed(2)}
-            />
-          )}
-        </div>
-
-      </div>
+        
         {/* Filtro de tiempo exacto al centro */}
-        <div className="flex justify-center w-fit items-center mb-6 gap-2 mx-auto bg-neutral/10 px-6 py-2 rounded-xl">
+        <div className="flex w-fit items-center gap-2 bg-neutral/10 px-6 py-1 rounded-md bg-primary-bg shadow-xs border border-neutral/30">
           <span className="text-sm font-medium text-secondary-text mr-2">Inicio</span>
           <Input
             type="number"
@@ -209,7 +190,7 @@ export default function EEGDashboard({ workerId }) {
             value={startMin}
             onChange={e => setStartMin(e.target.value.replace(/\D/, ""))}
             placeholder="mm"
-            className="w-14 text-center text-sm input-no-spinner"
+            className="w-12 h-8 text-center text-sm input-no-spinner bg-white"
           />
           <span>:</span>
           <Input
@@ -219,7 +200,7 @@ export default function EEGDashboard({ workerId }) {
             value={startSec}
             onChange={e => setStartSec(e.target.value.replace(/\D/, ""))}
             placeholder="ss"
-            className="w-14 input-no-spinner text-center text-sm"
+            className="w-12 input-no-spinner text-center text-sm h-8 bg-white"
           />
           <span className="mx-2 text-sm font-medium text-secondary-text">Fin</span>
           <Input
@@ -229,7 +210,7 @@ export default function EEGDashboard({ workerId }) {
             value={endMin}
             onChange={e => setEndMin(e.target.value.replace(/\D/, ""))}
             placeholder="mm"
-            className="w-14 text-center text-sm input-no-spinner"
+            className="w-12 h-8 text-center text-sm input-no-spinner bg-white"
           />
           <span>:</span>
           <Input
@@ -239,11 +220,11 @@ export default function EEGDashboard({ workerId }) {
             value={endSec}
             onChange={e => setEndSec(e.target.value.replace(/\D/, ""))}
             placeholder="ss"
-            className="w-14 text-center text-sm input-no-spinner"
+            className="w-12 h-8 text-center text-sm input-no-spinner bg-white"
           />
           <Button
             size="sm"
-            variant="neutral"
+            variant="secondary"
             className="ml-2"
             onClick={handleApplyManualRange}
             disabled={startMin === "" || startSec === ""}
@@ -251,6 +232,8 @@ export default function EEGDashboard({ workerId }) {
             Aplicar
           </Button>
         </div>
+
+      </div>
 
       {/* Gráficos */}
       <div>
@@ -269,7 +252,22 @@ export default function EEGDashboard({ workerId }) {
                   width={42}
                   tickMargin={6}
                 />
-                <Tooltip />
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    return (
+                      <div className="bg-white rounded shadow-xs px-3 py-2 text-xs">
+                        <div className="font-semibold text-primary-text/65">{label}</div>
+                        {payload.map((entry, idx) => (
+                          <div key={idx} className="mt-1">
+                            <span className="font-medium">{entry.name}:</span>{" "}
+                            <span>{entry.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }}
+                />
                 <Line
                   type="monotone"
                   dataKey={variableA}
@@ -300,7 +298,22 @@ export default function EEGDashboard({ workerId }) {
                   width={42}
                   tickMargin={6}
                 />
-                <Tooltip />
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    return (
+                      <div className="bg-white rounded shadow-xs px-3 py-2 text-xs">
+                        <div className="font-semibold text-primary-text/65">{label}</div>
+                        {payload.map((entry, idx) => (
+                          <div key={idx} className="mt-1">
+                            <span className="font-medium">{entry.name}:</span>{" "}
+                            <span>{entry.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }}
+                />
                 <Line
                   type="monotone"
                   dataKey={variableB}
@@ -317,9 +330,8 @@ export default function EEGDashboard({ workerId }) {
           </div>
         )}
       </div>
-
       {/* Slider de tiempo debajo de los gráficos */}
-      <div className="mt-4">
+      <div className="my-4">
         <Slider
           value={range}
           onValueChange={setRange}
@@ -328,12 +340,32 @@ export default function EEGDashboard({ workerId }) {
           step={1}
           className="w-full"
         />
-        <div className="flex justify-center gap-3 text-sm mt-2 text-primary-text">
+        {/* <div className="flex justify-center gap-3 text-sm mt-2 text-primary-text">
           <span>{parsedData[range[0]]?.Hora}</span>
           <span>-</span>
           <span>{parsedData[range[1]]?.Hora}</span>
-        </div>
+        </div> */}
       </div>
+
+        {/* Promedio(s) a la derecha */}
+        <div className="flex gap-4 ml-auto mt-2">
+          {variableA && averages[variableA] != null && (
+            <AverageCard
+              icon={Activity}
+              variableName={`${variablesLabels[variableA] || variableA.replace(/_/g, " ")} promedio`}
+              average={averages[variableA].toFixed(2)}
+              color="neutral"
+            />
+          )}
+          {variableB && averages[variableB] != null && (
+            <AverageCard
+              icon={Activity}
+              variableName={`${variablesLabels[variableB] || variableB.replace(/_/g, " ")} promedio`}
+              average={averages[variableB].toFixed(2)}
+              color="primary"
+            />
+          )}
+        </div>
     </div>
   );
 }

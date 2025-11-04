@@ -138,7 +138,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
                             ? "text-primary"
                             : "text-primary-bg"
                       )}
-                      <span className="text-xs">{item.name}</span> {/* usa el nombre del item */}
+                      <span className="text-sm">{item.name}</span> {/* usa el nombre del item */}
                     </>
                   </NavLink>
                 </NavigationMenuItem>
@@ -164,7 +164,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
                         "!text-lg shrink-0",
                         dashboardOpen || isDashboardActive(location) ? "text-primary" : "text-primary-bg"
                       )}
-                      <span className="text-xs">Dashboard</span> {/* texto pequeño solo aquí */}
+                      <span className="text-sm">Dashboard</span> {/* texto pequeño solo aquí */}
                     </span>
                     <span className={`transform transition-transform duration-300 ${dashboardOpen ? "rotate-180" : ""}`}>
                       {React.cloneElement(Icons.arrowDown, {
@@ -241,7 +241,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
       <div className="flex items-center pr-6">
         <div className="relative" ref={profileMenuRef}>
           <button
-            className={`flex items-center gap-1.5 px-4 py-2 rounded text-xs font-normal transition-colors
+            className={`flex items-center gap-1.5 px-4 py-2 rounded text-sm font-normal transition-colors
               ${profileMenuOpen ? '!bg-primary-bg/60' : 'bg-transparent hover:!bg-primary-bg/40 focus:!bg-primary-bg/60'}`}
             onClick={() => setProfileMenuOpen((open) => !open)}
             aria-haspopup="true"
@@ -255,7 +255,7 @@ export default function Navbar({ user = { name: "Usuario", avatar: 'user' }, onL
                 className: `!text-xl shrink-0 ${profileMenuOpen ? 'text-primary' : 'text-primary-bg'}`
               })}
             </div>
-            <span className="font-medium text-xs">{user.name}</span>
+            <span className="font-medium text-sm">{user.name}</span>
             <span className={`transform transition-transform duration-300 ${profileMenuOpen ? "rotate-180" : ""}`}>
               {React.cloneElement(Icons.arrowDown, {
                 className: `!text-sm shrink-0 ${profileMenuOpen ? "text-primary" : "text-primary-text"}`

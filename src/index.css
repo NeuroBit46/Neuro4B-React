@@ -72,11 +72,19 @@
 }
 
 .glass-neutral-bg {
-  backdrop-filter: blur(4px);
   background-color: rgba(166, 148, 204, 0.15);
-  border: 1px solid rgba(166, 148, 204, 0.3);
+  backdrop-filter: blur(6px) saturate(1.15); 
+  border: 1px solid rgba(166, 148, 204, 0.5);
   box-shadow: 0 8px 20px rgba(166, 148, 204, 0.10);
   transition: box-shadow 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-primary-bg {
+  background-color: rgba(234, 244, 247, 0.85);
+  backdrop-filter: blur(6px) saturate(1.15); 
+  border: 1px solid rgba(78, 185, 197, 0.5);
+  box-shadow: 0 6px 18px rgba(160, 190, 192, 0.12);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .glass-neutral {
@@ -111,14 +119,6 @@
 .glass-secondary-bg:focus-within {
   box-shadow: 0 0 0 4px rgba(215, 235, 238, 0.65),
               0 8px 20px rgba(78, 185, 197, 0.15);
-}
-
-.glass-primary-bg {
-  background-color: rgba(234, 244, 247, 0.85);
-  backdrop-filter: blur(6px) saturate(1.15); 
-  border: 1px solid rgba(215, 235, 232, 0.5);
-  box-shadow: 0 6px 18px rgba(160, 190, 192, 0.12);
-  transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 /* iOS-like glass usando primary */

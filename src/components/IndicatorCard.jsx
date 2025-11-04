@@ -24,13 +24,13 @@ export default function IndicatorCard({
               </span>
             </div>
           )}
-          <CardTitle className={`text-sm font-semibold tracking-wide text-primary-text ${titleClassName}`}>
+          <CardTitle className={`text-base font-semibold tracking-wide text-primary-text ${titleClassName}`}>
             {title}
           </CardTitle>
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className={`text-xs leading-snug text-secondary-text ${descriptionClassName}`}>
+        <div className={`text-sm leading-snug text-secondary-text ${descriptionClassName}`}>
           {description}
         </div>
       </CardContent>
