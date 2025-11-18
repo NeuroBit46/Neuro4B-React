@@ -21,3 +21,5 @@ COPY --from=builder /react/dist /var/www/react
 
 # ⬇️ MUY IMPORTANTE: copiar la config
 COPY nginx/nginx-setup.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 8080
