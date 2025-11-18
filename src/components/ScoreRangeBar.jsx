@@ -44,7 +44,7 @@ export function ScoreRangeBar({
           {boundaries.map(b => (
             <span
               key={b.value}
-              className="absolute text-[0.6rem] font-medium text-primary-text/70 tabular-nums"
+              className="absolute text-sm font-medium text-primary-text/70 tabular-nums"
               style={{ left: `${b.pos}%`, transform: 'translateX(-50%)' }}
             >
               {b.value}
@@ -75,7 +75,7 @@ export function ScoreRangeBar({
               }}
             >
               {showLabels && (
-                <span className="text-xs font-semibold tracking-wide px-1 text-center leading-tight select-none" style={{ color: labelColor }}>
+                <span className="text-sm font-semibold tracking-wide px-1 text-center leading-tight select-none" style={{ color: labelColor }}>
                   {b.label}
                 </span>
               )}

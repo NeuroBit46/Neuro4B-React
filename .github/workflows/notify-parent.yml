@@ -1,0 +1,17 @@
+name: notify parent on push
+
+on:
+  push:
+    branches: [ main ]   # ajusta si usas otra rama
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger repository_dispatch on parent
+        run: |
+          curl -sS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.PARENT_REPO_TOKEN }}" \
+            https://api.github.com/repos/NeuroBit46/DockerN4B/dispatches \
+            -d '{"event_type":"bump-submodules","client_payload":{"source":"${{ github.repository }}","sha":"${{ github.sha }}"}}'

@@ -66,6 +66,8 @@ export default function App() {
 
     const gridRows = hasHeader ? 'auto 1fr' : '1fr';
 
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
     return (
       <div
         className="grid bg-primary relative overflow-x-hidden overflow-y-auto w-full min-w-0"
@@ -79,7 +81,7 @@ export default function App() {
         {hasHeader && (
           <aside className="z-2 w-full">
             <div className="glass-primary rounded-sm mx-3 mt-2 mb-1 py-2">
-              <Sidebar onLogout={handleLogout} />
+              <Sidebar user={{ name: user.username || user.email || "Usuario", avatar: "user" }} onLogout={handleLogout} />
             </div>
           </aside>
         )}

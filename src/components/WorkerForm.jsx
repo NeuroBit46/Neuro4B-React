@@ -115,7 +115,7 @@ export default function WorkerForm({
 
     setLoading(true);
     try {
-      const newData = { name, company, position };
+      const newData = { name, company, position, observations };
 
       // adjuntar siempre el PDF
       newData.pdfFile = pdfFile;
@@ -147,8 +147,8 @@ export default function WorkerForm({
       setPosition(initialData.position || '');
       setPdfFile(initialData.pdfFile || null);
       setExcelFile(initialData.excelFile || null);
+      setObservations(initialData.observations || ''); // <-- igual que position
     }
-    // No hagas nada en modo "crear"
   }, [initialData, mode]);
 
   // Limpia el blob al cerrar el modal
@@ -184,6 +184,7 @@ export default function WorkerForm({
   const dimName     = isView && isEmpty(name);
   const dimCompany  = isView && isEmpty(company);
   const dimPosition = isView && isEmpty(position);
+  const dimObservations = isView && isEmpty(observations);
 
   const { isActive: globalLoading, progress } = useLoadingBar();
 
@@ -255,7 +256,7 @@ export default function WorkerForm({
             {!shouldHide(observations) && (
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-secondary-text mb-1 flex items-center gap-2">
-                  {renderIcon(Icons.notes || Icons.comment, isView && isEmpty(observations))}
+                  {renderIcon(Icons.notes, dimObservations)}
                   Observaciones
                 </label>
                 <Textarea

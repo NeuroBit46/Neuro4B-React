@@ -37,6 +37,7 @@ export default function DetailWorker() {
             name: found.nombre,
             company: found.empresa,
             position: found.cargo,
+            observations: found.obs,
             pdfFile: buildFile(found.ruta_PDF, 'application/pdf'),
             excelFile: buildFile(found.ruta_EEG, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           });
@@ -53,7 +54,8 @@ export default function DetailWorker() {
           emptyLabels={{
             name: "Nombre no registrado",
             company: "Empresa no indicada",
-            position: "Cargo no indicado"
+            position: "Cargo no indicado",
+            observations: "Observaciones no indicadas"
           }}
         />
       ) : (
