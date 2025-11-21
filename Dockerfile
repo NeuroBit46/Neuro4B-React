@@ -3,7 +3,7 @@ FROM node:24 AS builder
 WORKDIR /react
 
 # copia de paquetes para cache eficiente
-COPY react/package*.json ./
+#COPY react/package*.json ./
 RUN npm ci || npm install
 
 # copia del proyecto React
