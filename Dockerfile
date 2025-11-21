@@ -7,7 +7,7 @@ COPY react/package*.json ./
 RUN npm ci || npm install
 
 # copia del proyecto React
-COPY react/ .
+#COPY react/ .
 
 # build con Vite (puedes dejar VITE_API_BASE vacío si usas proxy /api)
 ARG VITE_API_BASE
