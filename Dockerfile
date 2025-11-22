@@ -3,11 +3,11 @@ FROM node:24 AS builder
 WORKDIR /react
 
 # copia de paquetes para cache eficiente
-COPY react/package*.json ./
+COPY package*.json ./
 RUN npm ci || npm install
 
 # copia del proyecto React
-COPY react/ .
+COPY . .
 
 # build con Vite (puedes dejar VITE_API_BASE vacío si usas proxy /api)
 ARG VITE_API_BASE
