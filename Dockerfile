@@ -2,24 +2,30 @@
 FROM node:24 AS builder
 WORKDIR /react
 
-# copia de paquetes para cache eficiente
-COPY package*.json ./
+# Copiar solo package*.json para cache de deps
+COPY react/package*.json ./
 RUN npm ci || npm install
 
-# copia del proyecto React
-COPY . .
+# Copiar proyecto
+COPY react/ .
 
-# build con Vite (puedes dejar VITE_API_BASE vacío si usas proxy /api)
+# Si usas VITE_API_BASE, lo dejamos, pero el proxy /api ya te cubre
 ARG VITE_API_BASE
 ENV VITE_API_BASE=${VITE_API_BASE}
+
 RUN npm run build
 
 # ---------- Runtime (Nginx) ----------
 FROM nginx:1.29.1
-# archivos estaticos
+
+# Archivos estáticos de React
 COPY --from=builder /react/dist /var/www/react
 
-# ⬇️ MUY IMPORTANTE: copiar la config
-COPY nginx/nginx-setup.conf /etc/nginx/conf.d/default.conf
+# Config de Nginx como plantilla + entrypoint
+COPY nginx/default.conf.template /etc/nginx/conf.d/default.conf.template
+COPY nginx/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 8080
+
+CMD ["/docker-entrypoint.sh"]
