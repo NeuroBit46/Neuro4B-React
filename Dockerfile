@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci || npm install
 
+# Test con Jest
+RUN npm install --save-dev jest
+
 # Copiar el resto del proyecto
 COPY . .
 
